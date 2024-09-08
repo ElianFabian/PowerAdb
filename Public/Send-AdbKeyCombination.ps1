@@ -1,0 +1,30 @@
+using module "../Class/KeyCode.psm1"
+
+function Send-AdbKeyCombination {
+
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory, ValueFromPipeline)]
+        [string] $DeviceId,
+
+        [ValidateCount(2, [int]::MaxValue)]
+        [ValidateSet([KeyCode])]
+        [Parameter(Mandatory)]
+        [string[]] $KeyCodes
+    )
+
+    process {
+        foreach ($id in $DeviceId) {
+            $apiLevel = [uint] (Get-AdbProp -DeviceId $id -PropertyName ro.build.version.sdk)
+            if ($apiLevel -le 30) {
+                Write-Error "'adb shell input keycombination' is not available for api levels lower or equal to 30. Device id: '$id', api level: '$apiLevel'"
+                continue
+            }
+            if ($apiLevel -le 33) {
+                Write-Error "'adb shell input keycombination' is available for api levels [31, 32, 33] (the command exists but it doesn't seem to work properly). Device id: '$id', api level: '$apiLevel'"
+                continue
+            }
+            Invoke-AdbExpression -DeviceId $id -Command "shell input keycombination $($KeyCodes | ForEach-Object { "KEYCODE_$_" })" | Out-Null
+        }
+    }
+}
