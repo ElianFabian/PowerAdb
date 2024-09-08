@@ -10,7 +10,7 @@ function Show-AdbDeviceInfo {
         return
     }
 
-    $names = $devices | Get-AdbDeviceName
+    $names = [string[]] ($devices | Get-AdbDeviceName)
     $longestDeviceName = $names | ForEach-Object { $_.Length } | Measure-Object -Maximum | Select-Object -ExpandProperty Maximum
     $longestIdLength = $devices | ForEach-Object { $_.Length } | Measure-Object -Maximum | Select-Object -ExpandProperty Maximum
 
@@ -22,6 +22,7 @@ function Show-AdbDeviceInfo {
     Write-Host $header -ForegroundColor Green
 
     $namesEnumerator = $names.GetEnumerator()
+    $namesEnumerator.Reset()
     foreach ($id in $devices) {
         $namesEnumerator.MoveNext() > $null
         $deviceName = $namesEnumerator.Current
