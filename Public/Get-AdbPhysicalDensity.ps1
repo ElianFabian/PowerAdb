@@ -7,9 +7,15 @@ function Get-AdbPhysicalDensity {
         [string[]] $DeviceId
     )
 
+    begin {
+        # Length of 'Physical density: '
+        $physicalDensityStrLength = 18
+    }
+
     process {
-        foreach ($id in $DeviceId) {
-            return (Invoke-AdbExpression -DeviceId $id -Command "shell wm density") -as [uint32]
+        $DeviceId | Invoke-AdbExpression -Command "shell wm density" `
+        | ForEach-Object {
+            [uint32] $_.Substring($physicalDensityStrLength)
         }
     }
 }
