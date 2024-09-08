@@ -13,7 +13,7 @@ function Get-AdbDeviceName {
                 [string] (Invoke-AdbExpression -DeviceId $id -Command "emu avd name" | Select-Object -First 1)
                 continue
             }
-            $id | Get-AdbProp -PropertyName "ro.product.model"
+            Get-AdbProp -DeviceId $id -PropertyName "ro.product.model"
         }
     }
 }
