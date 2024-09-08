@@ -18,17 +18,9 @@ function Send-AdbSwipe {
         [float] $Y2
     )
 
-    begin {
-        # Length of 'Physical size: '
-        $physicalSizeStrLength = 15
-    }
-
     process {
         foreach ($id in $DeviceId) {
-            $resolution = (Invoke-AdbExpression -DeviceId $id -Command "shell wm size" -Verbose:$false -WarningAction SilentlyContinue).Substring($physicalSizeStrLength)
-            $resolutionSplit = [uint[]] $resolution.Split('x')
-            $width = $resolutionSplit[0]
-            $height = $resolutionSplit[1]
+            $width, $height = Get-AdbDisplaySize -DeviceId $id -Verbose:$false
 
             if ($X1 -lt 0.0 -or $X1 -gt $width) {
                 Write-Error "X1 coordinate in device with id '$id' must be between 0 and $width, but was '$X1'"

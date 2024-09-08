@@ -8,7 +8,7 @@ function Set-AdbPhysicalDensity {
         # Limit to 10,000 to avoid crashing the emulator
         [ValidateRange(72, 10000)]
         [Parameter(Mandatory, ParameterSetName = "Default")]
-        [uint] $Density,
+        [uint32] $Density,
 
         [Parameter(ParameterSetName = "Reset")]
         [switch] $Reset

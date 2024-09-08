@@ -7,6 +7,6 @@ function Get-AdbScreenViewNode {
         [string[]] $DeviceId
     )
 
-    return $DeviceId | Get-AdbScreenViewContent -Verbose:$VerbosePreference
+    return $DeviceId | Get-AdbScreenViewContent -Verbose:$VerbosePreference `
     | Select-Xml -XPath "//node" | Select-Object -ExpandProperty Node
 }

@@ -26,11 +26,11 @@ function Set-AdbProp {
 
     process {
         foreach ($id in $DeviceId) {
-            $deviceProperties = adb -s $id shell getprop
-            | Out-String -Stream
-            | Select-String -Pattern "\[(.+)\]:" -AllMatches
-            | Select-Object -ExpandProperty Matches
-            | ForEach-Object { $_.Groups[1].Value }
+            $deviceProperties = adb -s $id shell getprop `
+            | Out-String -Stream `
+            | Select-String -Pattern "\[(.+)\]:" -AllMatches `
+            | Select-Object -ExpandProperty Matches `
+            | ForEach-Object { $_.Groups[1].Value } `
             | Where-Object { -not $_.StartsWith("debug.") }
 
             if ($PropertyName -notin $deviceProperties -and -not $PropertyName.StartsWith("debug.")) {

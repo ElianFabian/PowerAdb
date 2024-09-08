@@ -11,10 +11,10 @@ function Invoke-AdbScreenShot {
 
     process {
         foreach ($id in $DeviceId) {
-            $adbCommand = "adb -s $id exec-out screencap -p > '$Destination'"
+            $adbCommand = "adb -s $id exec-out screencap -p > ""$Destination"""
 
             # https://stackoverflow.com/a/59118502/18418162
-            if ($IsWindows) {
+            if ($IsWindows -or -not $IsCoreCLR) {
                 if ($VerbosePreference) {
                     Write-Verbose "cmd /c $adbCommand"
                 }

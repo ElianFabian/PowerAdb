@@ -8,16 +8,11 @@ function Get-AdbForegroundApplicationId {
     )
 
     process {
-        foreach ($id in $DeviceId) {
-            if (-not (Test-AdbEmulator -DeviceId $id)) {
-                # Concluded from experience results
-                Write-Error "Can't get foreground application in real device. Device id: '$id'"
-                continue
-            }
-        }
-        $DeviceId | Invoke-AdbExpression -Command "shell dumpsys window windows" -Verbose:$VerbosePreference
-        | Select-String -Pattern "mCurrentFocus=.+ u0 (.+)/" -AllMatches
-        | Select-Object -ExpandProperty Matches
-        | ForEach-Object { $_.Groups[1].Value }
+        $DeviceId | Invoke-AdbExpression -Command "shell dumpsys window windows" `
+        | Out-String `
+        | Select-String -Pattern ".+mSurface=Surface\(name=(.+)/.+\).+" -AllMatches `
+        | Select-Object -ExpandProperty Matches `
+        | Select-Object -ExpandProperty Groups -First 1 `
+        | Select-Object -ExpandProperty Value -Last 1
     }
 }

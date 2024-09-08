@@ -1,6 +1,6 @@
 function Get-AdbApplicationPid {
 
-    [OutputType([uint[]])]
+    [OutputType([uint32[]])]
     [CmdletBinding()]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
@@ -13,7 +13,7 @@ function Get-AdbApplicationPid {
     process {
         foreach ($id in $DeviceId) {
             foreach ($appId in $ApplicationId) {
-                [uint] (Invoke-AdbExpression -DeviceId $id -Command "shell pidof $appId" -Verbose:$VerbosePreference)
+                [uint32] (Invoke-AdbExpression -DeviceId $id -Command "shell pidof $appId" -Verbose:$VerbosePreference)
             }
         }
     }

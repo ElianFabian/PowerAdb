@@ -1,7 +1,7 @@
 function Get-AdbPhysicalDensity {
 
     [CmdletBinding()]
-    [OutputType([uint[]])]
+    [OutputType([uint32[]])]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId
@@ -9,7 +9,7 @@ function Get-AdbPhysicalDensity {
 
     process {
         foreach ($id in $DeviceId) {
-            return (Invoke-AdbExpression -DeviceId $id -Command "shell wm density") -as [uint]
+            return (Invoke-AdbExpression -DeviceId $id -Command "shell wm density") -as [uint32]
         }
     }
 }

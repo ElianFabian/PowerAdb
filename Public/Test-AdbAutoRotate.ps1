@@ -1,3 +1,4 @@
+# https://stackoverflow.com/questions/25864385/changing-android-device-orientation-with-adb
 function Test-AdbAutoRotate {
 
     [CmdletBinding()]
@@ -7,8 +8,8 @@ function Test-AdbAutoRotate {
     )
 
     process {
-        $DeviceId
-        | Invoke-AdbExpression -Command "shell settings get system accelerometer_rotation"
+        $DeviceId `
+        | Invoke-AdbExpression -Command "shell settings get system accelerometer_rotation" `
         | ForEach-Object { if ($_ -eq '1') { $true } else { $false } }
     }
 }

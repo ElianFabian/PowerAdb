@@ -1,5 +1,3 @@
-using module "../Class/KeyCode.psm1"
-
 function Send-AdbKeyEvent {
 
     [CmdletBinding()]
@@ -8,7 +6,6 @@ function Send-AdbKeyEvent {
         [string[]] $DeviceId,
 
         [ValidateCount(1, [int]::MaxValue)]
-        [ValidateSet([KeyCode])]
         [Parameter(Mandatory)]
         [string[]] $KeyCode
     )

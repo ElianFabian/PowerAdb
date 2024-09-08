@@ -1,7 +1,7 @@
 function Get-AdbDisplaySize {
 
     [CmdletBinding()]
-    [OutputType([uint[]], [string])]
+    [OutputType([uint32[]], [string])]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
@@ -9,11 +9,16 @@ function Get-AdbDisplaySize {
         [switch] $AsString
     )
 
+    begin {
+        # Length of 'Physical size: '
+        $physicalSizeStrLength = 15
+    }
+
     process {
         foreach ($id in $DeviceId) {
-            $result = Invoke-AdbExpression -DeviceId $id -Command "shell wm size"
+            $result = [string] (Invoke-AdbExpression -DeviceId $id -Command "shell wm size")
 
-            $resolutionStr = $result.Split(": ")[1]
+            $resolutionStr = $result.Substring($physicalSizeStrLength).Trim("`n")
 
             if ($AsString) {
                 return $resolutionStr
@@ -21,10 +26,7 @@ function Get-AdbDisplaySize {
 
             $resolution = $resolutionStr.Split("x")
 
-            return @(
-                [uint] $resolution[0],
-                [uint] $resolution[1]
-            )
+            return @([uint32] $resolution[0], [uint32] $resolution[1])
         }
     }
 }

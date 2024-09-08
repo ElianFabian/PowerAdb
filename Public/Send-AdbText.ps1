@@ -13,8 +13,8 @@ function Send-AdbText {
     )
 
     begin {
-        if (Compare-Object -ReferenceObject ([System.Text.Encoding]::ASCII.GetBytes($Text)) -DifferenceObject ([System.Text.Encoding]::Latin1.GetBytes($Text))) {
-            Write-Error "'adb shell input text' only accepts latin1 characters. Text: '$Text'"
+        if (Compare-Object -ReferenceObject ($script:Ascii.GetBytes($Text)) -DifferenceObject ($script:Latin1.GetBytes($Text))) {
+            Write-Error "'adb shell input text' only accepts ASCII characters. Text: '$Text'"
             return $null
         }
     }
@@ -42,4 +42,14 @@ function Send-AdbText {
             Invoke-AdbExpression -DeviceId $id -Command "shell input text ""$encodedText"""
         }
     }
+}
+
+
+$script:Ascii = [System.Text.Encoding]::ASCII
+
+$script:Latin1 = if ($IsCoreCLR) {
+    [System.Text.Encoding]::Latin1
+}
+else {
+    [System.Text.Encoding]::GetEncoding("ISO-8859-1")
 }

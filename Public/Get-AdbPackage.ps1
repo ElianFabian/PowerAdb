@@ -13,7 +13,7 @@ function Get-AdbPackage {
     }
 
     process {
-        $DeviceId | Invoke-AdbExpression -Command "shell pm list packages"
+        $DeviceId | Invoke-AdbExpression -Command "shell pm list packages" `
         | ForEach-Object { $_.Substring($packagePrefixStrLength) }
     }
 }

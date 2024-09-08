@@ -1,7 +1,8 @@
+#Requires -Version 5.1
+
 $PublicFunction = @(Get-ChildItem -Path $PSScriptRoot\Public\*.ps1 -File -ErrorAction SilentlyContinue)
 
-$incorrectFiles = $PublicFunction
-| Where-Object {
+$incorrectFiles = $PublicFunction | Where-Object {
     $fileContent = Get-Content -Path $_.FullName -Raw
     $fileBaseName = $_.BaseName
 
@@ -9,7 +10,7 @@ $incorrectFiles = $PublicFunction
 }
 
 if ($incorrectFiles) {
-    $formattedOutput = $incorrectFiles | Join-String -Separator "`r`n"
+    $formattedOutput = $incorrectFiles -join "`n"
     Write-Error "There are functions whose name doesn't match its filename: `n$formattedOutput"
     exit
 }
@@ -25,6 +26,6 @@ foreach ($import in @($PublicFunction)) {
 }
 
 
-& "$PSScriptRoot/AdbArgumentCompleter.ps1"
+. "$PSScriptRoot/AdbArgumentCompleter.ps1"
 
 Export-ModuleMember -Function $PublicFunction.BaseName

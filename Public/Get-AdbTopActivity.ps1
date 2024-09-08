@@ -8,8 +8,13 @@ function Get-AdbTopActivity {
     )
 
     process {
-        $DeviceId | Invoke-AdbExpression -Command "shell dumpsys activity activities" -Verbose:$VerbosePreference
-        | Select-String -Pattern "topResumedActivity=.+{.+ .+ (.+) .+}" -AllMatches
-        | ForEach-Object { $_.Matches[0].Groups[1].Value.Replace('/', '') }
+        $DeviceId | Invoke-AdbExpression -Command "shell dumpsys activity activities" -Verbose:$VerbosePreference `
+        | Select-String -Pattern "(topResumedActivity=.+|mResumedActivity: ActivityRecord){.+ .+ (.+) .+}" -AllMatches `
+        | Select-Object -ExpandProperty Matches -First 1 `
+        | Select-Object -ExpandProperty Groups -Last 1 `
+        | Select-Object -ExpandProperty Value -Last 1 `
+        | ForEach-Object {
+            $_.Replace('/', '').Trim("}")
+        }
     }
 }

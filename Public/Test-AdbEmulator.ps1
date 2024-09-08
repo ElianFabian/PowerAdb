@@ -9,7 +9,7 @@ function Test-AdbEmulator {
 
     process {
         foreach ($id in $DeviceId) {
-            return $id.StartsWith("emulator-")
+            $id.StartsWith("emulator-")
         }
     }
 }

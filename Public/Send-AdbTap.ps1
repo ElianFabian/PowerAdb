@@ -14,10 +14,7 @@ function Send-AdbTap {
 
     process {
         foreach ($id in $DeviceId) {
-            $resolution = (Invoke-AdbExpression -DeviceId $id -Command "shell wm size" -Verbose:$false -WarningAction SilentlyContinue).Substring($physicalSizeStrLength)
-            $resolutionSplit = [uint[]] $resolution.Split('x')
-            $width = $resolutionSplit[0]
-            $height = $resolutionSplit[1]
+            $width, $height = Get-AdbDisplaySize -DeviceId $id -Verbose:$false
 
             if ($X -lt 0.0 -or $X -gt $width) {
                 Write-Error "X coordinate in device with id '$id' must be between 0 and $width, but was '$X'"

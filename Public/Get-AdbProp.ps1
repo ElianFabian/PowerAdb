@@ -17,10 +17,10 @@ function Get-AdbProp {
     process {
         foreach ($id in $DeviceId) {
             if ($List) {
-                Invoke-AdbExpression -DeviceId $id -Command "shell getprop"
-                | Out-String
-                | Select-String -Pattern "\[(.+)\]: \[(.+)\]" -AllMatches
-                | Select-Object -ExpandProperty Matches
+                Invoke-AdbExpression -DeviceId $id -Command "shell getprop" `
+                | Out-String `
+                | Select-String -Pattern "\[(.+)\]: \[(.+)\]" -AllMatches `
+                | Select-Object -ExpandProperty Matches `
                 | ForEach-Object {
                     [PSCustomObject]@{
                         Property = $_.Groups[1].Value
@@ -37,7 +37,7 @@ function Get-AdbProp {
                 }
 
                 Invoke-AdbExpression -DeviceId $id -Command "shell getprop $PropertyName"
-            }
+            } `
             | Where-Object {
                 -not [string]::IsNullOrWhiteSpace($_)
             }

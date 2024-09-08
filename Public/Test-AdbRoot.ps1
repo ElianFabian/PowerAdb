@@ -17,9 +17,8 @@ function Test-AdbRoot {
             # http://stackoverflow.com/questions/3576989/how-can-you-detect-if-the-device-is-rooted-in-the-app
             #
             # http://stackoverflow.com/questions/7727021/how-can-androids-copy-protection-check-if-the-device-is-rooted
-            $isEmulator = Test-AdbEmulator -DeviceId $id -Verbose:$false
             $buildTags = Get-AdbProp -DeviceId $id -PropertyName ro.build.tags -Verbose:$false
-            if (-not $isEmulator -and $buildTags -and $buildTags.Contains('test-keys')) {
+            if ($buildTags -and $buildTags.Contains('test-keys')) {
                 return $true
             }
 
@@ -29,12 +28,12 @@ function Test-AdbRoot {
                 return $true
             }
 
-            # su is only available on a rooted device (or the emulator)
+            # su is only available on a rooted device
             # The user could rename or move to a non-standard location, but in that case they
             # probably don't want us to know they're root and they can pretty much subvert
             # any check anyway.
             $suResult = Invoke-AdbExpression -DeviceId $id -Command 'shell ls system/xbin/su' 2> $null
-            if (-not $isEmulator -and $suResult -eq 'system/xbin/su') {
+            if ($suResult -eq 'system/xbin/su') {
                 return $true
             }
 

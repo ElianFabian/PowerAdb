@@ -42,8 +42,8 @@ function Get-AdbSetting {
     process {
         foreach ($id in $DeviceId) {
             if ($List) {
-                Invoke-AdbExpression -DeviceId $id -Command "shell settings list $namespaceLowercase"
-                | Out-String -Stream
+                Invoke-AdbExpression -DeviceId $id -Command "shell settings list $namespaceLowercase" `
+                | Out-String -Stream `
                 | ForEach-Object {
                     $indexOfEqualsSymbol = $_.IndexOf('=')
                     $itemKey = $_.Substring(0, $indexOfEqualsSymbol)

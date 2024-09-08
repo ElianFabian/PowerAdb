@@ -6,10 +6,10 @@ function Set-AdbDisplaySize {
         [string[]] $DeviceId,
 
         [Parameter(Mandatory, ParameterSetName = "Default")]
-        [uint] $Width,
+        [uint32] $Width,
 
         [Parameter(Mandatory, ParameterSetName = "Default")]
-        [uint] $Height,
+        [uint32] $Height,
 
         [Parameter(ParameterSetName = "Reset")]
         [switch] $Reset
