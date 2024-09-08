@@ -9,18 +9,22 @@ function Send-AdbTap {
         [float] $X,
 
         [Parameter(Mandatory)]
-        [float] $Y
+        [float] $Y,
+
+        [switch] $DisableCoordinateCheck
     )
 
     process {
         foreach ($id in $DeviceId) {
-            $width, $height = Get-AdbDisplaySize -DeviceId $id -Verbose:$false
+            if (-not $DisableCoordinateCheck) {
+                $width, $height = Get-AdbDisplaySize -DeviceId $id -Verbose:$false
+            }
 
-            if ($X -lt 0.0 -or $X -gt $width) {
+            if (-not $DisableCoordinateCheck -and ($X -lt 0.0 -or $X -gt $width)) {
                 Write-Error "X coordinate in device with id '$id' must be between 0 and $width, but was '$X'"
                 return
             }
-            if ($Y -lt 0.0 -or $Y -gt $height) {
+            if (-not $DisableCoordinateCheck -and ($Y -lt 0.0 -or $Y -gt $height)) {
                 Write-Error "Y coordinate in device with id '$id' must be between 0 and $height, but was '$Y'"
                 return
             }
