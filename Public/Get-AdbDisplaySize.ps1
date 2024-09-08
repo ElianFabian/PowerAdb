@@ -21,12 +21,13 @@ function Get-AdbDisplaySize {
             $resolutionStr = $result.Substring($physicalSizeStrLength).Trim("`n")
 
             if ($AsString) {
-                return $resolutionStr
+                $resolutionStr
+                continue
             }
 
             $resolution = $resolutionStr.Split("x")
 
-            return @([uint32] $resolution[0], [uint32] $resolution[1])
+            @([uint32] $resolution[0], [uint32] $resolution[1])
         }
     }
 }
