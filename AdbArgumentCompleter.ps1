@@ -89,9 +89,11 @@ Register-ArgumentCompleter -CommandName @(
     $deviceId = $fakeBoundParameters['DeviceId']
     $namespace = $fakeBoundParameters['Namespace']
 
-    $deviceId | Get-AdbSetting -Namespace $namespace -List `
-    | ForEach-Object { $_.Key } `
-    | Where-Object { $_ -like "*$wordToComplete*" }
+    $keys = [string[]] (Get-AdbSetting -DeviceId $deviceId -Namespace $namespace -List | Select-Object -ExpandProperty Key)
+    $startMatches = [string[]] ($keys | Where-Object { $_ -like "$wordToComplete*" })
+    $containMatches = [string[]] ($keys | Where-Object { $_ -like "*$wordToComplete*" -and $_ -notlike "$wordToComplete*" })
+
+    $startMatches + $containMatches
 }
 
 
