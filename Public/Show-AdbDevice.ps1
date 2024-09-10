@@ -1,4 +1,4 @@
-function Show-AdbDeviceInfo {
+function Show-AdbDevice {
 
     $devices = Get-AdbDevice
 
