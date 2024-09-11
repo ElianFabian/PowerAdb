@@ -1,3 +1,7 @@
+param (
+    [string[]] $Path
+)
+
 $Path | Get-ChildItem | Where-Object {
     $fileContent = Get-Content -Path $_.FullName -Raw
     $fileBaseName = $_.BaseName
