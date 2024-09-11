@@ -38,6 +38,7 @@ Register-ArgumentCompleter -CommandName @(
     "Revoke-AdbPermission"
     "Start-AdbCrash"
     "Invoke-AdbDeepLink"
+    "Stop-AdbApplication"
 ) `
     -ParameterName ApplicationId -ScriptBlock {
 
