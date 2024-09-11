@@ -6,7 +6,14 @@ $incorrectFiles = $PublicFunction | Where-Object {
     $fileContent = Get-Content -Path $_.FullName -Raw
     $fileBaseName = $_.BaseName
 
-    $fileContent -notmatch "function $fileBaseName\s*{"
+    if ( [string]::IsNullOrWhiteSpace($fileContent)) {
+        return $true
+    }
+    if ($fileContent -notmatch "function $fileBaseName\s*{") {
+        return $true
+    }
+
+    return $false
 }
 
 if ($incorrectFiles) {
