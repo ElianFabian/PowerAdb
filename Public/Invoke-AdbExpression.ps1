@@ -14,11 +14,14 @@ function Invoke-AdbExpression {
         $availableDevicesCount = (adb devices).Count - 2
         if ($availableDevicesCount -eq 0) {
             Write-Warning "There are no available devices"
-            return
+            $stopExecution = $true
         }
     }
 
     process {
+        if ($stopExecution) {
+            return
+        }
         if (-not $PSBoundParameters.ContainsKey('DeviceId')) {
             if ($availableDevicesCount -gt 1) {
                 Write-Error "There are multiple devices connected, you have to indicate the device id"
