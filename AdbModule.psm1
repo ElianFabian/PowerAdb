@@ -3,17 +3,7 @@
 $PublicFunction = @(Get-ChildItem -Path $PSScriptRoot\Public\*.ps1 -File -ErrorAction SilentlyContinue)
 
 $incorrectFiles = $PublicFunction | Where-Object {
-    $fileContent = Get-Content -Path $_.FullName -Raw
-    $fileBaseName = $_.BaseName
-
-    if ( [string]::IsNullOrWhiteSpace($fileContent)) {
-        return $true
-    }
-    if ($fileContent -notmatch "function $fileBaseName\s*{") {
-        return $true
-    }
-
-    return $false
+    .\Test-IncorrectFileFunction.ps1 -Path $_.FullName
 }
 
 if ($incorrectFiles) {

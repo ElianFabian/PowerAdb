@@ -1,5 +1,13 @@
+param (
+    [string[]] $Path
+)
+
+$functionNames = Get-ChildItem -LiteralPath "$PSScriptRoot/Public/" -File `
+| Where-Object { -not (.\Test-IncorrectFileFunction.ps1 -Path $_.FullName) } `
+| Select-Object -ExpandProperty BaseName
+
 Register-ArgumentCompleter `
-    -CommandName (Get-Command -Name (Get-ChildItem -LiteralPath "$PSScriptRoot/Public/" -File | Select-Object -ExpandProperty BaseName)) `
+    -CommandName (Get-Command -Name $functionNames) `
     -ParameterName DeviceId -ScriptBlock {
 
     param(
@@ -29,6 +37,7 @@ Register-ArgumentCompleter -CommandName @(
     "Grant-AdbPermission"
     "Revoke-AdbPermission"
     "Start-AdbCrash"
+    "Invoke-AdbDeepLink"
 ) `
     -ParameterName ApplicationId -ScriptBlock {
 
