@@ -15,19 +15,19 @@ function Invoke-AdbScreenShot {
 
             # https://stackoverflow.com/a/59118502/18418162
             if ($IsWindows -or -not $IsCoreCLR) {
-                if ($VerbosePreference) {
-                    Write-Verbose "cmd /c $adbCommand"
-                }
-                cmd /c $adbCommand
+                $actualCommand = "cmd /c $adbCommand"
             }
             elseif ($IsMacOS -or $IsLinux) {
-                if ($VerbosePreference) {
-                    Write-Verbose "sh -c $adbCommand"
-                }
-                bash -c $adbCommand
+                $actualCommand = "sh -c $adbCommand"
             }
             else {
                 Write-Error "Unsupported platform. This script only works on Windows, MacOS, and Linux."
+                continue
+            }
+
+            & $actualCommand
+            if ($VerbosePreference) {
+                Write-Verbose "$actualCommand"
             }
         }
     }
