@@ -1,7 +1,7 @@
 function Invoke-AdbExpression {
 
     [OutputType([string[]])]
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param (
         [Parameter(ValueFromPipeline)]
         [string[]] $DeviceId,
@@ -28,20 +28,21 @@ function Invoke-AdbExpression {
 
         try {
             $previousEncoding = [System.Console]::OutputEncoding
-            # We have to ensure that the encoding is UTF-8 for adb to show correct ouput
             [System.Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
             if (-not $DeviceId) {
-                Write-Verbose "adb $Command"
-
-                # I don't like using Invoke-Expression, but it's the best solution I found
-                return Invoke-Expression "adb $Command"
+                if ($PSCmdlet.ShouldProcess("adb $Command")) {
+                    Write-Verbose "adb $Command"
+                    Invoke-Expression "adb $Command"
+                }
             }
-
-            $DeviceId | ForEach-Object {
-                Write-Verbose "adb -s $_ $Command"
-
-                Invoke-Expression "adb -s $_ $Command"
+            else {
+                $DeviceId | ForEach-Object {
+                    if ($PSCmdlet.ShouldProcess("adb -s $_ $Command")) {
+                        Write-Verbose "adb -s $_ $Command"
+                        Invoke-Expression "adb -s $_ $Command"
+                    }
+                }
             }
         }
         finally {
