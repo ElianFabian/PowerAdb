@@ -8,7 +8,7 @@ $incorrectFiles = $PublicFunction | Where-Object {
 
 if ($incorrectFiles) {
     $formattedOutput = $incorrectFiles -join "`n"
-    #Write-Error "There are functions whose name doesn't match its filename: `n$formattedOutput"
+    Write-Error "There are functions whose name doesn't match its filename: `n$formattedOutput"
 }
 
 
