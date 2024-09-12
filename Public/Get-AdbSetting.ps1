@@ -30,8 +30,12 @@ function Get-AdbSetting {
 
     process {
         foreach ($id in $DeviceId) {
+            $apiLevel = Get-AdbApiLevel -DeviceId $id -Verbose:$false
+            if ($apiLevel -lt 17) {
+                Write-Error "Settings is not supported for device with id '$id' with API level of '$apiLevel'. Only API levels 17 and above are supported."
+                continue
+            }
             if ($List) {
-                $apiLevel = Get-AdbApiLevel -DeviceId $id -Verbose:$false
                 if ($apiLevel -lt 23) {
                     Write-Error "List parameter is not supported for device with id '$id' with API level of '$apiLevel'. Only API levels 23 and above are supported."
                     continue

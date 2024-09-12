@@ -34,6 +34,11 @@ function Set-AdbSetting {
 
     process {
         foreach ($id in $DeviceId) {
+            $apiLevel = Get-AdbApiLevel -DeviceId $id -Verbose:$false
+            if ($apiLevel -lt 17) {
+                Write-Error "Settings is not supported for device with id '$id' with API level of '$apiLevel'. Only API levels 17 and above are supported."
+                continue
+            }
             $id | Invoke-AdbExpression -Command "shell settings put $namespaceLowercase $Key ""$Value"""
         }
     }
