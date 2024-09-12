@@ -10,24 +10,13 @@ function Get-AdbSetting {
         [ValidateSet("Global", "System", "Secure")]
         [string] $Namespace,
 
+        [Parameter(Mandatory, ParameterSetName = "Default")]
+        [string] $Key,
+
         # If any Key contains '=' then output will be wrong
         [Parameter(Mandatory, ParameterSetName = "List")]
         [switch] $List
     )
-
-    dynamicparam {
-        if ($PSBoundParameters.ContainsKey('Namespace')) {
-            $KeyAttribute = New-Object System.Management.Automation.ParameterAttribute
-            $KeyAttribute.Mandatory = $true
-            $KeyAttribute.HelpMessage = "Must specify Namespace first before setting Key"
-            $KeyAttribute.ParameterSetName = "Default"
-
-            $Key = New-Object System.Management.Automation.RuntimeDefinedParameter('Key', [string], $KeyAttribute)
-            $KeyDictionary = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
-            $KeyDictionary.Add('Key', $Key)
-            return $KeyDictionary
-        }
-    }
 
     begin {
         $Key = [string] $PSBoundParameters['Key']
@@ -42,8 +31,14 @@ function Get-AdbSetting {
     process {
         foreach ($id in $DeviceId) {
             if ($List) {
+                $apiLevel = Get-AdbApiLevel -DeviceId $id -Verbose:$false
+                if ($apiLevel -lt 23) {
+                    Write-Error "List parameter is not supported for device with id '$id' with API level of '$apiLevel'. Only API levels 23 and above are supported."
+                    continue
+                }
                 Invoke-AdbExpression -DeviceId $id -Command "shell settings list $namespaceLowercase" `
                 | Out-String -Stream `
+                | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
                 | ForEach-Object {
                     $indexOfEqualsSymbol = $_.IndexOf('=')
                     $itemKey = $_.Substring(0, $indexOfEqualsSymbol)

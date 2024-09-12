@@ -8,21 +8,11 @@ function Remove-AdbSetting {
 
         [Parameter(Mandatory)]
         [ValidateSet("Global", "System", "Secure")]
-        [string] $Namespace
+        [string] $Namespace,
+
+        [Parameter(Mandatory, ParameterSetName = "Default")]
+        [string] $Key
     )
-
-    dynamicparam {
-        if ($PSBoundParameters.ContainsKey('Namespace')) {
-            $KeyAttribute = New-Object System.Management.Automation.ParameterAttribute
-            $KeyAttribute.Mandatory = $true
-            $KeyAttribute.HelpMessage = "Must specify Namespace first before setting Key"
-
-            $Key = New-Object System.Management.Automation.RuntimeDefinedParameter('Key', [string], $KeyAttribute)
-            $KeyDictionary = New-Object System.Management.Automation.RuntimeDefinedParameterDictionary
-            $KeyDictionary.Add('Key', $Key)
-            return $KeyDictionary
-        }
-    }
 
     begin {
         $Key = [string] $PSBoundParameters['Key']
@@ -35,6 +25,14 @@ function Remove-AdbSetting {
     }
 
     process {
-        $DeviceId | Invoke-AdbExpression -Command "shell settings delete $namespaceLowercase $Key"
+        foreach ($id in $DeviceId) {
+            $apiLevel = Get-AdbApiLevel -DeviceId $id -Verbose:$false
+            if ($apiLevel -lt 21) {
+                Write-Error "Removing keys is not supported for device with id '$id' with API level of '$apiLevel'. Only API levels 21 and above are supported."
+                continue
+            }
+
+            Invoke-AdbExpression -DeviceId $id -Command "shell settings delete $namespaceLowercase $Key"
+        }
     }
 }
