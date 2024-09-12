@@ -14,7 +14,7 @@ function Get-AdbPackage {
 
     process {
         $DeviceId | Invoke-AdbExpression -Command "shell pm list packages" `
-        | Out-String -Stream
+        | Out-String -Stream `
         | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } `
         | ForEach-Object { $_.Substring($packagePrefixStrLength) }
     }
