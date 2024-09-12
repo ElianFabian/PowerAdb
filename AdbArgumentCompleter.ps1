@@ -39,6 +39,7 @@ Register-ArgumentCompleter -CommandName @(
     "Start-AdbCrash"
     "Invoke-AdbDeepLink"
     "Stop-AdbApplication"
+    "Start-AdbProcessDeath"
 ) `
     -ParameterName ApplicationId -ScriptBlock {
 
