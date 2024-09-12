@@ -3,7 +3,7 @@ param (
 )
 
 $functionNames = Get-ChildItem -LiteralPath "$PSScriptRoot/Public/" -File `
-| Where-Object { -not (.\Test-IncorrectFileFunction.ps1 -Path $_.FullName) } `
+| Where-Object { -not (& "$PSScriptRoot/Test-IncorrectFileFunction.ps1" -Path $_.FullName) } `
 | Select-Object -ExpandProperty BaseName
 
 Register-ArgumentCompleter `
