@@ -42,7 +42,7 @@ function Get-AdbSetting {
                 }
                 Invoke-AdbExpression -DeviceId $id -Command "shell settings list $namespaceLowercase" `
                 | Out-String -Stream `
-                | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+                | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } `
                 | ForEach-Object {
                     $indexOfEqualsSymbol = $_.IndexOf('=')
                     $itemKey = $_.Substring(0, $indexOfEqualsSymbol)
