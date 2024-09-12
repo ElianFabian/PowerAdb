@@ -55,7 +55,11 @@ function Get-AdbSetting {
                 continue
             }
 
-            Invoke-AdbExpression -DeviceId $id -Command "shell settings get $namespaceLowercase $Key"
+            Invoke-AdbExpression -DeviceId $id -Command "shell settings get $namespaceLowercase $Key" `
+            | Out-String -Stream `
+            | Where-Object {
+                -not [string]::IsNullOrWhiteSpace($_)
+            }
         }
     }
 }
