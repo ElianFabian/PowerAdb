@@ -1,7 +1,6 @@
 function Set-AdbProp {
 
-    [CmdletBinding()]
-    [OutputType([string[]])]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
@@ -35,10 +34,10 @@ function Set-AdbProp {
 
             if ($PropertyName -notin $deviceProperties -and -not $PropertyName.StartsWith("debug.")) {
                 Write-Error "Custom property '$PropertyName' must start with 'debug.'"
-                return
+                continue
             }
 
-            Invoke-AdbExpression -DeviceId $id -Command "shell setprop $PropertyName ""$Value"""
+            Invoke-AdbExpression -DeviceId $id -Command "shell setprop $PropertyName '$Value'" -Verbose:$VerbosePreference
         }
     }
 }
