@@ -64,7 +64,7 @@ Register-ArgumentCompleter -CommandName @(
 
 Register-ArgumentCompleter -CommandName @(
     "Get-AdbProperty"
-    "Set-AdbPropPerty"
+    "Set-AdbProperty"
 ) -ParameterName Name -ScriptBlock {
 
     param(
