@@ -1,6 +1,6 @@
 function Set-AdbSetting {
 
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     [OutputType([string[]])]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
@@ -39,7 +39,7 @@ function Set-AdbSetting {
                 Write-Error "Settings is not supported for device with id '$id' with API level of '$apiLevel'. Only API levels 17 and above are supported."
                 continue
             }
-            Invoke-AdbExpression -DeviceId $id -Command "shell settings put $namespaceLowercase $Key ""$Value"""
+            Invoke-AdbExpression -DeviceId $id -Command "shell settings put $namespaceLowercase '$Key' '$Value'" -Verbose:$VerbosePreference
         }
     }
 }

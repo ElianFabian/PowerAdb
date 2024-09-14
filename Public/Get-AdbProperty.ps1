@@ -1,6 +1,9 @@
 function Get-AdbProperty {
 
-    [CmdletBinding(DefaultParameterSetName = "Default")]
+    [CmdletBinding(
+        DefaultParameterSetName = "Default",
+        SupportsShouldProcess = $false
+    )]
     [OutputType([string[]], ParameterSetName = "Default")]
     [OutputType([PSCustomObject[]], ParameterSetName = "List")]
     param (
@@ -35,7 +38,7 @@ function Get-AdbProperty {
             }
 
             $values = if ($QueryFromList) {
-                $properties = Get-AdbProperty -DeviceId $id -List
+                $properties = Get-AdbProperty -DeviceId $id -List -WhatIf:$false -Confirm:$false
                 $targetProperties = foreach ($propName in $Name) {
                     $properties | Where-Object {
                         $_.Name -ceq $propName
@@ -53,7 +56,7 @@ function Get-AdbProperty {
                         continue
                     }
 
-                    Invoke-AdbExpression -DeviceId $id -Command "shell getprop $Name"
+                    Invoke-AdbExpression -DeviceId $id -Command "shell getprop '$Name'" -WhatIf:$false -Confirm:$false
                 }
             }
 
