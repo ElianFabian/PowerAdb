@@ -42,7 +42,7 @@ function Get-AdbSystemLocale {
                 }
                 else {
                     $defaultSystemLanguage = Get-AdbProperty -DeviceId $id -Name 'ro.product.locale.language'
-                    $defaultSystemCountry = Get-AdbProperty -DeviceId $id -Name 'ro.product.locale.country'
+                    $defaultSystemCountry = Get-AdbProperty -DeviceId $id -Name 'ro.product.locale.region'
 
                     "$defaultSystemLanguage-$defaultSystemCountry"
                 }
