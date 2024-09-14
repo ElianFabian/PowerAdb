@@ -13,10 +13,8 @@ function Test-AdbRoot {
             # No reliable way to determine if an android phone is rooted, since a rooted phone could
             # always disguise itself as non-rooted. Some common approaches can be found on SO:
             # - http://stackoverflow.com/questions/1101380/determine-if-running-on-a-rooted-device
-            #
-            # http://stackoverflow.com/questions/3576989/how-can-you-detect-if-the-device-is-rooted-in-the-app
-            #
-            # http://stackoverflow.com/questions/7727021/how-can-androids-copy-protection-check-if-the-device-is-rooted
+            # - http://stackoverflow.com/questions/3576989/how-can-you-detect-if-the-device-is-rooted-in-the-app
+            # - http://stackoverflow.com/questions/7727021/how-can-androids-copy-protection-check-if-the-device-is-rooted
             $buildTags = Get-AdbProperty -DeviceId $id -Name ro.build.tags -Verbose:$false
             if ($buildTags -and $buildTags.Contains('test-keys')) {
                 return $true
