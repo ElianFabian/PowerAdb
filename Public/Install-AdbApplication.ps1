@@ -1,5 +1,6 @@
 function Install-AdbApplication {
 
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
@@ -15,13 +16,13 @@ function Install-AdbApplication {
 
         # It seems that in some API levels this does not exist, even though
         # it appears on the adb help in the version it doesn't work
-        # I won't add it yet
+        # We won't add it yet
         # [Parameter(Mandatory)]
         # [switch] $GrantAllRantimePermissions
     )
 
     begin {
-        # In certain phones or probably APIs the default behavior is to prevent installing
+        # In certain API levels the default behavior is to prevent installing
         # if the app is already installed
         if ($Replace) {
             $replaceParam = "-r "
@@ -36,7 +37,7 @@ function Install-AdbApplication {
             }
             foreach ($item in $items) {
                 $itemPath = $item.FullName
-                Invoke-AdbExpression -DeviceId $id -Command "install $replaceParam'$itemPath'"
+                Invoke-AdbExpression -DeviceId $id -Command "install $replaceParam'$itemPath'" -Verbose:$VerbosePreference
             }
         }
     }

@@ -8,7 +8,7 @@ function Get-AdbPermissionGroup {
     )
 
     process {
-        $DeviceId | Invoke-AdbExpression -Command "shell pm list permission-groups" `
+        $DeviceId | Invoke-AdbExpression -Command "shell pm list permission-groups" -Verbose:$VerbosePreference `
         | Where-Object { $_ } `
         | ForEach-Object { $_.Replace("permission group:", "") }
     }

@@ -1,6 +1,6 @@
 function Grant-AdbPermission {
 
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
@@ -16,7 +16,7 @@ function Grant-AdbPermission {
         foreach ($id in $DeviceId) {
             foreach ($appId in $ApplicationId) {
                 foreach ($permissionName in $Permission) {
-                    $id | Invoke-AdbExpression -Command "shell pm grant $appId $permissionName" -Verbose:$VerbosePreference | Out-Null
+                    $id | Invoke-AdbExpression -Command "shell pm grant '$appId' '$permissionName'" -Verbose:$VerbosePreference | Out-Null
                 }
             }
         }

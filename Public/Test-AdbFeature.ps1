@@ -13,7 +13,7 @@ function Test-AdbFeature {
     process {
         foreach ($id in $DeviceId) {
             # Faster than 'adb shell pm has-feature'
-            $supportedFeatures = Get-AdbFeature -DeviceId $id
+            $supportedFeatures = Get-AdbFeature -DeviceId $id -Verbose:$VerbosePreference
             foreach ($permissionName in $Permission) {
                 if ($permissionName.Contains(' ')) {
                     Write-Error "Permission '$permissionName' can't contain any space"

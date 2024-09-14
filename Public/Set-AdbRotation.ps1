@@ -1,7 +1,7 @@
 # https://stackoverflow.com/questions/25864385/changing-android-device-orientation-with-adb
 function Set-AdbRotation {
 
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     [OutputType([bool[]])]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
@@ -22,6 +22,6 @@ function Set-AdbRotation {
     }
 
     process {
-        $DeviceId | Invoke-AdbExpression -Command "shell settings put system user_rotation $rotationCode"
+        $DeviceId | Invoke-AdbExpression -Command "shell settings put system user_rotation $rotationCode" -Verbose:$VerbosePreference
     }
 }

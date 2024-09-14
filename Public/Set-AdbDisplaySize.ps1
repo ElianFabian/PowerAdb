@@ -1,6 +1,9 @@
 function Set-AdbDisplaySize {
 
-    [CmdletBinding(DefaultParameterSetName = "Default")]
+    [CmdletBinding(
+        SupportsShouldProcess,
+        DefaultParameterSetName = "Default"
+    )]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
@@ -17,11 +20,16 @@ function Set-AdbDisplaySize {
 
     process {
         foreach ($id in $DeviceId) {
-            if ($Reset) {
-                Invoke-AdbExpression -DeviceId $id -Command "shell wm size reset"
+            if ($apiLevel -lt 18) {
+                Write-Error "Physical density is not supported for device with id '$id' with API level of '$apiLevel'. Only API levels 18 and above are supported."
                 continue
             }
-            Invoke-AdbExpression -DeviceId $id -Command "shell wm size $($Width)x$($Height)"
+
+            if ($Reset) {
+                Invoke-AdbExpression -DeviceId $id -Command "shell wm size reset" -Verbose:$VerbosePreference
+                continue
+            }
+            Invoke-AdbExpression -DeviceId $id -Command "shell wm size $($Width)x$($Height)" -Verbose:$VerbosePreference
         }
     }
 }

@@ -1,6 +1,6 @@
 function Send-AdbKeyCombination {
 
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string] $DeviceId,
@@ -21,7 +21,7 @@ function Send-AdbKeyCombination {
                 Write-Error "'adb shell input keycombination' is available for api levels [31, 32, 33] (the command exists but it doesn't seem to work properly). Device id: '$id', api level: '$apiLevel'"
                 continue
             }
-            Invoke-AdbExpression -DeviceId $id -Command "shell input keycombination $($KeyCodes | ForEach-Object { "KEYCODE_$_" })" | Out-Null
+            Invoke-AdbExpression -DeviceId $id -Command "shell input keycombination $($KeyCodes | ForEach-Object { "KEYCODE_$_" })" -Verbose:$VerbosePreference | Out-Null
         }
     }
 }

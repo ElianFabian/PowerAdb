@@ -21,9 +21,9 @@ function Wait-AdbState {
 
     process {
         if (-not $DeviceId) {
-            return Invoke-AdbExpression -Command "wait-for-$transportLowercase-$stateLowercase" -WarningAction SilentlyContinue
+            return Invoke-AdbExpression -Command "wait-for-$transportLowercase-$stateLowercase" -Verbose:$VerbosePreference
         }
 
-        $DeviceId | Invoke-AdbExpression -Command "wait-for-$transportLowercase-$stateLowercase"
+        $DeviceId | Invoke-AdbExpression -Command "wait-for-$transportLowercase-$stateLowercase" -Verbose:$VerbosePreference
     }
 }

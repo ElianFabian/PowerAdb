@@ -16,11 +16,16 @@ function Set-AdbPhysicalDensity {
 
     process {
         foreach ($id in $DeviceId) {
-            if ($Reset) {
-                Invoke-AdbExpression -DeviceId $id -Command "shell wm size reset"
+            $apiLevel = Get-AdbApiLevel -DeviceId $id -Verbose:$false
+            if ($apiLevel -lt 18) {
+                Write-Error "Physical density is not supported for device with id '$id' with API level of '$apiLevel'. Only API levels 18 and above are supported."
                 continue
             }
-            Invoke-AdbExpression -DeviceId $id -Command "shell wm size $($Width)x$($Height)"
+            if ($Reset) {
+                Invoke-AdbExpression -DeviceId $id -Command "shell wm density reset"
+                continue
+            }
+            Invoke-AdbExpression -DeviceId $id -Command "shell wm density $Density"
         }
     }
 }

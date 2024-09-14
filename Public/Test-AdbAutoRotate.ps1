@@ -9,7 +9,7 @@ function Test-AdbAutoRotate {
 
     process {
         $DeviceId `
-        | Invoke-AdbExpression -Command "shell settings get system accelerometer_rotation" `
+        | Invoke-AdbExpression -Command "shell settings get system accelerometer_rotation" -Verbose:$VerbosePreference `
         | ForEach-Object { if ($_ -eq '1') { $true } else { $false } }
     }
 }

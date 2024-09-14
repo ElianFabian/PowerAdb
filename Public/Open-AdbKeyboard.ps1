@@ -1,6 +1,6 @@
 function Open-AdbKeyboard {
 
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string] $DeviceId
@@ -8,7 +8,7 @@ function Open-AdbKeyboard {
 
     process {
         foreach ($id in $DeviceId) {
-            $id | Send-AdbKeyEvent -KeyCode BUTTON_START
+            $id | Send-AdbKeyEvent -KeyCode BUTTON_START -Verbose:$VerbosePreference
         }
     }
 }

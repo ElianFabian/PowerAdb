@@ -13,7 +13,7 @@ function Test-AdbDarkMode {
                 $false
             }
             else {
-                Invoke-AdbExpression -DeviceId $id -Command "shell cmd uimode night" `
+                Invoke-AdbExpression -DeviceId $id -Command "shell cmd uimode night" -Verbose:$VerbosePreference `
                 | ForEach-Object {
                     switch ($_) {
                         'Night mode: no' { $false }

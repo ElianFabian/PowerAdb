@@ -13,7 +13,7 @@ function Start-AdbProcessDeath {
     process {
         foreach ($id in $DeviceId) {
             foreach ($appId in $ApplicationId) {
-                Invoke-AdbExpression -DeviceId $id -Command "shell am kill '$appId'"
+                Invoke-AdbExpression -DeviceId $id -Command "shell am kill '$appId'" -Verbose:$VerbosePreference
             }
         }
     }

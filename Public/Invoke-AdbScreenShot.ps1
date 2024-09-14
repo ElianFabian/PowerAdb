@@ -1,6 +1,6 @@
 function Invoke-AdbScreenShot {
 
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
@@ -23,6 +23,10 @@ function Invoke-AdbScreenShot {
             else {
                 Write-Error "Unsupported platform. This script only works on Windows, MacOS, and Linux."
                 continue
+            }
+
+            if (-not $PSCmdlet.ShouldProcess($actualCommand)) {
+                return
             }
 
             & $actualCommand

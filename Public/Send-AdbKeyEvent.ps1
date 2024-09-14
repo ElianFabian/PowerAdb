@@ -1,6 +1,6 @@
 function Send-AdbKeyEvent {
 
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
@@ -13,7 +13,7 @@ function Send-AdbKeyEvent {
     process {
         foreach ($id in $DeviceId) {
             foreach ($code in $KeyCode) {
-                Invoke-AdbExpression -DeviceId $id -Command "shell input keyevent KEYCODE_$code" | Out-Null
+                Invoke-AdbExpression -DeviceId $id -Command "shell input keyevent KEYCODE_$code" -Verbose:$VerbosePreference | Out-Null
             }
         }
     }

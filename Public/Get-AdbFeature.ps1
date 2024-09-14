@@ -8,7 +8,7 @@ function Get-AdbFeature {
     )
 
     process {
-        $DeviceId | Invoke-AdbExpression -Command "shell pm list features" `
+        $DeviceId | Invoke-AdbExpression -Command "shell pm list features" -Verbose:$VerbosePreference `
         | Where-Object { $_ } `
         | ForEach-Object { $_.Replace("feature:", "") }
     }

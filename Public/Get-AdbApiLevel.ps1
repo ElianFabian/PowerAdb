@@ -1,6 +1,6 @@
 function Get-AdbApiLevel {
 
-    [CmdletBinding(SupportsShouldProcess = $false)]
+    [CmdletBinding()]
     [OutputType([uint32[]])]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]

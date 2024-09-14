@@ -1,6 +1,6 @@
 function Enable-AdbDarkMode {
 
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId
@@ -13,7 +13,7 @@ function Enable-AdbDarkMode {
                 Write-Error "Operation not supported for device with id: '$id' and API level '$apiLevel'. Dark theme is only available since API level 29"
                 continue
             }
-            Invoke-AdbExpression -DeviceId $id -Command "shell cmd uimode night yes" > $null
+            Invoke-AdbExpression -DeviceId $id -Command "shell cmd uimode night yes" -Verbose:$VerbosePreference > $null
         }
     }
 }

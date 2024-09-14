@@ -27,7 +27,7 @@ function Get-AdbPermission {
                 $permissionsByGroup = @{}
                 $currentGroup = $null
 
-                Invoke-AdbExpression -DeviceId $id -Command "shell pm list permissions -g $dangerousOnlyParam $visibleToUserParam" `
+                Invoke-AdbExpression -DeviceId $id -Command "shell pm list permissions -g $dangerousOnlyParam $visibleToUserParam" -Verbose:$VerbosePreference `
                 | Select-Object -Skip 1 `
                 | Where-Object { $_ } `
                 | ForEach-Object {
@@ -46,7 +46,7 @@ function Get-AdbPermission {
             }
         }
         else {
-            $DeviceId | Invoke-AdbExpression -Command "shell pm list permissions $dangerousOnlyParam $visibleToUserParam" `
+            $DeviceId | Invoke-AdbExpression -Command "shell pm list permissions $dangerousOnlyParam $visibleToUserParam" -Verbose:$VerbosePreference `
             | Where-Object { $_ } `
             | Select-Object -Skip 1 `
             | ForEach-Object { $_.Replace("permission:", "") }

@@ -8,7 +8,7 @@ function Get-AdbLibrary {
     )
 
     process {
-        $DeviceId | Invoke-AdbExpression -Command "shell pm list libraries" `
+        $DeviceId | Invoke-AdbExpression -Command "shell pm list libraries" -Verbose:$VerbosePreference `
         | Where-Object { $_ } `
         | ForEach-Object { $_.Replace("library:", "") }
     }

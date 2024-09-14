@@ -1,5 +1,6 @@
 function Stop-AdbApplication {
 
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,

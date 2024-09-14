@@ -13,14 +13,14 @@ function Get-AdbPackage {
     }
 
     process {
-        $DeviceId | Invoke-AdbExpression -Command "shell pm list packages" `
+        $DeviceId | Invoke-AdbExpression -Command "shell pm list packages" -Verbose:$VerbosePreference `
         | Out-String -Stream `
         | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } `
         | ForEach-Object { $_.Substring($packagePrefixStrLength) }
     }
 }
 
-# TODO: I might implement this
+# TODO: We might implement this
 # list packages [-f] [-d] [-e] [-s] [-3] [-i] [-l] [-u] [-U]
 #       [--show-versioncode] [--apex-only] [--uid UID] [--user USER_ID] [FILTER]
 #     Prints all packages; optionally only those whose name contains

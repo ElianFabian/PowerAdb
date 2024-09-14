@@ -1,6 +1,6 @@
 function Close-AdbKeyboard {
 
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string] $DeviceId

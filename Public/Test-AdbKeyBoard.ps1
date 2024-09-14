@@ -10,7 +10,7 @@ function Test-AdbKeyBoard {
     process {
         foreach ($id in $DeviceId) {
             try {
-                Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys input_method" `
+                Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys input_method" -Verbose:$VerbosePreference `
                 | Select-String -Pattern "mInputShown=(true|false)" `
                 | Select-Object -ExpandProperty Matches -First 1 `
                 | Select-Object -ExpandProperty Groups -First 2 `

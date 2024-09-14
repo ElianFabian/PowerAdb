@@ -1,6 +1,6 @@
 function Start-AdbCrash {
 
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(ValueFromPipeline)]
         [string[]] $DeviceId,
@@ -12,7 +12,7 @@ function Start-AdbCrash {
     process {
         foreach ($id in $DeviceId) {
             foreach ($appId in $ApplicationId) {
-                $id | Invoke-AdbExpression -Command "shell am crash '$appId'"
+                $id | Invoke-AdbExpression -Command "shell am crash '$appId'" -Verbose:$VerbosePreference
             }
         }
     }

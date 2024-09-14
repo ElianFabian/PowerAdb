@@ -1,6 +1,6 @@
 function Send-AdbSwipe {
 
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
@@ -43,7 +43,7 @@ function Send-AdbSwipe {
                 return
             }
 
-            Invoke-AdbExpression -DeviceId $id -Command "shell input touchscreen swipe $X1 $Y1 $X2 $Y2" | Out-Null
+            Invoke-AdbExpression -DeviceId $id -Command "shell input touchscreen swipe $X1 $Y1 $X2 $Y2" -Verbose:$VerbosePreference | Out-Null
         }
     }
 }

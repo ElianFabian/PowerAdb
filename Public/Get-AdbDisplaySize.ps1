@@ -16,7 +16,12 @@ function Get-AdbDisplaySize {
 
     process {
         foreach ($id in $DeviceId) {
-            $result = [string] (Invoke-AdbExpression -DeviceId $id -Command "shell wm size")
+            if ($apiLevel -lt 18) {
+                Write-Error "Physical density is not supported for device with id '$id' with API level of '$apiLevel'. Only API levels 18 and above are supported."
+                continue
+            }
+
+            $result = [string] (Invoke-AdbExpression -DeviceId $id -Command "shell wm size" -Verbose:$VerbosePreference)
 
             $resolutionStr = $result.Substring($physicalSizeStrLength).Trim("`n")
 

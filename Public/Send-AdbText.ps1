@@ -3,7 +3,7 @@ function Send-AdbText {
     # These ( ) < > | ; & * \ ~ " ' ` % and 'space' all need escaping. Space is replaced with %s
     # https://stackoverflow.com/a/31371987/18418162
 
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
@@ -39,7 +39,7 @@ function Send-AdbText {
 
             $encodedText = $sb.ToString()
 
-            Invoke-AdbExpression -DeviceId $id -Command "shell input text ""$encodedText"""
+            Invoke-AdbExpression -DeviceId $id -Command "shell input text ""$encodedText""" -Verbose:$VerbosePreference
         }
     }
 }

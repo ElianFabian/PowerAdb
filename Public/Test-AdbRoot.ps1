@@ -21,7 +21,7 @@ function Test-AdbRoot {
             }
 
             # Superuser.apk would only exist on a rooted device:
-            $superUserApkResult = Invoke-AdbExpression -DeviceId $id -Command 'shell ls system/app/Superuser.apk' 2> $null
+            $superUserApkResult = Invoke-AdbExpression -DeviceId $id -Command 'shell ls system/app/Superuser.apk' -Verbose:$false 2> $null
             if ($superUserApkResult -and $superUserApkResult -eq 'system/app/Superuser.apk') {
                 return $true
             }
@@ -30,7 +30,7 @@ function Test-AdbRoot {
             # The user could rename or move to a non-standard location, but in that case they
             # probably don't want us to know they're root and they can pretty much subvert
             # any check anyway.
-            $suResult = Invoke-AdbExpression -DeviceId $id -Command 'shell ls system/xbin/su' 2> $null
+            $suResult = Invoke-AdbExpression -DeviceId $id -Command 'shell ls system/xbin/su' -Verbose:$false 2> $null
             if ($suResult -eq 'system/xbin/su') {
                 return $true
             }

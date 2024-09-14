@@ -1,6 +1,6 @@
 function Remove-AdbSetting {
 
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     [OutputType([string[]])]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
@@ -32,7 +32,7 @@ function Remove-AdbSetting {
                 continue
             }
 
-            Invoke-AdbExpression -DeviceId $id -Command "shell settings delete $namespaceLowercase $Key"
+            Invoke-AdbExpression -DeviceId $id -Command "shell settings delete $namespaceLowercase $Key" -Verbose:$VerbosePreference
         }
     }
 }

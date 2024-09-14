@@ -1,6 +1,6 @@
 function Send-AdbTap {
 
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
@@ -29,7 +29,7 @@ function Send-AdbTap {
                 return
             }
 
-            Invoke-AdbExpression -DeviceId $id -Command "shell input tap $X $Y" | Out-Null
+            Invoke-AdbExpression -DeviceId $id -Command "shell input tap $X $Y" -Verbose:$VerbosePreference | Out-Null
         }
     }
 }

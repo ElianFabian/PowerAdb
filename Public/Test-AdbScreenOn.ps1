@@ -11,7 +11,7 @@ function Test-AdbScreenOn {
 
     process {
         $DeviceId `
-        | Invoke-AdbExpression -Command "shell dumpsys input_method" `
+        | Invoke-AdbExpression -Command "shell dumpsys input_method" -Verbose:$VerbosePreference `
         | Out-String | Select-String -Pattern "(screenOn = |mInteractive=)(true|false)" -AllMatches `
         | Select-Object -ExpandProperty Matches `
         | Select-Object -ExpandProperty Groups `

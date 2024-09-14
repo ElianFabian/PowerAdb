@@ -14,7 +14,7 @@ function Enable-AdbLocation {
             }
             elseif ($apiLevel -ge 17) {
                 # Set only 'gps' instead of 'gps,network' to avoid showing location consent dialog
-                Set-AdbSetting -DeviceId $id -Namespace Secure -Key location_providers_allowed -Value 'gps'
+                Set-AdbSetting -DeviceId $id -Namespace Secure -Key location_providers_allowed -Value 'gps' -Verbose:$VerbosePreference
             }
             else {
                 Write-Error "Unsupported API level: '$apiLevel'. Only API levels 17 and above are supported."
