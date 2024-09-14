@@ -42,6 +42,7 @@ Register-ArgumentCompleter -CommandName @(
     "Start-AdbProcessDeath"
     "Install-AdbApplication"
     "Uninstall-AdbApplication"
+    "Clear-AdbApplication"
 ) `
     -ParameterName ApplicationId -ScriptBlock {
 
