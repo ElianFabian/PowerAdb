@@ -20,7 +20,7 @@ Register-ArgumentCompleter `
 
     Get-AdbDevice | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
         $deviceName = Get-AdbDeviceName -DeviceId $_
-        $apiLevel = Get-AdbProp -DeviceId $_ -PropertyName "ro.build.version.sdk"
+        $apiLevel = Get-AdbProperty -DeviceId $_ -Name 'ro.build.version.sdk'
 
         New-Object -Type System.Management.Automation.CompletionResult -ArgumentList @(
             $_
@@ -63,9 +63,9 @@ Register-ArgumentCompleter -CommandName @(
 }
 
 Register-ArgumentCompleter -CommandName @(
-    "Get-AdbProp"
-    "Set-AdbProp"
-) -ParameterName PropertyName -ScriptBlock {
+    "Get-AdbProperty"
+    "Set-AdbPropPerty"
+) -ParameterName Name -ScriptBlock {
 
     param(
         $commandName,
@@ -77,7 +77,7 @@ Register-ArgumentCompleter -CommandName @(
 
     $deviceId = $fakeBoundParameters['DeviceId']
 
-    $deviceProperties = Get-AdbProp -DeviceId $deviceId -List | Select-Object -ExpandProperty Property
+    $deviceProperties = Get-AdbProperty -DeviceId $deviceId -List | Select-Object -ExpandProperty Name
 
     $startMatches = $deviceProperties | Where-Object { $_ -like "$wordToComplete*" }
     $containMatches = $deviceProperties | Where-Object { $_ -like "*$wordToComplete*" -and $_ -notlike "$wordToComplete*" }

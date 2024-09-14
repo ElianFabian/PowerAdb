@@ -12,7 +12,7 @@ function Send-AdbKeyCombination {
 
     process {
         foreach ($id in $DeviceId) {
-            $apiLevel = [uint32] (Get-AdbProp -DeviceId $id -PropertyName ro.build.version.sdk -Verbose:$false)
+            $apiLevel = [uint32] (Get-AdbProperty -DeviceId $id -Name ro.build.version.sdk -Verbose:$false)
             if ($apiLevel -le 30) {
                 Write-Error "'adb shell input keycombination' is not available for api levels lower or equal to 30. Device id: '$id', api level: '$apiLevel'"
                 continue

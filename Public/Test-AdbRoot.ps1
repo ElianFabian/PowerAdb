@@ -17,7 +17,7 @@ function Test-AdbRoot {
             # http://stackoverflow.com/questions/3576989/how-can-you-detect-if-the-device-is-rooted-in-the-app
             #
             # http://stackoverflow.com/questions/7727021/how-can-androids-copy-protection-check-if-the-device-is-rooted
-            $buildTags = Get-AdbProp -DeviceId $id -PropertyName ro.build.tags -Verbose:$false
+            $buildTags = Get-AdbProperty -DeviceId $id -Name ro.build.tags -Verbose:$false
             if ($buildTags -and $buildTags.Contains('test-keys')) {
                 return $true
             }

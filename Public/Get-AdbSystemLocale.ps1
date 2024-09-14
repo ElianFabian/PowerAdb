@@ -18,31 +18,31 @@ function Get-AdbSystemLocale {
             if ($apiLevel -ge 24) {
                 $systemLocaleList = Get-AdbSetting -DeviceId $id -Namespace System -Key 'system_locales'
                 if ($systemLocaleList -like '*null*') {
-                    Get-AdbProp -DeviceId $id -PropertyName 'ro.product.locale'
+                    Get-AdbProperty -DeviceId $id -Name 'ro.product.locale'
                 }
                 else {
                     $systemLocaleList.Split(',')
                 }
             }
             elseif ($apiLevel -ge 23) {
-                $systemLocale = Get-AdbProp -DeviceId $id -PropertyName 'persist.sys.locale'
+                $systemLocale = Get-AdbProperty -DeviceId $id -Name 'persist.sys.locale'
                 if ($systemLocale -cmatch "^[a-z]{2}-[A-Z]{2}$") {
                     $systemLocale
                 }
                 else {
-                    Get-AdbProp -DeviceId $id -PropertyName 'ro.product.locale'
+                    Get-AdbProperty -DeviceId $id -Name 'ro.product.locale'
                 }
             }
             elseif ($apiLevel -ge 16) {
-                $systemLanguage = Get-AdbProp -DeviceId $id -PropertyName 'persist.sys.language'
+                $systemLanguage = Get-AdbProperty -DeviceId $id -Name 'persist.sys.language'
                 if ($systemLanguage) {
-                    $systemCountry = Get-AdbProp -DeviceId $id -PropertyName 'persist.sys.country'
+                    $systemCountry = Get-AdbProperty -DeviceId $id -Name 'persist.sys.country'
 
                     "$systemLanguage-$systemCountry"
                 }
                 else {
-                    $defaultSystemLanguage = Get-AdbProp -DeviceId $id -PropertyName 'ro.product.locale.language'
-                    $defaultSystemCountry = Get-AdbProp -DeviceId $id -PropertyName 'ro.product.locale.country'
+                    $defaultSystemLanguage = Get-AdbProperty -DeviceId $id -Name 'ro.product.locale.language'
+                    $defaultSystemCountry = Get-AdbProperty -DeviceId $id -Name 'ro.product.locale.country'
 
                     "$defaultSystemLanguage-$defaultSystemCountry"
                 }

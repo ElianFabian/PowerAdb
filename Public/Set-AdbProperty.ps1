@@ -1,4 +1,4 @@
-function Set-AdbProp {
+function Set-AdbProperty {
 
     [CmdletBinding(SupportsShouldProcess = $true)]
     param (
@@ -6,15 +6,15 @@ function Set-AdbProp {
         [string[]] $DeviceId,
 
         [Parameter(Mandatory)]
-        [string[]] $PropertyName,
+        [string[]] $Name,
 
         [Parameter(Mandatory)]
         [string] $Value
     )
 
     begin {
-        if ($PropertyName.Contains(" ")) {
-            Write-Error "PropertyName '$PropertyName' can't contain space characters"
+        if ($Name.Contains(" ")) {
+            Write-Error "Property name '$Name' can't contain space characters"
             return
         }
         if ($Value.Contains(" ")) {
@@ -32,12 +32,12 @@ function Set-AdbProp {
             | ForEach-Object { $_.Groups[1].Value } `
             | Where-Object { -not $_.StartsWith("debug.") }
 
-            if ($PropertyName -notin $deviceProperties -and -not $PropertyName.StartsWith("debug.")) {
-                Write-Error "Custom property '$PropertyName' must start with 'debug.'"
+            if ($Name -notin $deviceProperties -and -not $Name.StartsWith("debug.")) {
+                Write-Error "Custom property '$Name' must start with 'debug.'"
                 continue
             }
 
-            Invoke-AdbExpression -DeviceId $id -Command "shell setprop $PropertyName '$Value'" -Verbose:$VerbosePreference
+            Invoke-AdbExpression -DeviceId $id -Command "shell setprop $Name '$Value'" -Verbose:$VerbosePreference
         }
     }
 }

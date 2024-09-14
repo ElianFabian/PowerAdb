@@ -10,10 +10,10 @@ function Get-AdbDeviceName {
     process {
         foreach ($id in $DeviceId) {
             if ((Test-AdbEmulator -DeviceId $id)) {
-                [string] (Invoke-AdbExpression -DeviceId $id -Command "emu avd name" | Select-Object -First 1)
+                [string] (Invoke-AdbExpression -DeviceId $id -Command 'emu avd name' | Select-Object -First 1)
                 continue
             }
-            Get-AdbProp -DeviceId $id -PropertyName "ro.product.model"
+            Get-AdbProperty -DeviceId $id -Name 'ro.product.model'
         }
     }
 }

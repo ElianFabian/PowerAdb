@@ -8,7 +8,7 @@ function Get-AdbApiLevel {
     )
 
     process {
-        $DeviceId | Get-AdbProp -PropertyName "ro.build.version.sdk" -Verbose:$VerbosePreference 2> $null `
+        $DeviceId | Get-AdbProperty -Name 'ro.build.version.sdk' -Verbose:$VerbosePreference 2> $null `
         | ForEach-Object { [uint32] $_ }
     }
 }
