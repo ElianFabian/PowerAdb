@@ -10,6 +10,10 @@ function Get-AdbProperty {
         [Parameter(Mandatory, ParameterSetName = "Default")]
         [string[]] $Name,
 
+        # Fast query of multiple values
+        [Parameter(ParameterSetName = "Default")]
+        [switch] $QueryFromList,
+
         [Parameter(Mandatory, ParameterSetName = "List")]
         [switch] $List
     )
@@ -30,15 +34,30 @@ function Get-AdbProperty {
                 continue
             }
 
-            $Name | ForEach-Object {
-                if ($_.Contains(" ")) {
-                    Write-Error "Property name '$_' can't contain space characters"
-                    continue
+            $values = if ($QueryFromList) {
+                $properties = Get-AdbProperty -DeviceId $id -List
+                $targetProperties = foreach ($propName in $Name) {
+                    $properties | Where-Object {
+                        $_.Name -ceq $propName
+                    } `
+                    | Select-Object -First 1
                 }
 
-                Invoke-AdbExpression -DeviceId $id -Command "shell getprop $Name"
-            } `
-            | Where-Object {
+                $targetProperties | Where-Object { $_.Name -cin $Name } `
+                | Select-Object -ExpandProperty Value
+            }
+            else {
+                $Name | ForEach-Object {
+                    if ($_.Contains(" ")) {
+                        Write-Error "Property name '$_' can't contain space characters"
+                        continue
+                    }
+
+                    Invoke-AdbExpression -DeviceId $id -Command "shell getprop $Name"
+                }
+            }
+
+            $values | Where-Object {
                 -not [string]::IsNullOrWhiteSpace($_)
             }
         }
