@@ -9,7 +9,7 @@ function Test-AdbDarkMode {
     process {
         foreach ($id in $DeviceId) {
             $apiLevel = Get-AdbApiLevel -DeviceId $id
-            if ($apiLevel -le 29) {
+            if ($apiLevel -lt 29) {
                 $false
             }
             else {
