@@ -8,7 +8,6 @@ function Enable-AdbAutoRotate {
     )
 
     process {
-        $DeviceId `
-        | Invoke-AdbExpression -Command "shell settings put system accelerometer_rotation 1" -Verbose:$VerbosePreference
+        $DeviceId | Set-AdbSetting -Namespace System -Key 'accelerometer_rotation' -Value 1 -Verbose:$VerbosePreference
     }
 }
