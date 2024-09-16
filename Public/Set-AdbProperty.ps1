@@ -6,7 +6,7 @@ function Set-AdbProperty {
         [string[]] $DeviceId,
 
         [Parameter(Mandatory)]
-        [string[]] $Name,
+        [string] $Name,
 
         [Parameter(Mandatory)]
         [string] $Value
