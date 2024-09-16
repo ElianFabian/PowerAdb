@@ -75,7 +75,7 @@ public static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint lpMode);
     $script:ConsoleMode = 7
 
     # At some point in some PowerShell Core version for Windows there are problems related to ANSI
-    # In our case the first verbose message when looping a collection it looks like '[33;1mVERBOSE'
+    # In our case the first verbose message when looping a collection it looks like '[33;1mVERBOSE'
     # Check this link for hardly more information and the solution used here: https://stackoverflow.com/a/70534568/18418162
     # This function doesn't seem to have any performance overhead
     function ResetConsoleColors {
