@@ -11,7 +11,6 @@ function Install-AdbApplication {
         [Parameter(Mandatory, ParameterSetName = 'LiteralPath')]
         [string[]] $LiteralPath,
 
-        [Parameter(Mandatory)]
         [switch] $Replace
 
         # It seems that in some API levels this does not exist, even though
