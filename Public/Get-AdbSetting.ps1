@@ -45,6 +45,10 @@ function Get-AdbSetting {
                 | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } `
                 | ForEach-Object {
                     $indexOfEqualsSymbol = $_.IndexOf('=')
+                    if ($indexOfEqualsSymbol -eq -1) {
+                        # It turns out that some settings have no equals symbol, so we just skip them
+                        return
+                    }
                     $itemKey = $_.Substring(0, $indexOfEqualsSymbol)
                     $itemValue = $_.Substring($indexOfEqualsSymbol + 1)
                     [PSCustomObject]@{
