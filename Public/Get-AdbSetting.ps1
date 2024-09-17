@@ -11,20 +11,19 @@ function Get-AdbSetting {
         [string] $Namespace,
 
         [Parameter(Mandatory, ParameterSetName = "Default")]
-        [string] $Key,
+        [string[]] $Key,
 
-        # If any Key contains '=' then output will be wrong
+        # Fast query of multiple values
+        # Be careful with this parameter, as it relies on the assumption that no key contains '='
+        [Parameter(ParameterSetName = "Default")]
+        [switch] $QueryFromList,
+
+        # Be careful with this parameter, as it relies on the assumption that no key contains '='
         [Parameter(Mandatory, ParameterSetName = "List")]
         [switch] $List
     )
 
     begin {
-        $Key = [string] $PSBoundParameters['Key']
-        if ($Key.Contains(" ")) {
-            Write-Error "Key '$Key' can't contain space characters"
-            return
-        }
-
         $namespaceLowercase = $Namespace.ToLower()
     }
 
@@ -59,9 +58,26 @@ function Get-AdbSetting {
                 continue
             }
 
-            Invoke-AdbExpression -DeviceId $id -Command "shell settings get $namespaceLowercase $Key" -Verbose:$VerbosePreference `
-            | Out-String -Stream `
-            | Where-Object {
+
+            $values = if ($QueryFromList) {
+                $properties = Get-AdbSetting -DeviceId $id -Namespace $Namespace -List -Verbose:$VerbosePreference
+                $targetProperties = foreach ($keyName in $Key) {
+                    $properties | Where-Object {
+                        $_.Key -ceq $keyName
+                    } `
+                    | Select-Object -First 1
+                }
+
+                $targetProperties | Where-Object { $_.Key -cin $Key } `
+                | Select-Object -ExpandProperty Value
+            }
+            else {
+                $Key | ForEach-Object {
+                    Invoke-AdbExpression -DeviceId $id -Command "shell settings get $namespaceLowercase $_" -Verbose:$VerbosePreference
+                }
+            }
+
+            $values | Where-Object {
                 -not [string]::IsNullOrWhiteSpace($_)
             }
         }
