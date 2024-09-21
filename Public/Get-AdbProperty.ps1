@@ -53,7 +53,7 @@ function Get-AdbProperty {
                         continue
                     }
 
-                    Invoke-AdbExpression -DeviceId $id -Command "shell getprop '$Name'" -Verbose:$VerbosePreference
+                    Invoke-AdbExpression -DeviceId $id -Command "shell getprop '$_'" -Verbose:$VerbosePreference
                 }
             }
 
