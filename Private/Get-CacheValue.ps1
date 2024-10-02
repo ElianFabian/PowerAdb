@@ -1,15 +1,12 @@
 function Get-CacheValue {
 
-    #TODO: Get name from calling function and use it as the cache key
-
     [CmdletBinding()]
     [OutputType([string])]
     param (
         [Parameter(Mandatory)]
         [string] $DeviceId,
 
-        [Parameter(Mandatory)]
-        [string] $Key
+        [string] $Key = (Get-PSCallStack | Select-Object -Skip 1 | Select-Object -First 1 -ExpandProperty Command)
     )
 
     $cacheKey = "$DeviceId.$Key"

@@ -5,8 +5,7 @@ function Set-CacheValue {
         [Parameter(Mandatory)]
         [string] $DeviceId,
 
-        [Parameter(Mandatory)]
-        [string] $Key,
+        [string] $Key =  (Get-PSCallStack | Select-Object -Skip 1 | Select-Object -First 1 -ExpandProperty Command),
 
         [Parameter(Mandatory)]
         [string] $Value
@@ -46,7 +45,8 @@ function Set-CacheValue {
                 Remove-Job $Sender.Id
             }
             else {
-                Write-Warning -Message "Job $($Sender.Name) completed with an unexpected status: $($Sender.State)."
+                # Just for debugging
+                # Write-Warning -Message "Job $($Sender.Name) completed with an unexpected status: $($Sender.State)."
             }
 
             Remove-Job -Name $Event.SourceIdentifier -Force
