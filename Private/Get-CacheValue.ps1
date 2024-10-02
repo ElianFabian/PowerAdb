@@ -1,5 +1,7 @@
 function Get-CacheValue {
 
+    #TODO: Get name from calling function and use it as the cache key
+
     [CmdletBinding()]
     [OutputType([string])]
     param (
