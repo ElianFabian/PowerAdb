@@ -7,11 +7,6 @@ function Get-AdbPhysicalDensity {
         [string[]] $DeviceId
     )
 
-    begin {
-        # Length of 'Physical density: '
-        $physicalDensityStrLength = 18
-    }
-
     process {
         foreach ($id in $DeviceId) {
             $apiLevel = Get-AdbApiLevel -DeviceId $id -Verbose:$false
@@ -23,9 +18,8 @@ function Get-AdbPhysicalDensity {
             Invoke-AdbExpression -DeviceId $id -Command "shell wm density" -Verbose:$VerbosePreference `
             | Out-String -Stream `
             | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } `
-            | ForEach-Object {
-                [uint32] $_.Substring($physicalDensityStrLength)
-            }
+            | Select-String -Pattern 'Physical density: (\d+)' -AllMatches `
+            | ForEach-Object { [uint32] $_.Matches.Groups[1].Value }
         }
     }
 }
