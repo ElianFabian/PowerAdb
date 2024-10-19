@@ -57,6 +57,6 @@ function Test-AdbLocation {
 #
 # Explanation of location_providers_allowed possible values:
 # ----------------------------------------------------------
-# gps,network (3)   | GPS-Network, Network and GPS
-# gps,network (2)   | GPS-Network and GPS
+# gps,network (3)   | GPS-Network, Network, and GPS
+# gps,network (2)   | GPS-Network, and GPS
 # gps               | Only GPS
