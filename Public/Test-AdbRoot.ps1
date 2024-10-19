@@ -22,7 +22,7 @@ function Test-AdbRoot {
 
             # Superuser.apk would only exist on a rooted device:
             $superUserApkResult = Invoke-AdbExpression -DeviceId $id -Command 'shell ls system/app/Superuser.apk' -Verbose:$false 2> $null
-            if ($superUserApkResult -and $superUserApkResult -eq 'system/app/Superuser.apk') {
+            if ($superUserApkResult -eq 'system/app/Superuser.apk') {
                 return $true
             }
 
