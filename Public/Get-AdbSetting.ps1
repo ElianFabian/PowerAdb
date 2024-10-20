@@ -34,11 +34,11 @@ function Get-AdbSetting {
                 Write-Error "Settings is not supported for device with id '$id' with API level of '$apiLevel'. Only API levels 17 and above are supported."
                 continue
             }
+            if (($List -or $QueryFromList) -and $apiLevel -lt 23) {
+                Write-Error "List/QueryFromList parameter is not supported for device with id '$id' with API level of '$apiLevel'. Only API levels 23 and above are supported."
+                continue
+            }
             if ($List) {
-                if ($apiLevel -lt 23) {
-                    Write-Error "List parameter is not supported for device with id '$id' with API level of '$apiLevel'. Only API levels 23 and above are supported."
-                    continue
-                }
                 Invoke-AdbExpression -DeviceId $id -Command "shell settings list $namespaceLowercase" -Verbose:$VerbosePreference `
                 | Out-String -Stream `
                 | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } `
@@ -57,7 +57,6 @@ function Get-AdbSetting {
                 }
                 continue
             }
-
 
             $values = if ($QueryFromList) {
                 $properties = Get-AdbSetting -DeviceId $id -Namespace $Namespace -List -Verbose:$VerbosePreference
