@@ -23,3 +23,5 @@ function Test-AdbWifiConnection {
         }
     }
 }
+
+# This function probably could be also implemented using "adb shell settings get global wifi_on", but it is not available in API level 16 and below.
