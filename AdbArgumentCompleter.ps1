@@ -18,6 +18,8 @@ Register-ArgumentCompleter `
         $fakeBoundParameters
     )
 
+    $WarningPreference = 'SilentlyContinue'
+
     Get-AdbDevice | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
         $deviceName = Get-AdbDeviceName -DeviceId $_
         $apiLevel = Get-AdbProperty -DeviceId $_ -Name 'ro.build.version.sdk'
@@ -56,6 +58,8 @@ Register-ArgumentCompleter -CommandName @(
 
     $deviceId = $fakeBoundParameters['DeviceId']
 
+    $WarningPreference = 'SilentlyContinue'
+
     $applicationIds = Get-AdbPackage -DeviceId $deviceId
 
     $startMatches = $applicationIds | Where-Object { $_ -like "$wordToComplete*" }
@@ -77,6 +81,8 @@ Register-ArgumentCompleter -CommandName @(
     )
 
     $deviceId = $fakeBoundParameters['DeviceId']
+
+    $WarningPreference = 'SilentlyContinue'
 
     $deviceProperties = Get-AdbProperty -DeviceId $deviceId -List | Select-Object -ExpandProperty Name
 
@@ -102,6 +108,8 @@ Register-ArgumentCompleter -CommandName @(
 
     $deviceId = $fakeBoundParameters['DeviceId']
     $namespace = $fakeBoundParameters['Namespace']
+
+    $WarningPreference = 'SilentlyContinue'
 
     $keys = [string[]] (Get-AdbSetting -DeviceId $deviceId -Namespace $namespace -List | Select-Object -ExpandProperty Key)
     $startMatches = [string[]] ($keys | Where-Object { $_ -like "$wordToComplete*" })
