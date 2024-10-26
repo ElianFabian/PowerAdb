@@ -9,11 +9,6 @@ function Get-AdbDisplaySize {
         [switch] $AsString
     )
 
-    begin {
-        # Length of 'Physical size: '
-        $physicalSizeStrLength = 15
-    }
-
     process {
         foreach ($id in $DeviceId) {
             if ($apiLevel -lt 18) {
@@ -23,7 +18,7 @@ function Get-AdbDisplaySize {
 
             $result = [string] (Invoke-AdbExpression -DeviceId $id -Command "shell wm size" -Verbose:$VerbosePreference)
 
-            $resolutionStr = $result.Substring($physicalSizeStrLength).Trim("`n")
+            $resolutionStr = $result.Replace('Physical size: ', '').Trim("`n")
 
             if ($AsString) {
                 $resolutionStr
