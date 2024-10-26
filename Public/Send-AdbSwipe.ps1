@@ -17,6 +17,8 @@ function Send-AdbSwipe {
         [Parameter(Mandatory)]
         [float] $Y2,
 
+        [long] $DelayInMilliseconds = 0,
+
         [switch] $DisableCoordinateCheck
     )
 
@@ -43,7 +45,7 @@ function Send-AdbSwipe {
                 return
             }
 
-            Invoke-AdbExpression -DeviceId $id -Command "shell input touchscreen swipe $X1 $Y1 $X2 $Y2" -Verbose:$VerbosePreference | Out-Null
+            Invoke-AdbExpression -DeviceId $id -Command "shell input touchscreen swipe $X1 $Y1 $X2 $Y2 $DelayInMilliseconds" -Verbose:$VerbosePreference | Out-Null
         }
     }
 }
