@@ -22,7 +22,7 @@ Register-ArgumentCompleter `
 
     Get-AdbDevice | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
         $deviceName = Get-AdbDeviceName -DeviceId $_
-        $apiLevel = Get-AdbProperty -DeviceId $_ -Name 'ro.build.version.sdk'
+        $apiLevel = Get-AdbApiLevel -DeviceId $_
 
         New-Object -Type System.Management.Automation.CompletionResult -ArgumentList @(
             $_
