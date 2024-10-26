@@ -10,6 +10,7 @@ function Get-AdbDisplaySize {
     )
 
     process {
+        $apiLevel = Get-AdbApiLevel -DeviceId $DeviceId -Verbose:$false
         foreach ($id in $DeviceId) {
             if ($apiLevel -lt 18) {
                 Write-Error "Physical density is not supported for device with id '$id' with API level of '$apiLevel'. Only API levels 18 and above are supported."
