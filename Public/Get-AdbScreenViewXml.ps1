@@ -1,12 +1,14 @@
-function Get-AdbScreenViewNode {
+function Get-AdbScreenViewXml {
 
     [CmdletBinding()]
-    [OutputType([System.Xml.XmlLinkedNode[]])]
+    [OutputType([xml[]])]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId
     )
 
     return $DeviceId | Get-AdbScreenViewContent -Verbose:$VerbosePreference `
-    | Select-Xml -XPath "//node" | Select-Object -ExpandProperty Node
+    | ForEach-Object {
+        [xml] $_
+    }
 }
