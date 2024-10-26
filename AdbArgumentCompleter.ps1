@@ -173,3 +173,51 @@ Register-ArgumentCompleter -CommandName @(
 
     $script:AdbKeyCodes | Where-Object { $_ -like "$wordToComplete*" }
 }
+
+Register-ArgumentCompleter -CommandName @(
+    "Receive-AdbFile"
+    "Send-AdbFile"
+) `
+    -ParameterName LiteralRemotePath -ScriptBlock {
+
+    param(
+        $commandName,
+        $parameterName,
+        $wordToComplete,
+        $commandAst,
+        $fakeBoundParameters
+    )
+
+    $deviceId = $fakeBoundParameters['DeviceId']
+
+    $normalizedWordToComplete = $wordToComplete.Trim("'").Replace('\', '/').Replace('//', "/")
+    $hasFinalSlash = $normalizedWordToComplete.EndsWith('/')
+
+    $parentPath = if ($hasFinalSlash) {
+        $normalizedWordToComplete
+    }
+    else { (Split-Path -Path $normalizedWordToComplete -Parent).Replace('\', '/') }
+    $childPath = if ($hasFinalSlash) {
+        ''
+    }
+    else { (Split-Path -Path $normalizedWordToComplete -Leaf).Replace('\', '/') }
+
+    $finalSlash = if ($hasFinalSlash) { '/' } else { '' }
+
+    $WarningPreference = 'SilentlyContinue'
+
+    Invoke-AdbExpression -DeviceId $deviceId -Command "shell ls '$parentPath'" `
+    | ForEach-Object { $_.Trim() } `
+    | Where-Object {
+        $_ -like "$childPath*"
+    } `
+    | ForEach-Object {
+        $finalPath = "$parentPath/$_$finalSlash"
+        New-Object -Type System.Management.Automation.CompletionResult -ArgumentList @(
+            "'$finalPath'"
+            "$_"
+            'ParameterValue'
+            "$finalPath"
+        )
+    }
+}
