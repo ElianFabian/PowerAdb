@@ -7,16 +7,11 @@ function Get-AdbPackage {
         [string[]] $DeviceId
     )
 
-    begin {
-        # Length of 'package:'
-        $packagePrefixStrLength = 8
-    }
-
     process {
         $DeviceId | Invoke-AdbExpression -Command "shell pm list packages" -Verbose:$VerbosePreference `
         | Out-String -Stream `
         | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } `
-        | ForEach-Object { $_.Substring($packagePrefixStrLength) }
+        | ForEach-Object { $_.Replace('package:', '') }
     }
 }
 
