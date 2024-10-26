@@ -1,4 +1,4 @@
-function Install-AdbApplication {
+function Install-AdbApp {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (

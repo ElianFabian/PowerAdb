@@ -1,4 +1,4 @@
-function Uninstall-AdbApplication {
+function Uninstall-AdbApp {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
