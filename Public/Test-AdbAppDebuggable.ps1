@@ -1,4 +1,4 @@
-function Test-AdbAppUsesLargeHeap {
+function Test-AdbAppDebuggable {
 
     [OutputType([bool[]])]
     [CmdletBinding()]
@@ -11,6 +11,6 @@ function Test-AdbAppUsesLargeHeap {
     )
 
     process {
-        Test-AdbAppHasFlag -DeviceId $DeviceId -ApplicationId $ApplicationId -Flag "LARGE_HEAP"
+        Test-AdbAppHasFlag -DeviceId $DeviceId -ApplicationId $ApplicationId -Flag "DEBUGGABLE"
     }
 }

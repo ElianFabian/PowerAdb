@@ -48,9 +48,9 @@ Register-ArgumentCompleter -CommandName @(
     "Get-AdbAppVersionName"
     "Test-AdbAppAllowClearUserData"
     "Test-AdbAppHasCode"
-    "Test-AdbAppIsDebuggable"
-    "Test-AdbAppIsTestOnly"
-    "Test-AdbAppUsesLargeHeap"
+    "Test-AdbAppDebuggable"
+    "Test-AdbAppTestOnly"
+    "Test-AdbAppLargeHeap"
 ) `
     -ParameterName ApplicationId -ScriptBlock {
 

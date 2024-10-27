@@ -1,5 +1,5 @@
-function Test-AdbAppIsDebuggable {
-
+function Test-AdbAppTestOnly {
+    
     [OutputType([bool[]])]
     [CmdletBinding()]
     param (
@@ -11,6 +11,6 @@ function Test-AdbAppIsDebuggable {
     )
 
     process {
-        Test-AdbAppHasFlag -DeviceId $DeviceId -ApplicationId $ApplicationId -Flag "DEBUGGABLE"
+        Test-AdbAppHasFlag -DeviceId $DeviceId -ApplicationId $ApplicationId -Flag "TEST_ONLY"
     }
 }

@@ -1,5 +1,5 @@
-function Test-AdbAppIsTestOnly {
-    
+function Test-AdbAppLargeHeap {
+
     [OutputType([bool[]])]
     [CmdletBinding()]
     param (
@@ -11,6 +11,6 @@ function Test-AdbAppIsTestOnly {
     )
 
     process {
-        Test-AdbAppHasFlag -DeviceId $DeviceId -ApplicationId $ApplicationId -Flag "TEST_ONLY"
+        Test-AdbAppHasFlag -DeviceId $DeviceId -ApplicationId $ApplicationId -Flag "LARGE_HEAP"
     }
 }

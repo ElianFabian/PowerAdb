@@ -1,4 +1,4 @@
-function Test-AdbKeyboard {
+function Test-AdbKeyboardOpen {
 
     [CmdletBinding()]
     [OutputType([bool[]])]
