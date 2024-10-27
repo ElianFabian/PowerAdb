@@ -1,5 +1,4 @@
-# Starts an application or resumes it if it's already been open
-function Start-AdbApplication {
+function Clear-AdbApp {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
@@ -13,7 +12,8 @@ function Start-AdbApplication {
     process {
         foreach ($id in $DeviceId) {
             foreach ($appId in $ApplicationId) {
-                $id | Invoke-AdbExpression -Command "shell monkey -p '$appId' -c android.intent.category.LAUNCHER 1" -Verbose:$VerbosePreference | Out-Null
+                $result = Invoke-AdbExpression -DeviceId $id -Command "shell pm clear $appId" -Verbose:$VerbosePreference
+                Write-Verbose "Clear data in device with id '$id' from '$appId': $result"
             }
         }
     }

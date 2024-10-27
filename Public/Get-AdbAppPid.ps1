@@ -1,6 +1,7 @@
-function Clear-AdbApplication {
+function Get-AdbAppPid {
 
-    [CmdletBinding(SupportsShouldProcess)]
+    [OutputType([uint32[]])]
+    [CmdletBinding()]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
@@ -12,8 +13,7 @@ function Clear-AdbApplication {
     process {
         foreach ($id in $DeviceId) {
             foreach ($appId in $ApplicationId) {
-                $result = Invoke-AdbExpression -DeviceId $id -Command "shell pm clear $appId" -Verbose:$VerbosePreference
-                Write-Verbose "Clear data in device with id '$id' from '$appId': $result"
+                [uint32] (Invoke-AdbExpression -DeviceId $id -Command "shell pidof $appId" -Verbose:$VerbosePreference)
             }
         }
     }

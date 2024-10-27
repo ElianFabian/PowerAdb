@@ -34,17 +34,17 @@ Register-ArgumentCompleter `
 }
 
 Register-ArgumentCompleter -CommandName @(
-    "Start-AdbApplication"
-    "Get-AdbApplicationPid"
+    "Start-AdbApp"
+    "Get-AdbAppPid"
     "Grant-AdbPermission"
     "Revoke-AdbPermission"
     "Start-AdbCrash"
     "Invoke-AdbDeepLink"
-    "Stop-AdbApplication"
+    "Stop-AdbApp"
     "Start-AdbProcessDeath"
-    "Install-AdbApplication"
-    "Uninstall-AdbApplication"
-    "Clear-AdbApplication"
+    "Install-AdbApp"
+    "Uninstall-AdbApp"
+    "Clear-AdbApp"
 ) `
     -ParameterName ApplicationId -ScriptBlock {
 

@@ -1,7 +1,7 @@
-function Get-AdbApplicationPid {
+# Starts an application or resumes it if it's already been open
+function Start-AdbApp {
 
-    [OutputType([uint32[]])]
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
@@ -13,7 +13,7 @@ function Get-AdbApplicationPid {
     process {
         foreach ($id in $DeviceId) {
             foreach ($appId in $ApplicationId) {
-                [uint32] (Invoke-AdbExpression -DeviceId $id -Command "shell pidof $appId" -Verbose:$VerbosePreference)
+                $id | Invoke-AdbExpression -Command "shell monkey -p '$appId' -c android.intent.category.LAUNCHER 1" -Verbose:$VerbosePreference | Out-Null
             }
         }
     }

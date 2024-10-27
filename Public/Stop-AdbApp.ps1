@@ -1,4 +1,4 @@
-function Stop-AdbApplication {
+function Stop-AdbApp {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
