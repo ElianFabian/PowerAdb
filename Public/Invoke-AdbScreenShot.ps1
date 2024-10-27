@@ -6,12 +6,22 @@ function Invoke-AdbScreenShot {
         [string[]] $DeviceId,
 
         [Parameter(Mandatory)]
-        [string] $Destination
+        [string] $Destination,
+
+        [switch] $Force
     )
 
+    begin {
+        $actualDestination = "$Destination.png"
+    }
+
     process {
+        if (-not $Force -and (Test-Path $actualDestination)) {
+            Write-Error "The file '$actualDestination' already exists. Use -Force to overwrite."
+            return
+        }
         foreach ($id in $DeviceId) {
-            $adbCommand = "adb -s $id exec-out screencap -p > ""$Destination"""
+            $adbCommand = "adb -s $id exec-out screencap -p > ""$actualDestination"""
 
             # https://stackoverflow.com/a/59118502/18418162
             if ($IsWindows -or -not $IsCoreCLR) {
@@ -29,9 +39,9 @@ function Invoke-AdbScreenShot {
                 return
             }
 
-            & $actualCommand
+            Invoke-Expression $actualCommand
             if ($VerbosePreference) {
-                Write-Verbose "$actualCommand"
+                Write-Verbose $actualCommand
             }
         }
     }
