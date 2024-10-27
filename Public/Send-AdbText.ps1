@@ -47,9 +47,4 @@ function Send-AdbText {
 
 $script:Ascii = [System.Text.Encoding]::ASCII
 
-$script:Latin1 = if ($IsCoreCLR) {
-    [System.Text.Encoding]::Latin1
-}
-else {
-    [System.Text.Encoding]::GetEncoding("ISO-8859-1")
-}
+$script:Latin1 = [System.Text.Encoding]::GetEncoding("ISO-8859-1")
