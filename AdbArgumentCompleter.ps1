@@ -45,6 +45,16 @@ Register-ArgumentCompleter -CommandName @(
     "Install-AdbApp"
     "Uninstall-AdbApp"
     "Clear-AdbApp"
+    "Get-AdbAppMinSdkVersion"
+    "Get-AdbAppSha256Signature"
+    "Get-AdbAppTargetSdkVersion"
+    "Get-AdbAppVersionCode"
+    "Get-AdbAppVersionName"
+    "Test-AdbAppAllowClearUserData"
+    "Test-AdbAppHasCode"
+    "Test-AdbAppIsDebuggable"
+    "Test-AdbAppIsTestOnly"
+    "Test-AdbAppUsesLargeHeap"
 ) `
     -ParameterName ApplicationId -ScriptBlock {
 
