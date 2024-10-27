@@ -3,7 +3,7 @@ function Test-AdbAppIsDebuggable {
     [OutputType([bool[]])]
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
 
         [Parameter(Mandatory)]

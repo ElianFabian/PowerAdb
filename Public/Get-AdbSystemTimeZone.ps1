@@ -1,5 +1,6 @@
 function Get-AdbSystemTimeZone {
 
+    [CmdletBinding()]
     [OutputType([string[]])]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]

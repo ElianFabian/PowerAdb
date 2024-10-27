@@ -2,7 +2,7 @@ function Invoke-AdbDeepLink {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(ValueFromPipeline)]
+        [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
 
         [Parameter(Mandatory)]

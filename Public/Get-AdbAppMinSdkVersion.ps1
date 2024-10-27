@@ -3,7 +3,7 @@ function Get-AdbAppMinSdkVersion {
     [OutputType([int[]])]
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
 
         [Parameter(Mandatory)]

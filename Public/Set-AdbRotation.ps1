@@ -2,7 +2,6 @@
 function Set-AdbRotation {
 
     [CmdletBinding(SupportsShouldProcess)]
-    [OutputType([bool[]])]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,

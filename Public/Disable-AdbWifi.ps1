@@ -2,7 +2,7 @@ function Disable-AdbWifi {
     
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId
     )
 

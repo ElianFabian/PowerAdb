@@ -1,6 +1,7 @@
 # https://stackoverflow.com/questions/25864385/changing-android-device-orientation-with-adb
 function Test-AdbAutoRotate {
 
+    [OutputType([bool[]])]
     [CmdletBinding()]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]

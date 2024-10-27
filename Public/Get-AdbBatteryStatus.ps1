@@ -1,7 +1,7 @@
 function Get-AdbBatteryStatus {
 
-    [OutputType([int])]
-    [OutputType([string])]
+    [OutputType([int[]])]
+    [OutputType([string[]])]
     [CmdletBinding()]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]

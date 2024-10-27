@@ -3,7 +3,7 @@ function Invoke-AdbExpression {
     [OutputType([string[]])]
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(ValueFromPipeline)]
+        [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
 
         [Parameter(Mandatory)]

@@ -3,7 +3,7 @@ function Send-AdbKeyCombination {
     [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
-        [string] $DeviceId,
+        [string[]] $DeviceId,
 
         [ValidateCount(2, [int]::MaxValue)]
         [Parameter(Mandatory)]

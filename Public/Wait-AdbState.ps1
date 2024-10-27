@@ -3,7 +3,7 @@ function Wait-AdbState {
     [CmdletBinding()]
     [OutputType([string[]])]
     param(
-        [Parameter(ValueFromPipeline)]
+        [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
 
         [Parameter(Mandatory)]

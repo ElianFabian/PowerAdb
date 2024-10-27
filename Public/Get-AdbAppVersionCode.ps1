@@ -3,7 +3,7 @@ function Get-AdbAppVersionCode {
     [OutputType([int[]])]
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
 
         [Parameter(Mandatory)]

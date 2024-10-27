@@ -2,7 +2,7 @@ function Start-AdbAppCrash {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(ValueFromPipeline)]
+        [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
 
         [Parameter(Mandatory)]

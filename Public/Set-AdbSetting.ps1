@@ -1,7 +1,6 @@
 function Set-AdbSetting {
 
     [CmdletBinding(SupportsShouldProcess)]
-    [OutputType([string[]])]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,

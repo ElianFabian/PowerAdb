@@ -3,7 +3,7 @@ function Get-AdbSystemLocale {
     [OutputType([string[]])]
     [CmdletBinding()]
     param (
-        [Parameter(ValueFromPipeline)]
+        [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId
     )
 

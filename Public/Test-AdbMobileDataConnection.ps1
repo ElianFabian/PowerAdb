@@ -1,8 +1,9 @@
 function Test-AdbMobileDataConnection {
+
     [OutputType([bool])]
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId
     )
 

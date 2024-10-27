@@ -2,7 +2,7 @@ function Remove-CacheValue {
 
     [CmdletBinding(DefaultParameterSetName = 'Default')]
     param (
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, ValueFromPipeline)]
         [string] $DeviceId,
 
         [Parameter(Mandatory, ParameterSetName = 'Default')]

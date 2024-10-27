@@ -3,7 +3,7 @@ function Test-AdbBatteryUsbPowered {
     [OutputType([bool])]
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId
     )
 

@@ -1,6 +1,6 @@
 function Get-AdbBatteryTechnology {
     
-    [OutputType([string])]
+    [OutputType([string[]])]
     [CmdletBinding()]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]

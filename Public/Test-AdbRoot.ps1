@@ -4,7 +4,7 @@ function Test-AdbRoot {
     [OutputType([bool])]
     [CmdletBinding()]
     param (
-        [Parameter(ValueFromPipeline)]
+        [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId
     )
 

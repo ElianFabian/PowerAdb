@@ -3,7 +3,7 @@ function Test-AdbAppUsesLargeHeap {
     [OutputType([bool[]])]
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
 
         [Parameter(Mandatory)]

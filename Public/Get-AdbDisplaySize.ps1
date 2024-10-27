@@ -1,7 +1,7 @@
 function Get-AdbDisplaySize {
 
     [CmdletBinding()]
-    [OutputType([uint32[]], [string])]
+    [OutputType([uint32[]], [string[]])]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,

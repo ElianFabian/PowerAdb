@@ -3,7 +3,7 @@ function Open-AdbKeyboard {
     [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
-        [string] $DeviceId
+        [string[]] $DeviceId
     )
 
     process {
