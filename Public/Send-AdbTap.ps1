@@ -20,7 +20,7 @@ function Send-AdbTap {
                 $size = Get-AdbDisplaySize -DeviceId $id -Verbose:$false
                 $width = $size.Width
                 $height = $size.Height
-
+            }
             if (-not $DisableCoordinateCheck -and ($X -lt 0.0 -or $X -gt $width)) {
                 Write-Error "X coordinate in device with id '$id' must be between 0 and $width, but was '$X'"
                 return
