@@ -16,9 +16,9 @@ Register-ArgumentCompleter `
 
     $WarningPreference = 'SilentlyContinue'
 
-    Get-AdbDevice | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
-        $deviceName = Get-AdbDeviceName -DeviceId $_
-        $apiLevel = Get-AdbApiLevel -DeviceId $_
+    Get-AdbDevice -Verbose:$false | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+        $deviceName = Get-AdbDeviceName -DeviceId $_ -Verbose:$false
+        $apiLevel = Get-AdbApiLevel -DeviceId $_ -Verbose:$false
 
         New-Object -Type System.Management.Automation.CompletionResult -ArgumentList @(
             $_
@@ -66,7 +66,7 @@ Register-ArgumentCompleter -CommandName @(
 
     $WarningPreference = 'SilentlyContinue'
 
-    $applicationIds = Get-AdbPackage -DeviceId $deviceId
+    $applicationIds = Get-AdbPackage -DeviceId $deviceId -Verbose:$false
 
     $startMatches = $applicationIds | Where-Object { $_ -like "$wordToComplete*" }
     $containMatches = $applicationIds | Where-Object { $_ -like "*$wordToComplete*" -and $_ -notlike "$wordToComplete*" }
@@ -90,7 +90,7 @@ Register-ArgumentCompleter -CommandName @(
 
     $WarningPreference = 'SilentlyContinue'
 
-    $deviceProperties = Get-AdbProperty -DeviceId $deviceId -List | Select-Object -ExpandProperty Name
+    $deviceProperties = Get-AdbProperty -DeviceId $deviceId -List -Verbose:$false | Select-Object -ExpandProperty Name
 
     $startMatches = $deviceProperties | Where-Object { $_ -like "$wordToComplete*" }
     $containMatches = $deviceProperties | Where-Object { $_ -like "*$wordToComplete*" -and $_ -notlike "$wordToComplete*" }
@@ -117,7 +117,7 @@ Register-ArgumentCompleter -CommandName @(
 
     $WarningPreference = 'SilentlyContinue'
 
-    $keys = [string[]] (Get-AdbSetting -DeviceId $deviceId -Namespace $namespace -List | Select-Object -ExpandProperty Key)
+    $keys = [string[]] (Get-AdbSetting -DeviceId $deviceId -Namespace $namespace -List -Verbose:$false | Select-Object -ExpandProperty Key)
     $startMatches = [string[]] ($keys | Where-Object { $_ -like "$wordToComplete*" })
     $containMatches = [string[]] ($keys | Where-Object { $_ -like "*$wordToComplete*" -and $_ -notlike "$wordToComplete*" })
 
@@ -210,17 +210,17 @@ Register-ArgumentCompleter -CommandName @(
     $parentPath = if ($hasFinalSlash) {
         $normalizedWordToComplete
     }
-    else { (Split-Path -Path $normalizedWordToComplete -Parent).Replace('\', '/') }
+    else { (Split-Path -Path $normalizedWordToComplete -Parent -Verbose:$false).Replace('\', '/') }
     $childPath = if ($hasFinalSlash) {
         ''
     }
-    else { (Split-Path -Path $normalizedWordToComplete -Leaf).Replace('\', '/') }
+    else { (Split-Path -Path $normalizedWordToComplete -Leaf -Verbose:$false).Replace('\', '/') }
 
     $finalSlash = if ($hasFinalSlash) { '/' } else { '' }
 
     $WarningPreference = 'SilentlyContinue'
 
-    Invoke-AdbExpression -DeviceId $deviceId -Command "shell ls '$parentPath'" `
+    Invoke-AdbExpression -DeviceId $deviceId -Command "shell ls '$parentPath'" -Verbose:$false `
     | ForEach-Object { $_.Trim() } `
     | Where-Object {
         $_ -like "$childPath*"
