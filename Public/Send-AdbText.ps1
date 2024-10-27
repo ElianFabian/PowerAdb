@@ -15,11 +15,15 @@ function Send-AdbText {
     begin {
         if (Compare-Object -ReferenceObject ($script:Ascii.GetBytes($Text)) -DifferenceObject ($script:Latin1.GetBytes($Text))) {
             Write-Error "'adb shell input text' only accepts ASCII characters. Text: '$Text'"
-            return $null
+            $skip = $true
         }
     }
 
     process {
+        if ($skip) {
+            return
+        }
+
         foreach ($id in $DeviceId) {
             $sb = [System.Text.StringBuilder]::new($Text)
 
