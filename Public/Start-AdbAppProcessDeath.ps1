@@ -1,5 +1,5 @@
 # Frees up app memory if possible
-function Start-AdbProcessDeath {
+function Start-AdbAppProcessDeath {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (

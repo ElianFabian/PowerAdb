@@ -37,7 +37,7 @@ Register-ArgumentCompleter -CommandName @(
     "Start-AdbAppCrash"
     "Invoke-AdbDeepLink"
     "Stop-AdbApp"
-    "Start-AdbProcessDeath"
+    "Start-AdbAppProcessDeath"
     "Install-AdbApp"
     "Uninstall-AdbApp"
     "Clear-AdbAppData"
