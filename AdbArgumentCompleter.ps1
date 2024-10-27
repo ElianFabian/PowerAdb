@@ -44,7 +44,7 @@ Register-ArgumentCompleter -CommandName @(
     "Start-AdbProcessDeath"
     "Install-AdbApp"
     "Uninstall-AdbApp"
-    "Clear-AdbApp"
+    "Clear-AdbAppData"
     "Get-AdbAppMinSdkVersion"
     "Get-AdbAppSha256Signature"
     "Get-AdbAppTargetSdkVersion"

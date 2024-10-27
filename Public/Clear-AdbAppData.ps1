@@ -1,4 +1,4 @@
-function Clear-AdbApp {
+function Clear-AdbAppData {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
