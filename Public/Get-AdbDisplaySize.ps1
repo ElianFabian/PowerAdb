@@ -1,7 +1,7 @@
 function Get-AdbDisplaySize {
 
     [CmdletBinding()]
-    [OutputType([uint32[]], [string[]])]
+    [OutputType([PSCustomObject[]], [string[]])]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
@@ -28,7 +28,11 @@ function Get-AdbDisplaySize {
 
             $resolution = $resolutionStr.Split("x")
 
-            @([uint32] $resolution[0], [uint32] $resolution[1])
+            [PSCustomObject] @{
+                DeviceId = $id
+                Width = [int] $resolution[0]
+                Height = [int] $resolution[1]
+            }
         }
     }
 }

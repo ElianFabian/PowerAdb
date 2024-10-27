@@ -25,7 +25,9 @@ function Send-AdbSwipe {
     process {
         foreach ($id in $DeviceId) {
             if (-not $DisableCoordinateCheck) {
-                $width, $height = Get-AdbDisplaySize -DeviceId $id -Verbose:$false
+                $size = Get-AdbDisplaySize -DeviceId $id -Verbose:$false
+                $width = $size.Width
+                $height = $size.Height
             }
 
             if (-not $DisableCoordinateCheck -and ($X1 -lt 0.0 -or $X1 -gt $width)) {

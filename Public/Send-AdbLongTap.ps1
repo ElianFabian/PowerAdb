@@ -17,7 +17,9 @@ function Send-AdbLongTap {
     process {
         foreach ($id in $DeviceId) {
             if (-not $DisableCoordinateCheck) {
-                $width, $height = Get-AdbDisplaySize -DeviceId $id -Verbose:$false
+                $size = Get-AdbDisplaySize -DeviceId $id -Verbose:$false
+                $width = $size.Width
+                $height = $size.Height
             }
 
             if (-not $DisableCoordinateCheck -and ($X -lt 0.0 -or $X -gt $width)) {
