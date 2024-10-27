@@ -153,7 +153,11 @@ $script:AdbKeyCodes = @(
     "ESCAPE", "BUTTON_START",
     "TAG_LAST_KEYCODE",
     "PAGE_UP", "PAGE_DOWN",
-    "PASTE"
+    "PASTE",
+    "MOVE_HOME", "MOVE_END",
+    "MEDIA_PLAY_PAUSE", "MEDIA_STOP", "MEDIA_NEXT", "MEDIA_PREVIOUS", "MEDIA_REWIND", "MEDIA_FAST_FORWARD",
+    "MUTE",
+    "PICTSYMBOLS"   
 )
 
 Register-ArgumentCompleter -CommandName @(
