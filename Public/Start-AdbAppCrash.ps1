@@ -1,4 +1,4 @@
-function Start-AdbCrash {
+function Start-AdbAppCrash {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (

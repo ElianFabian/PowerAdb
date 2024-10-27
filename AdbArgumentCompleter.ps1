@@ -34,7 +34,7 @@ Register-ArgumentCompleter -CommandName @(
     "Get-AdbAppPid"
     "Grant-AdbPermission"
     "Revoke-AdbPermission"
-    "Start-AdbCrash"
+    "Start-AdbAppCrash"
     "Invoke-AdbDeepLink"
     "Stop-AdbApp"
     "Start-AdbProcessDeath"
