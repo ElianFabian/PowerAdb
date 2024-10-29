@@ -9,10 +9,10 @@ function Get-AdbDeviceName {
 
     process {
         foreach ($id in $DeviceId) {
-            $cache = Get-CacheValue -DeviceId $id -ErrorAction SilentlyContinue
-            if ($null -ne $cache) {
+            $cachedDeviceName = Get-CacheValue -DeviceId $id -ErrorAction SilentlyContinue
+            if ($null -ne $cachedDeviceName) {
                 Write-Verbose "Get cached device name for device with id '$id'"
-                [string] $cache
+                [string] $cachedDeviceName
             }
             else {
                 $result = if ((Test-AdbEmulator -DeviceId $id)) {
