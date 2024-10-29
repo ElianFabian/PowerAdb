@@ -16,7 +16,7 @@ function Disable-AdbLocation {
                 Set-AdbSetting -DeviceId $id -Namespace Secure -Key location_providers_allowed -Value '-'
             }
             else {
-                Write-Error "Unsupported API level: '$apiLevel'. Only API levels 17 and above are supported." -Verbose:$VerbosePreference
+                Write-Error "Unsupported API level: '$apiLevel'. Only API levels 17 and above are supported."
             }
         }
     }
