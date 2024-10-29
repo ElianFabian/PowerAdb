@@ -39,10 +39,10 @@ function Invoke-AdbScreenShot {
                 return
             }
 
-            Invoke-Expression $actualCommand
             if ($VerbosePreference) {
                 Write-Verbose $actualCommand
             }
+            Invoke-Expression $actualCommand
         }
     }
 }

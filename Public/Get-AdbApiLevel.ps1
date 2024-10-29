@@ -11,7 +11,7 @@ function Get-AdbApiLevel {
         foreach ($id in $DeviceId) {
             $cache = Get-CacheValue -DeviceId $id -ErrorAction SilentlyContinue
             if ($null -ne $cache) {
-                Write-Verbose "Get cached API level: '$cache'"
+                Write-Verbose "Get cached API level for device with id '$id'"
                 [uint32] $cache
             }
             else {

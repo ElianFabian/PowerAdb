@@ -11,7 +11,7 @@ function Get-AdbDeviceName {
         foreach ($id in $DeviceId) {
             $cache = Get-CacheValue -DeviceId $id -ErrorAction SilentlyContinue
             if ($null -ne $cache) {
-                Write-Verbose "Get cached device name: '$cache'"
+                Write-Verbose "Get cached device name for device with id '$id'"
                 [string] $cache
             }
             else {
