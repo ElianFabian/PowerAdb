@@ -1,6 +1,6 @@
 function Get-AdbBatteryLevel {
 
-    [OutputType([int[]])]
+    [OutputType([uint32[]])]
     [CmdletBinding()]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
@@ -12,7 +12,7 @@ function Get-AdbBatteryLevel {
             Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys battery" -Verbose:$VerbosePreference `
             | Select-String -Pattern "  level: (\d+)" -AllMatches `
             | ForEach-Object {
-                [int] $_.Matches.Groups[1].Value
+                [uint32] $_.Matches.Groups[1].Value
             }
         }
     }

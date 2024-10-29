@@ -30,8 +30,8 @@ function Get-AdbDisplaySize {
 
             [PSCustomObject] @{
                 DeviceId = $id
-                Width = [int] $resolution[0]
-                Height = [int] $resolution[1]
+                Width = [uint32] $resolution[0]
+                Height = [uint32] $resolution[1]
             }
         }
     }

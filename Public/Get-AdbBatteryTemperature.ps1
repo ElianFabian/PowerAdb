@@ -1,5 +1,5 @@
 function Get-AdbBatteryTemperature {
-    
+
     [OutputType([float[]])]
     [CmdletBinding()]
     param (

@@ -1,6 +1,6 @@
 function Get-AdbBatteryHealth {
 
-    [OutputType([int[]])]
+    [OutputType([uint32[]])]
     [OutputType([string[]])]
     [CmdletBinding()]
     param (
@@ -15,8 +15,8 @@ function Get-AdbBatteryHealth {
             Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys battery" -Verbose:$VerbosePreference `
             | Select-String -Pattern "  health: (\d+)" -AllMatches `
             | ForEach-Object {
-                $healthCode = [int] $_.Matches.Groups[1].Value
-               
+                $healthCode = [uint32] $_.Matches.Groups[1].Value
+
                 if ($AsCode) {
                     $healthCode
                 }

@@ -1,6 +1,6 @@
 function Get-AdbAppTargetSdkVersion {
 
-    [OutputType([int[]])]
+    [OutputType([uint32[]])]
     [CmdletBinding()]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
@@ -16,7 +16,7 @@ function Get-AdbAppTargetSdkVersion {
                 Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys package '$appId'" `
                 | Select-String -Pattern "targetSdk=(\d+)" `
                 | Select-Object -ExpandProperty Matches -First 1 `
-                | ForEach-Object { [int] $_.Groups[1].Value }
+                | ForEach-Object { [uint32] $_.Groups[1].Value }
             }
         }
     }
