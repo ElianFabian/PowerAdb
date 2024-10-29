@@ -26,7 +26,7 @@ function New-AdbItem {
                         Invoke-AdbExpression -DeviceId $id -Command "shell ""echo '$Value' > '$LiteralRemotePath'"""  -Verbose:$VerbosePreference
                     }
                     else {
-                        Write-Error "File '$LiteralRemotePath' already exists on device with id '$id'."
+                        Write-Error "File '$LiteralRemotePath' already exists on device with id '$id'." -Category ResourceExists
                     }
                 }
                 'Directory' {
@@ -34,7 +34,7 @@ function New-AdbItem {
                         Invoke-AdbExpression -DeviceId $id -Command "shell mkdir '$LiteralRemotePath'" -Verbose:$VerbosePreference
                     }
                     else {
-                        Write-Error "Directory '$LiteralRemotePath' already exists on device with id '$id'."
+                        Write-Error "Directory '$LiteralRemotePath' already exists on device with id '$id'." -Category ResourceExists
                     }
                 }
             }
