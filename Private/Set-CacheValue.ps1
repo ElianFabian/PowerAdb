@@ -5,7 +5,7 @@ function Set-CacheValue {
         [Parameter(Mandatory, ValueFromPipeline)]
         [string] $DeviceId,
 
-        [string] $Key =  (Get-PSCallStack | Select-Object -Skip 1 | Select-Object -First 1 -ExpandProperty Command),
+        [string] $Key =  (Get-PSCallStack | Select-Object -First 1 -ExpandProperty Command),
 
         [Parameter(Mandatory)]
         [string] $Value
