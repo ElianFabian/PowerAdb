@@ -1,4 +1,4 @@
-function Send-AdbFile {
+function Send-AdbItem {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (

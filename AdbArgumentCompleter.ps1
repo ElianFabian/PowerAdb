@@ -46,6 +46,7 @@ Register-ArgumentCompleter -CommandName @(
     "Get-AdbAppTargetSdkVersion"
     "Get-AdbAppVersionCode"
     "Get-AdbAppVersionName"
+    "Get-AdbFileContent"
     "Test-AdbAppAllowClearUserData"
     "Test-AdbAppHasCode"
     "Test-AdbAppDebuggable"
@@ -192,12 +193,7 @@ Register-ArgumentCompleter -CommandName @(
     $script:AdbKeyCodes | Where-Object { $_ -like "$wordToComplete*" }
 }
 
-Register-ArgumentCompleter -CommandName @(
-    "Receive-AdbFile"
-    "Send-AdbFile"
-) `
-    -ParameterName LiteralRemotePath -ScriptBlock {
-
+$remotePathCompletion = {
     param(
         $commandName,
         $parameterName,
@@ -208,29 +204,41 @@ Register-ArgumentCompleter -CommandName @(
 
     $deviceId = $fakeBoundParameters['DeviceId']
 
-    $normalizedWordToComplete = $wordToComplete.Trim("'").Replace('\', '/').Replace('//', "/")
-    $hasFinalSlash = $normalizedWordToComplete.EndsWith('/')
+    $partiallyNormalizedWordToComplete = $wordToComplete.Trim("'").Replace('\', '/')
+    $hasFinalSlash = $partiallyNormalizedWordToComplete.EndsWith('/')
 
-    $parentPath = if ($hasFinalSlash) {
+    $normalizedWordToComplete = $partiallyNormalizedWordToComplete.Trim('/')
+
+    $parentPath = if ([string]::IsNullOrWhiteSpace($normalizedWordToComplete)) {
+        ''
+    }
+    elseif ($hasFinalSlash) {
         $normalizedWordToComplete
     }
-    else { (Split-Path -Path $normalizedWordToComplete -Parent -Verbose:$false).Replace('\', '/') }
+    else { 
+        (Split-Path -Path $normalizedWordToComplete -Parent -Verbose:$false).Replace('\', '/').Trim('/')
+    }
     $childPath = if ($hasFinalSlash) {
         ''
     }
-    else { (Split-Path -Path $normalizedWordToComplete -Leaf -Verbose:$false).Replace('\', '/') }
-
-    $finalSlash = if ($hasFinalSlash) { '/' } else { '' }
+    else { 
+        (Split-Path -Path $normalizedWordToComplete -Leaf -Verbose:$false).Replace('\', '/').Trim('/')
+    }
 
     $WarningPreference = 'SilentlyContinue'
 
+    # There's no good way to know if a symbolic link is a directory or a file that has performance issues
+    # So, we aren't able to add a slash to the end of the directory, which would be a nice feature
     Invoke-AdbExpression -DeviceId $deviceId -Command "shell ls '$parentPath'" -Verbose:$false `
     | ForEach-Object { $_.Trim() } `
     | Where-Object {
         $_ -like "$childPath*"
     } `
     | ForEach-Object {
-        $finalPath = "$parentPath/$_$finalSlash"
+        $finalPath = if ([string]::IsNullOrWhiteSpace($parentPath)) {
+            "/$_"
+        }
+        else { "/$parentPath/$_" }
         New-Object -Type System.Management.Automation.CompletionResult -ArgumentList @(
             "'$finalPath'"
             "$_"
@@ -239,3 +247,16 @@ Register-ArgumentCompleter -CommandName @(
         )
     }
 }
+
+Register-ArgumentCompleter -CommandName @(
+    "Receive-AdbItem"
+    "Send-AdbItem"
+    "New-AdbItem"
+    "Test-AdbPath"
+) -ParameterName LiteralRemotePath -ScriptBlock $remotePathCompletion
+
+Register-ArgumentCompleter -CommandName @(
+    "Get-AdbContent"
+    "Get-AdbChildItem"
+    "Remove-AdbItem"
+) -ParameterName RemotePath -ScriptBlock $remotePathCompletion

@@ -1,4 +1,4 @@
-function Receive-AdbFile {
+function Receive-AdbItem {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
