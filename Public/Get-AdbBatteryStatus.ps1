@@ -27,7 +27,7 @@ function Get-AdbBatteryStatus {
                         3 { "Discharging" }
                         4 { "NotCharging" }
                         5 { "Full" }
-                        default { "UnknownStatus" }
+                        default { "UnknownStatus-$statusCode" }
                     }
                 }
             }

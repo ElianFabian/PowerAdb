@@ -29,7 +29,7 @@ function Get-AdbBatteryHealth {
                         5 { "Overvoltage" }
                         6 { "Failed" }
                         7 { "Cold" }
-                        default { "UnknownHealth" }
+                        default { "UnknownHealth-$healthCode" }
                     }
                 }
             }
