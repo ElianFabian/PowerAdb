@@ -29,6 +29,27 @@ Register-ArgumentCompleter `
     }
 }
 
+$packageCompletion = {
+
+    param(
+        $commandName,
+        $parameterName,
+        $wordToComplete,
+        $commandAst,
+        $fakeBoundParameters
+    )
+
+    $deviceId = $fakeBoundParameters['DeviceId']
+
+    $WarningPreference = 'SilentlyContinue'
+
+    $applicationIds = Get-AdbPackage -DeviceId $deviceId -Verbose:$false
+
+    $startMatches = $applicationIds | Where-Object { $_ -like "$wordToComplete*" }
+    $containMatches = $applicationIds | Where-Object { $_ -like "*$wordToComplete*" -and $_ -notlike "$wordToComplete*" }
+    $startMatches + $containMatches
+}
+
 Register-ArgumentCompleter -CommandName @(
     "Start-AdbApp"
     "Get-AdbAppPid"
@@ -52,27 +73,14 @@ Register-ArgumentCompleter -CommandName @(
     "Test-AdbAppDebuggable"
     "Test-AdbAppTestOnly"
     "Test-AdbAppLargeHeap"
-) `
-    -ParameterName ApplicationId -ScriptBlock {
+) -ParameterName ApplicationId -ScriptBlock $packageCompletion
 
-    param(
-        $commandName,
-        $parameterName,
-        $wordToComplete,
-        $commandAst,
-        $fakeBoundParameters
-    )
+Register-ArgumentCompleter -CommandName @(
+    "Test-AdbPath"
+    "Get-AdbContent"
+    "Get-AdbChildItem"
+) -ParameterName RunAs -ScriptBlock $packageCompletion
 
-    $deviceId = $fakeBoundParameters['DeviceId']
-
-    $WarningPreference = 'SilentlyContinue'
-
-    $applicationIds = Get-AdbPackage -DeviceId $deviceId -Verbose:$false
-
-    $startMatches = $applicationIds | Where-Object { $_ -like "$wordToComplete*" }
-    $containMatches = $applicationIds | Where-Object { $_ -like "*$wordToComplete*" -and $_ -notlike "$wordToComplete*" }
-    $startMatches + $containMatches
-}
 
 Register-ArgumentCompleter -CommandName @(
     "Get-AdbProperty"
@@ -158,7 +166,7 @@ $script:AdbKeyCodes = @(
     "MOVE_HOME", "MOVE_END",
     "MEDIA_PLAY_PAUSE", "MEDIA_STOP", "MEDIA_NEXT", "MEDIA_PREVIOUS", "MEDIA_REWIND", "MEDIA_FAST_FORWARD",
     "MUTE",
-    "PICTSYMBOLS"   
+    "PICTSYMBOLS"
 )
 
 Register-ArgumentCompleter -CommandName @(
@@ -203,6 +211,10 @@ $remotePathCompletion = {
     )
 
     $deviceId = $fakeBoundParameters['DeviceId']
+    $runAs = $fakeBoundParameters['RunAs']
+    if ($runAs) {
+        $runAsCommand = " run-as '$runAs'"
+    }
 
     $partiallyNormalizedWordToComplete = $wordToComplete.Trim("'").Replace('\', '/')
     $hasFinalSlash = $partiallyNormalizedWordToComplete.EndsWith('/')
@@ -215,30 +227,32 @@ $remotePathCompletion = {
     elseif ($hasFinalSlash) {
         $normalizedWordToComplete
     }
-    else { 
+    else {
         (Split-Path -Path $normalizedWordToComplete -Parent -Verbose:$false).Replace('\', '/').Trim('/')
     }
     $childPath = if ($hasFinalSlash) {
         ''
     }
-    else { 
+    else {
         (Split-Path -Path $normalizedWordToComplete -Leaf -Verbose:$false).Replace('\', '/').Trim('/')
     }
 
     $WarningPreference = 'SilentlyContinue'
 
+    $firstSlash = if ($runAs) { '' } else { '/' }
+
     # There's no good way to know if a symbolic link is a directory or a file that has performance issues
     # So, we aren't able to add a slash to the end of the directory, which would be a nice feature
-    Invoke-AdbExpression -DeviceId $deviceId -Command "shell ls '$parentPath'" -Verbose:$false `
+    Invoke-AdbExpression -DeviceId $deviceId -Command "shell$runAsCommand ls '$parentPath'" -Verbose:$false `
     | ForEach-Object { $_.Trim() } `
     | Where-Object {
         $_ -like "$childPath*"
     } `
     | ForEach-Object {
         $finalPath = if ([string]::IsNullOrWhiteSpace($parentPath)) {
-            "/$_"
+            "$firstSlash$_"
         }
-        else { "/$parentPath/$_" }
+        else { "$firstSlash$parentPath/$_" }
         New-Object -Type System.Management.Automation.CompletionResult -ArgumentList @(
             "'$finalPath'"
             "$_"
@@ -253,10 +267,20 @@ Register-ArgumentCompleter -CommandName @(
     "Send-AdbItem"
     "New-AdbItem"
     "Test-AdbPath"
+    "Remove-AdbItem"
+    "Move-AdbItem"
 ) -ParameterName LiteralRemotePath -ScriptBlock $remotePathCompletion
 
 Register-ArgumentCompleter -CommandName @(
     "Get-AdbContent"
     "Get-AdbChildItem"
-    "Remove-AdbItem"
+    "Set-AdbContent"
+    "Add-AdbContent"
+    "Copy-AdbItem"
+    "Move-AdbItem"
 ) -ParameterName RemotePath -ScriptBlock $remotePathCompletion
+
+Register-ArgumentCompleter -CommandName @(
+    "Copy-AdbItem"
+    "Move-AdbItem"
+) -ParameterName RemoteDestination -ScriptBlock $remotePathCompletion

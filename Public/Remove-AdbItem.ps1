@@ -27,11 +27,21 @@ function Remove-AdbItem {
         else {
             ''
         }
+
+        if ($RunAs) {
+            $runAsCommand = " run-as '$RunAs'"
+        }
     }
 
     process {
         foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $id -Command "shell ""rm $params '$LiteralRemotePath'""" -Verbose:$VerbosePreference
+            $isDirectory = (Invoke-AdbExpression -DeviceId $id -Command "shell$runAsCommand [ -e '$LiteralRemotePath' ] && echo '1' || echo '0'" -Verbose:$false -WhatIf:$false 2> $null) -eq '1'
+            if ($isDirectory -and -not $Force -and -not $Recurse) {
+                Invoke-AdbExpression -DeviceId $id -Command "shell$runAsCommand ""rmdir '$LiteralRemotePath'""" -Verbose:$VerbosePreference
+            }
+            else {
+                Invoke-AdbExpression -DeviceId $id -Command "shell$runAsCommand ""rm $params '$LiteralRemotePath'""" -Verbose:$VerbosePreference
+            }
         }
     }
 }

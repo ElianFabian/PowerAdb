@@ -6,13 +6,25 @@ function Get-AdbChildItem {
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
 
-        [Parameter(Mandatory)]
-        [string] $RemotePath
+        [string] $RemotePath,
+
+        [switch] $Recurse,
+
+        [string] $RunAs
     )
+
+    begin {
+        if ($Recurse) {
+            $paramRecurse = " -R"
+        }
+        if ($RunAs) {
+           $runAsCommand = " run-as '$RunAs'"
+        }
+    }
 
     process {
         foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $id -Command "shell ls '$RemotePath'" -Verbose:$VerbosePreference `
+            Invoke-AdbExpression -DeviceId $id -Command "shell $runAsCommand ls$paramRecurse '$RemotePath'" -Verbose:$VerbosePreference `
             | Out-String -Stream `
             | Where-Object { -not $_.Contains(':') -and -not [string]::IsNullOrWhiteSpace($_) }
         }
