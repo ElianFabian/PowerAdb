@@ -1,4 +1,4 @@
-function Get-AdbContent {
+function Set-AdbContent {
 
     [CmdletBinding()]
     [OutputType([string[]])]
@@ -9,20 +9,21 @@ function Get-AdbContent {
         [Parameter(Mandatory)]
         [string] $RemotePath,
 
-        [switch] $Raw,
+        [Parameter(Mandatory)]
+        [string] $Content,
 
         [string] $RunAs
     )
 
     begin {
         if ($RunAs) {
-           $runCommand = " run-as '$RunAs'"
+           $runAsCommand = " run-as '$RunAs'"
         }
     }
 
     process {
         foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $id -Command "shell$runCommand cat '$RemotePath'" -Verbose:$VerbosePreference | Out-String -Stream:(-not $Raw)
+            Invoke-AdbExpression -DeviceId $id -Command "shell$runAsCommand echo '$Content' > '$RemotePath'" -Verbose:$VerbosePreference
         }
     }
 }

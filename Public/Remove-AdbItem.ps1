@@ -11,7 +11,9 @@ function Remove-AdbItem {
 
         [switch] $Force,
 
-        [switch] $Recurse
+        [switch] $Recurse,
+
+        [string] $RunAs
     )
 
     begin {
@@ -27,11 +29,15 @@ function Remove-AdbItem {
         else {
             ''
         }
+
+        if ($RunAs) {
+            $runAsCommand = " run-as '$RunAs'"
+        }
     }
 
     process {
         foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $id -Command "shell ""rm $params '$LiteralRemotePath'""" -Verbose:$VerbosePreference
+            Invoke-AdbExpression -DeviceId $id -Command "shell$runAsCommand ""rm $params '$LiteralRemotePath'""" -Verbose:$VerbosePreference
         }
     }
 }
