@@ -47,7 +47,7 @@ $packageCompletion = {
 
     $startMatches = $applicationIds | Where-Object { $_ -like "$wordToComplete*" }
     $containMatches = $applicationIds | Where-Object { $_ -like "*$wordToComplete*" -and $_ -notlike "$wordToComplete*" }
-    $startMatches + $containMatches
+    @($startMatches) + @($containMatches)
 }
 
 Register-ArgumentCompleter -CommandName @(
