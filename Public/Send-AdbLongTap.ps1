@@ -25,6 +25,10 @@ function Send-AdbLongTap {
             }
             'Node' {
                 $bounds = $Node.bounds
+                if ($bounds -notmatch '\[\d+,\d+\]\[\d+,\d+\]') {
+                    Write-Error "Bounds of node must be in the format '[x1,y1][x2,y2]', but was '$bounds'"
+                    return
+                }
                 $x1 = [float] $bounds.Substring(1, $bounds.IndexOf(',') - 1)
                 $y1 = [float] $bounds.Substring($bounds.IndexOf(',') + 1, $bounds.IndexOf(']') - $bounds.IndexOf(',') - 1)
                 $x2 = [float] $bounds.Substring($bounds.LastIndexOf('[') + 1, $bounds.LastIndexOf(',') - $bounds.LastIndexOf('[') - 1)
