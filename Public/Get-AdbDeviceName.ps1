@@ -15,16 +15,25 @@ function Get-AdbDeviceName {
                 [string] $cachedDeviceName
             }
             else {
-                $result = if ((Test-AdbEmulator -DeviceId $id)) {
+                $deviceName = if ((Test-AdbEmulator -DeviceId $id)) {
                     [string] (Invoke-AdbExpression -DeviceId $id -Command 'emu avd name' -Verbose:$VerbosePreference | Select-Object -First 1)
                 }
                 else {
                     Get-AdbProperty -DeviceId $id -Name 'ro.product.model' -Verbose:$VerbosePreference
                 }
 
-                Set-CacheValue -DeviceId $id -Value $result
-
-                [string] $result
+                if ($deviceName) {
+                    Set-CacheValue -DeviceId $id -Value $deviceName
+                    [string] $deviceName
+                }
+                else {
+                    if ($id -in (Get-AdbDevice)) {
+                        Write-Warning "Failed to get device name for device with id '$id'."
+                    }
+                    else {
+                        Write-Warning "Failed to get device name for device with id '$id'. There is no device with id '$id' connected."
+                    }
+                }
             }
         }
     }
