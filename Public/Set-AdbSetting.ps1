@@ -42,3 +42,6 @@ function Set-AdbSetting {
         }
     }
 }
+
+# In order to make this work for System and Secure namespaces, enable
+# "Disable permission monitoring" in Developer options. https://stackoverflow.com/a/72949330/18418162
