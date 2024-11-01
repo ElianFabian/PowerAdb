@@ -11,6 +11,7 @@ function Get-AdbContent {
 
         [switch] $Raw,
 
+        # This forces the path to be treated as a literal path
         [string] $RunAs
     )
 
