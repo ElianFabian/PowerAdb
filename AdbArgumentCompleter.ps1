@@ -75,6 +75,7 @@ Register-ArgumentCompleter -CommandName @(
     "Test-AdbAppLargeHeap"
     "Get-AdbAppFirstInstallDate"
     "Get-AdbAppLastUpdateDate"
+    "Get-AdbAppData"
 ) -ParameterName ApplicationId -ScriptBlock $packageCompletion
 
 Register-ArgumentCompleter -CommandName @(
