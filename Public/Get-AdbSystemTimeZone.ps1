@@ -8,6 +8,6 @@ function Get-AdbSystemTimeZone {
     )
 
     process {
-        $DeviceId | Get-AdbProperty -Name 'persist.sys.timezone' -Verbose:$VerbosePreference
+        $DeviceId | Get-AdbProperty -Name 'persist.sys.timezone' -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false
     }
 }

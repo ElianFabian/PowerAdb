@@ -21,7 +21,7 @@ function Get-AdbProperty {
     process {
         foreach ($id in $DeviceId) {
             if ($List) {
-                Invoke-AdbExpression -DeviceId $id -Command 'shell getprop' -Verbose:$VerbosePreference `
+                Invoke-AdbExpression -DeviceId $id -Command 'shell getprop' -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
                 | Out-String `
                 | Select-String -Pattern "\[(.+)\]: \[(.+)\]" -AllMatches `
                 | Select-Object -ExpandProperty Matches `
@@ -35,7 +35,7 @@ function Get-AdbProperty {
             }
 
             $values = if ($QueryFromList) {
-                $properties = Get-AdbProperty -DeviceId $id -List -Verbose:$VerbosePreference
+                $properties = Get-AdbProperty -DeviceId $id -List -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false
                 $targetProperties = foreach ($propName in $Name) {
                     $properties | Where-Object {
                         $_.Name -ceq $propName
@@ -53,7 +53,7 @@ function Get-AdbProperty {
                         continue
                     }
 
-                    Invoke-AdbExpression -DeviceId $id -Command "shell getprop '$_'" -Verbose:$VerbosePreference
+                    Invoke-AdbExpression -DeviceId $id -Command "shell getprop '$_'" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false
                 }
             }
 

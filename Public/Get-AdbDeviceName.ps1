@@ -16,7 +16,7 @@ function Get-AdbDeviceName {
             }
             else {
                 $deviceName = if ((Test-AdbEmulator -DeviceId $id)) {
-                    [string] (Invoke-AdbExpression -DeviceId $id -Command 'emu avd name' -Verbose:$VerbosePreference | Select-Object -First 1)
+                    [string] (Invoke-AdbExpression -DeviceId $id -Command 'emu avd name' -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false | Select-Object -First 1)
                 }
                 else {
                     Get-AdbProperty -DeviceId $id -Name 'ro.product.model' -Verbose:$VerbosePreference

@@ -8,7 +8,7 @@ function Get-AdbForegroundAppId {
     )
 
     process {
-        $DeviceId | Invoke-AdbExpression -Command "shell dumpsys window windows" -Verbose:$VerbosePreference `
+        $DeviceId | Invoke-AdbExpression -Command "shell dumpsys window windows" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
         | Out-String `
         | Select-String -Pattern ".+mSurface=Surface\(name=(.+)/.+\).+" -AllMatches `
         | Select-Object -ExpandProperty Matches `

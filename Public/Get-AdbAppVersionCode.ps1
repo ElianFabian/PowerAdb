@@ -13,7 +13,7 @@ function Get-AdbAppVersionCode {
     process {
         foreach ($id in $DeviceId) {
             foreach ($appId in $ApplicationId) {
-                Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys package '$appId'" `
+                Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys package '$appId'" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
                 | Select-String -Pattern "versionCode=(\d+)" `
                 | Select-Object -ExpandProperty Matches -First 1 `
                 | ForEach-Object { [uint32] $_.Groups[1].Value }

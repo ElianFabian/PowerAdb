@@ -22,7 +22,7 @@ function Get-AdbPackage {
     }
 
     process {
-        $DeviceId | Invoke-AdbExpression -Command "shell pm list packages$paramFilterBy" -Verbose:$VerbosePreference `
+        $DeviceId | Invoke-AdbExpression -Command "shell pm list packages$paramFilterBy" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
         | Out-String -Stream `
         | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } `
         | ForEach-Object { $_.Replace('package:', '') }

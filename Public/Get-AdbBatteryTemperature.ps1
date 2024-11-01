@@ -9,7 +9,7 @@ function Get-AdbBatteryTemperature {
 
     process {
         foreach ($id in $DeviceId) {
-            $result = Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys battery" -Verbose:$VerbosePreference `
+            $result = Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys battery" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false`
             | Select-String -Pattern "  temperature: (\d+)" -AllMatches
 
             if ($result.Matches.Count -eq 0) {

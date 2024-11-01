@@ -13,7 +13,7 @@ function Get-AdbAppPid {
     process {
         foreach ($id in $DeviceId) {
             foreach ($appId in $ApplicationId) {
-                [uint32] (Invoke-AdbExpression -DeviceId $id -Command "shell pidof $appId" -Verbose:$VerbosePreference)
+                [uint32] (Invoke-AdbExpression -DeviceId $id -Command "shell pidof $appId" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false)
             }
         }
     }
