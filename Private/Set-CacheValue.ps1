@@ -31,9 +31,7 @@ function Set-CacheValue {
             . "$scriptRoot/Remove-CacheValue.ps1"
 
             & 'adb' '-s' "$id" 'wait-for-any-disconnect'
-            Write-Host "Device with id '$id' disconnected. Removing cached values." -ForegroundColor Green
             Remove-CacheValue -DeviceId $id -All
-            Write-Host "Removed cached values for device with id '$id'." -ForegroundColor Green
         } -ArgumentList $DeviceId, $AdbCache, $PSScriptRoot
 
         # Cleanup the job automatically after completion
