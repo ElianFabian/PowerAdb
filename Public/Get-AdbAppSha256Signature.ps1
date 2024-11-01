@@ -21,3 +21,5 @@ function Get-AdbAppSha256Signature {
         }
     }
 }
+
+# This function doesn't seem to work on real devices, only on emulators
