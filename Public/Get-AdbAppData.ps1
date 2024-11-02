@@ -25,19 +25,13 @@ function Get-AdbAppData {
 
         [switch] $Sha256Signature,
 
-        [switch] $AllowClearUserData,
+        [switch] $ForceQueryable,
 
-        [switch] $Debuggable,
+        [switch] $InstallerPackageName,
 
-        [switch] $LargeHeap,
+        [switch] $PackageFlags,
 
-        [switch] $AllowBackup,
-
-        [switch] $KillAfterRestore,
-
-        [switch] $TestOnly,
-
-        [switch] $HasCode
+        [switch] $PrivatePackageFlags
     )
 
     process {
@@ -88,66 +82,65 @@ function Get-AdbAppData {
                     | Select-Object -ExpandProperty Matches -First 1 `
                     | ForEach-Object { $_.Groups[1].Value }
                 }
-                if ($AllData -or $AllowClearUserData) {
-                    $allowClearUserDataValue = $rawData `
+                if ($AllData -or $ForceQueryable) {
+                    $forceQueryableValue = $rawData `
+                    | Select-String -Pattern "forceQueryable=(true|false)" `
+                    | Select-Object -ExpandProperty Matches -First 1 `
+                    | ForEach-Object { [bool]::Parse($_.Groups[1].Value) }
+                }
+                if ($AllData -or $InstallerPackageName) {
+                    $installerPackageNameValue = $rawData `
+                    | Select-String -Pattern "installerPackageName=(.+)" `
+                    | Select-Object -ExpandProperty Matches -First 1 `
+                    | ForEach-Object { $_.Groups[1].Value }
+                }
+                if ($AllData -or $PackageFlags) {
+                    $rawFlags = $rawData `
                     | Select-String -Pattern "flags=\[\s.+\s\]" `
                     | Select-Object -ExpandProperty Matches -First 1 `
-                    | ForEach-Object { $_.Value.Contains("ALLOW_CLEAR_USER_DATA") }
+                    | ForEach-Object { $_.Value }
+
+                    $packageFlagsValue = [PSCustomObject]@{
+                        AllowBackup          = $rawFlags.Contains("ALLOW_BACKUP")
+                        AllowClearUserData   = $rawFlags.Contains("ALLOW_CLEAR_USER_DATA")
+                        AllowTaskReparenting = $rawFlags.Contains("ALLOW_TASK_REPARENTING")
+                        Debuggable           = $rawFlags.Contains("DEBUGGABLE")
+                        DirectBootAware      = $rawFlags.Contains("PARTIALLY_DIRECT_BOOT_AWARE")
+                        HasCode              = $rawFlags.Contains("HAS_CODE")
+                        LargeHeap            = $rawFlags.Contains("LARGE_HEAP")
+                        KillAfterRestore     = $rawFlags.Contains("KILL_AFTER_RESTORE")
+                        TestOnly             = $rawFlags.Contains("TEST_ONLY")
+                        VmSafeMode           = $rawFlags.Contains("VM_SAFE_MODE")
+                    }
                 }
-                if ($AllData -or $Debuggable) {
-                    $debuggableValue = $rawData `
-                    | Select-String -Pattern "flags=\[\s.+\s\]" `
+                if ($AllData -or $PrivatePackageFlags) {
+                    $privateRawFlags = $rawData `
+                    | Select-String -Pattern "privateFlags=\[\s.+\s\]" `
                     | Select-Object -ExpandProperty Matches -First 1 `
-                    | ForEach-Object { $_.Value.Contains("DEBUGGABLE") }
+                    | ForEach-Object { $_.Value }
+
+                    $privatePackageFlagsValue = [PSCustomObject]@{
+                        AllowAudioPlaybackCapture     = $privateRawFlags.Contains("ALLOW_AUDIO_PLAYBACK_CAPTURE")
+                        AllowNativeHeapPointerTagging = $privateRawFlags.Contains("PRIVATE_FLAG_ALLOW_NATIVE_HEAP_POINTER_TAGGING")
+                        # The opposite flag for ResizableActivity is "PRIVATE_FLAG_ACTIVITIES_RESIZE_MODE_UNRESIZEABLE"
+                        ResizableActivity             = $privateRawFlags.Contains("PRIVATE_FLAG_ACTIVITIES_RESIZE_MODE_RESIZEABLE")
+                    }
                 }
-                if ($AllData -or $LargeHeap) {
-                    $largeHeapValue = $rawData `
-                    | Select-String -Pattern "flags=\[\s.+\s\]" `
-                    | Select-Object -ExpandProperty Matches -First 1 `
-                    | ForEach-Object { $_.Value.Contains("LARGE_HEAP") }
-                }
-                if ($AllData -or $AllowBackup) {
-                    $allowBackupValue = $rawData `
-                    | Select-String -Pattern "flags=\[\s.+\s\]" `
-                    | Select-Object -ExpandProperty Matches -First 1 `
-                    | ForEach-Object { $_.Value.Contains("ALLOW_BACKUP") }
-                }
-                if ($AllData -or $KillAfterRestore) {
-                    $killAfterRestoreValue = $rawData `
-                    | Select-String -Pattern "flags=\[\s.+\s\]" `
-                    | Select-Object -ExpandProperty Matches -First 1 `
-                    | ForEach-Object { $_.Value.Contains("KILL_AFTER_RESTORE") }
-                }
-                if ($AllData -or $TestOnly) {
-                    $testOnlyValue = $rawData `
-                    | Select-String -Pattern "flags=\[\s.+\s\]" `
-                    | Select-Object -ExpandProperty Matches -First 1 `
-                    | ForEach-Object { $_.Value.Contains("TEST_ONLY") }
-                }
-                if ($AllData -or $HasCode) {
-                    $hasCodeValue = $rawData `
-                    | Select-String -Pattern "flags=\[\s.+\s\]" `
-                    | Select-Object -ExpandProperty Matches -First 1 `
-                    | ForEach-Object { $_.Value.Contains("HAS_CODE") }
-                }
-                
+
                 [PSCustomObject]@{
-                    DeviceId           = $id
-                    ApplicationId      = $appId
-                    VersionCode        = $versionCodeValue
-                    VersionName        = $versionNameValue
-                    MinSdkVersion      = $minSdkVersionValue
-                    TargetSdkVersion   = $targetSdkVersionValue
-                    FirstInstallDate   = $firstInstallDateValue
-                    LastUpdateDate     = $lastUpdateDateValue
-                    Sha256Signature    = $sha256SignatureValue
-                    AllowClearUserData = $allowClearUserDataValue
-                    Debuggable         = $debuggableValue
-                    LargeHeap          = $largeHeapValue
-                    AllowBackup        = $allowBackupValue
-                    KillAfterRestore   = $killAfterRestoreValue
-                    TestOnly           = $testOnlyValue
-                    HasCode            = $hasCodeValue
+                    DeviceId             = $id
+                    ApplicationId        = $appId
+                    VersionCode          = $versionCodeValue
+                    VersionName          = $versionNameValue
+                    MinSdkVersion        = $minSdkVersionValue
+                    TargetSdkVersion     = $targetSdkVersionValue
+                    FirstInstallDate     = $firstInstallDateValue
+                    LastUpdateDate       = $lastUpdateDateValue
+                    Sha256Signature      = $sha256SignatureValue
+                    ForceQueryable       = $forceQueryableValue
+                    InstallerPackageName = $installerPackageNameValue
+                    PackageFlags         = $packageFlagsValue
+                    PrivatePackageFlags  = $privatePackageFlagsValue
                 }
             }
         }
