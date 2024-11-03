@@ -1,4 +1,4 @@
-function Get-AdbAppData {
+function Get-AdbAppInfo {
 
     [OutputType([PSCustomObject[]])]
     [CmdletBinding()]
@@ -9,7 +9,7 @@ function Get-AdbAppData {
         [Parameter(Mandatory)]
         [string[]] $ApplicationId,
 
-        [switch] $AllData,
+        [switch] $AllInfo,
 
         [switch] $VersionCode,
 
@@ -40,61 +40,61 @@ function Get-AdbAppData {
                 # For more information: https://developer.android.com/guide/topics/manifest/application-element
                 $rawData = Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys package '$appId'" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false
 
-                if ($AllData -or $VersionCode) {
+                if ($AllInfo -or $VersionCode) {
                     $versionCodeValue = $rawData `
                     | Select-String -Pattern "versionCode=(\d+)" `
                     | Select-Object -ExpandProperty Matches -First 1 `
                     | ForEach-Object { [uint32] $_.Groups[1].Value }
                 }
-                if ($AllData -or $VersionName) {
+                if ($AllInfo -or $VersionName) {
                     $versionNameValue = $rawData `
                     | Select-String -Pattern "versionName=(\S+)" `
                     | Select-Object -ExpandProperty Matches -First 1 `
                     | ForEach-Object { $_.Groups[1].Value }
                 }
-                if ($AllData -or $MinSdkVersion) {
+                if ($AllInfo -or $MinSdkVersion) {
                     $minSdkVersionValue = $rawData `
                     | Select-String -Pattern "minSdk=(\d+)" `
                     | Select-Object -ExpandProperty Matches -First 1 `
                     | ForEach-Object { [uint32] $_.Groups[1].Value }
                 }
-                if ($AllData -or $TargetSdkVersion) {
+                if ($AllInfo -or $TargetSdkVersion) {
                     $targetSdkVersionValue = $rawData `
                     | Select-String -Pattern "targetSdk=(\d+)" `
                     | Select-Object -ExpandProperty Matches -First 1 `
                     | ForEach-Object { [uint32] $_.Groups[1].Value }
                 }
-                if ($AllData -or $FirstInstallDate) {
+                if ($AllInfo -or $FirstInstallDate) {
                     $firstInstallDateValue = $rawData `
                     | Select-String -Pattern "firstInstallTime=(\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d)" `
                     | Select-Object -ExpandProperty Matches -First 1 `
                     | ForEach-Object { Get-Date -Date $_.Groups[1].Value }
                 }
-                if ($AllData -or $LastUpdateDate) {
+                if ($AllInfo -or $LastUpdateDate) {
                     $lastUpdateDateValue = $rawData `
                     | Select-String -Pattern "lastUpdateTime=(\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d)" `
                     | Select-Object -ExpandProperty Matches -First 1 `
                     | ForEach-Object { Get-Date -Date $_.Groups[1].Value }
                 }
-                if ($AllData -or $Sha256Signature) {
+                if ($AllInfo -or $Sha256Signature) {
                     $sha256SignatureValue = $rawData `
                     | Select-String -Pattern "Signatures: \[(.+)\]" `
                     | Select-Object -ExpandProperty Matches -First 1 `
                     | ForEach-Object { $_.Groups[1].Value }
                 }
-                if ($AllData -or $ForceQueryable) {
+                if ($AllInfo -or $ForceQueryable) {
                     $forceQueryableValue = $rawData `
                     | Select-String -Pattern "forceQueryable=(true|false)" `
                     | Select-Object -ExpandProperty Matches -First 1 `
                     | ForEach-Object { [bool]::Parse($_.Groups[1].Value) }
                 }
-                if ($AllData -or $InstallerPackageName) {
+                if ($AllInfo -or $InstallerPackageName) {
                     $installerPackageNameValue = $rawData `
                     | Select-String -Pattern "installerPackageName=(.+)" `
                     | Select-Object -ExpandProperty Matches -First 1 `
                     | ForEach-Object { $_.Groups[1].Value }
                 }
-                if ($AllData -or $PackageFlags) {
+                if ($AllInfo -or $PackageFlags) {
                     $rawFlags = $rawData `
                     | Select-String -Pattern "flags=\[\s.+\s\]" `
                     | Select-Object -ExpandProperty Matches -First 1 `
@@ -113,7 +113,7 @@ function Get-AdbAppData {
                         VmSafeMode           = $rawFlags.Contains("VM_SAFE_MODE")
                     }
                 }
-                if ($AllData -or $PrivatePackageFlags) {
+                if ($AllInfo -or $PrivatePackageFlags) {
                     $privateRawFlags = $rawData `
                     | Select-String -Pattern "privateFlags=\[\s.+\s\]" `
                     | Select-Object -ExpandProperty Matches -First 1 `

@@ -62,7 +62,7 @@ Register-ArgumentCompleter -CommandName @(
     "Start-AdbAppProcessDeath"
     "Install-AdbApp"
     "Uninstall-AdbApp"
-    "Clear-AdbAppData"
+    "Clear-AdbAppInfo"
     "Get-AdbAppMinSdkVersion"
     "Get-AdbAppSha256Signature"
     "Get-AdbAppTargetSdkVersion"
@@ -76,7 +76,7 @@ Register-ArgumentCompleter -CommandName @(
     "Test-AdbAppLargeHeap"
     "Get-AdbAppFirstInstallDate"
     "Get-AdbAppLastUpdateDate"
-    "Get-AdbAppData"
+    "Get-AdbAppInfo"
 ) -ParameterName ApplicationId -ScriptBlock $packageCompletion
 
 Register-ArgumentCompleter -CommandName @(
