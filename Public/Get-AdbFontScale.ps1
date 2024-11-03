@@ -9,7 +9,7 @@ function Get-AdbFontScale {
 
     process {
         foreach ($id in $DeviceId) {
-            $result = ($id | Invoke-AdbExpression -Command "shell settings get system font_scale" -Verbose:$VerbosePreference) -as [float]
+            $result = ($id | Invoke-AdbExpression -Command "shell settings get system font_scale" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false) -as [float]
             if ($result) {
                 return $result
             }

@@ -15,7 +15,7 @@ function Get-AdbPhysicalDensity {
                 continue
             }
 
-            Invoke-AdbExpression -DeviceId $id -Command "shell wm density" -Verbose:$VerbosePreference `
+            Invoke-AdbExpression -DeviceId $id -Command "shell wm density" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
             | Out-String -Stream `
             | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } `
             | Select-String -Pattern 'Physical density: (\d+)' -AllMatches `

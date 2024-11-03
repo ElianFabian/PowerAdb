@@ -15,7 +15,7 @@ function Get-AdbTotalRam {
                 [uint64] $cachedTotalRam
             }
             else {
-                $result = Invoke-AdbExpression -DeviceId $id -Command "shell cat /proc/meminfo" -Verbose:$VerbosePreference `
+                $result = Invoke-AdbExpression -DeviceId $id -Command "shell cat /proc/meminfo" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
                 | Select-String -Pattern "MemTotal:\s*(\d+)\skB" -AllMatches `
                 | Select-Object -First 1 `
                 | ForEach-Object { $_.Matches.Groups[1].Value } `

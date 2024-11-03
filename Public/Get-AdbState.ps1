@@ -8,6 +8,6 @@ function Get-AdbState {
     )
 
     process {
-        $DeviceId | Invoke-AdbExpression -Command "get-state" -Verbose:$VerbosePreference
+        $DeviceId | Invoke-AdbExpression -Command "get-state" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false
     }
 }

@@ -12,7 +12,7 @@ function Get-AdbRotation {
 
     process {
         $DeviceId `
-        | Invoke-AdbExpression -Command "shell settings get system user_rotation" -Verbose:$VerbosePreference `
+        | Invoke-AdbExpression -Command "shell settings get system user_rotation" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
         | ForEach-Object {
             if ($AsCode) {
                 [uint32] $_

@@ -12,7 +12,7 @@ function Get-AdbBatteryHealth {
 
     process {
         foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys battery" -Verbose:$VerbosePreference `
+            Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys battery" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
             | Select-String -Pattern "  health: (\d+)" -AllMatches `
             | ForEach-Object {
                 $healthCode = [uint32] $_.Matches.Groups[1].Value

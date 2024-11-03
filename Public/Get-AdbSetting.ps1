@@ -39,7 +39,7 @@ function Get-AdbSetting {
                 continue
             }
             if ($List) {
-                Invoke-AdbExpression -DeviceId $id -Command "shell settings list $namespaceLowercase" -Verbose:$VerbosePreference `
+                Invoke-AdbExpression -DeviceId $id -Command "shell settings list $namespaceLowercase" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
                 | Out-String -Stream `
                 | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } `
                 | ForEach-Object {
@@ -72,7 +72,7 @@ function Get-AdbSetting {
             }
             else {
                 $Key | ForEach-Object {
-                    Invoke-AdbExpression -DeviceId $id -Command "shell settings get $namespaceLowercase $_" -Verbose:$VerbosePreference
+                    Invoke-AdbExpression -DeviceId $id -Command "shell settings get $namespaceLowercase $_" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false
                 }
             }
 

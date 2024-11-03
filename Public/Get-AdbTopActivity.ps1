@@ -8,7 +8,7 @@ function Get-AdbTopActivity {
     )
 
     process {
-        $DeviceId | Invoke-AdbExpression -Command "shell dumpsys activity activities" -Verbose:$VerbosePreference `
+        $DeviceId | Invoke-AdbExpression -Command "shell dumpsys activity activities" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
         | Select-String -Pattern "(topResumedActivity=.+|mResumedActivity: ActivityRecord){.+ .+ (.+) .+}" -AllMatches `
         | Select-Object -ExpandProperty Matches -First 1 `
         | Select-Object -ExpandProperty Groups -Last 1 `

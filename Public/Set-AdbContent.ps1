@@ -23,7 +23,7 @@ function Set-AdbContent {
 
     process {
         foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $id -Command "shell$runAsCommand echo '$Content' > '$RemotePath'" -Verbose:$VerbosePreference
+            Invoke-AdbExpression -DeviceId $id -Command "shell$runAsCommand ""echo '$Content' > '$RemotePath'""" -Verbose:$VerbosePreference
         }
     }
 }

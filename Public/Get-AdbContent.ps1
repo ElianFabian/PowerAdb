@@ -11,6 +11,7 @@ function Get-AdbContent {
 
         [switch] $Raw,
 
+        # This forces the path to be treated as a literal path
         [string] $RunAs
     )
 
@@ -22,7 +23,7 @@ function Get-AdbContent {
 
     process {
         foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $id -Command "shell$runCommand cat '$RemotePath'" -Verbose:$VerbosePreference | Out-String -Stream:(-not $Raw)
+            Invoke-AdbExpression -DeviceId $id -Command "shell$runCommand cat '$RemotePath'" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false | Out-String -Stream:(-not $Raw)
         }
     }
 }

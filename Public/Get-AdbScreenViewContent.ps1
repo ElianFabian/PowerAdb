@@ -15,7 +15,7 @@ function Get-AdbScreenViewContent {
                 continue
             }
         }
-        $DeviceId | Invoke-AdbExpression -Command "exec-out uiautomator dump /dev/tty" -Verbose:$VerbosePreference `
+        $DeviceId | Invoke-AdbExpression -Command "exec-out uiautomator dump /dev/tty" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
         | Out-String `
         | ForEach-Object { $_.Replace("UI hierchary dumped to: /dev/tty", "") } `
         | ForEach-Object {

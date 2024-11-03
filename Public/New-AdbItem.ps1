@@ -18,12 +18,18 @@ function New-AdbItem {
         [switch] $Force
     )
 
+    begin {
+        if ($RunAs) {
+            $runAsCommand = " run-as '$RunAs'"
+        }
+    }
+
     process {
         foreach ($id in $DeviceId) {
             switch ($Type) {
                 'File' {
                     if (($Force -or -not (TestItem -DeviceId $id -LiteralRemotePath $LiteralRemotePath))) {
-                        Invoke-AdbExpression -DeviceId $id -Command "shell ""echo '$Value' > '$LiteralRemotePath'"""  -Verbose:$VerbosePreference
+                        Invoke-AdbExpression -DeviceId $id -Command "shell$runAsCommand ""echo '$Value' > '$LiteralRemotePath'"""  -Verbose:$VerbosePreference
                     }
                     else {
                         Write-Error "File '$LiteralRemotePath' already exists on device with id '$id'." -Category ResourceExists
@@ -31,7 +37,7 @@ function New-AdbItem {
                 }
                 'Directory' {
                     if ($Force -or -not (TestItem -DeviceId $id -LiteralRemotePath $LiteralRemotePath)) {
-                        Invoke-AdbExpression -DeviceId $id -Command "shell mkdir '$LiteralRemotePath'" -Verbose:$VerbosePreference
+                        Invoke-AdbExpression -DeviceId $id -Command "shell$runAsCommand mkdir '$LiteralRemotePath'" -Verbose:$VerbosePreference
                     }
                     else {
                         Write-Error "Directory '$LiteralRemotePath' already exists on device with id '$id'." -Category ResourceExists
