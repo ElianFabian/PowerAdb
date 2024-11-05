@@ -1,5 +1,6 @@
 function Get-AdbDiskInfo {
 
+    [OutputType([PSCustomObject[]])]
     [CmdletBinding()]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
@@ -20,7 +21,17 @@ function Get-AdbDiskInfo {
                 $appDataSizes = $groups['appDataSizesStr'].Value.Split(',').Trim() | ForEach-Object { [uint64] $_ }
                 $cacheSizes = $groups['cacheSizesStr'].Value.Split(',').Trim() | ForEach-Object { [uint64] $_ }
 
-                # TODO: handle the case whrere there are less information than expected (e.g. API level 16)
+                $fileBasedEncryption = $groups['fileBasedEncryption'].Value
+                $appSize = $groups['appSize'].Value
+                $appDataSize = $groups['appDataSize'].Value
+                $appCacheSize = $groups['appCacheSize'].Value
+                $photosSize = $groups['photosSize'].Value
+                $videosSize = $groups['videosSize'].Value
+                $audioSize = $groups['audioSize'].Value
+                $downloadsSize = $groups['downloadsSize'].Value
+                $systemSize = $groups['systemSize'].Value
+                $otherSize = $groups['otherSize'].Value
+
                 [PSCustomObject]@{
                     DeviceId            = $id
                     DataFree            = ([uint64] $groups['dataFreeInKb'].Value) * 1024
@@ -28,16 +39,16 @@ function Get-AdbDiskInfo {
                     CacheFree           = ([uint64] $groups['cacheFreeInKb'].Value) * 1024
                     SystemFree          = ([uint64] $groups['systemFreeInKb'].Value) * 1024
                     SystemTotal         = ([uint64] $groups['systemTotalInKb'].Value) * 1024
-                    FileBasedEncryption = [bool]::Parse($groups['fileBasedEncryption'].Value)
-                    AppSize             = [uint64] $groups['appSize'].Value
-                    AppDataSize         = [uint64] $groups['appDataSize'].Value
-                    AppCacheSize        = [uint64] $groups['appCacheSize'].Value
-                    PhotosSize          = [uint64] $groups['photosSize'].Value
-                    VideosSize          = [uint64] $groups['videosSize'].Value
-                    AudioSize           = [uint64] $groups['audioSize'].Value
-                    DownloadsSize       = [uint64] $groups['downloadsSize'].Value
-                    SystemSize          = [uint64] $groups['systemSize'].Value
-                    OtherSize           = [uint64] $groups['otherSize'].Value
+                    FileBasedEncryption = if ($fileBasedEncryption) { [bool]::Parse($fileBasedEncryption) } else { $null }
+                    AppSize             = if ($appSize) { [uint64] $appSize } else { $null }
+                    AppDataSize         = if ($appDataSize) { [uint64] $appDataSize } else { $null }
+                    AppCacheSize        = if ($appCacheSize) { [uint64] $appCacheSize } else { $null }
+                    PhotosSize          = if ($photosSize) { [uint64] $photosSize } else { $null }
+                    VideosSize          = if ($videosSize) { [uint64] $videosSize } else { $null }
+                    AudioSize           = if ($audioSize) { [uint64] $audioSize } else { $null }
+                    DownloadsSize       = if ($downloadsSize) { [uint64] $downloadsSize } else { $null }
+                    SystemSize          = if ($systemSize) { [uint64] $systemSize } else { $null }
+                    OtherSize           = if ($otherSize) { [uint64] $otherSize } else { $null }
                     InstalledApps       = for ($i = 0; $i -lt $packageNames.Count; $i++) {
                         [PSCustomObject]@{
                             ApplicationId = $packageNames[$i]
@@ -52,10 +63,12 @@ function Get-AdbDiskInfo {
     }
 }
 
+
+
 $diskInfoPattern = @"
-Data-Free: (?<dataFreeInKb>\d+)K / (?<dataTotalInKb>\d+)K.+\r?\n+
-Cache-Free: (?<cacheFreeInKb>\d+)K.+\r?\n+
-System-Free: (?<systemFreeInKb>\d+)K / (?<systemTotalInKb>\d+)K.+\r?\n
+Data-Free: (?<dataFreeInKb>\d+)K / (?<dataTotalInKb>\d+)K.+(\r?\n)+
+Cache-Free: (?<cacheFreeInKb>\d+)K.+(\r?\n)+
+System-Free: (?<systemFreeInKb>\d+)K / (?<systemTotalInKb>\d+)K.+(\r?\n)+
 (
 File-based Encryption: (?<fileBasedEncryption>true|false)\r?\n
 App Size: (?<appSize>\d+)\r?\n
