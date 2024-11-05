@@ -1,6 +1,6 @@
 function Test-AdbWifiConnection {
 
-    [OutputType([bool])]
+    [OutputType([bool[]])]
     [CmdletBinding()]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]

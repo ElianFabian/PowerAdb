@@ -1,7 +1,7 @@
 function Test-AdbFeature {
 
     [CmdletBinding()]
-    [OutputType([string[]])]
+    [OutputType([bool[]])]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,

@@ -1,6 +1,6 @@
 function Test-AdbMobileDataConnection {
 
-    [OutputType([bool])]
+    [OutputType([bool[]])]
     [CmdletBinding()]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]

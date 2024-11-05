@@ -1,5 +1,6 @@
 function Test-AdbDarkMode {
 
+    [OutputType([bool[]])]
     [CmdletBinding()]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]

@@ -1,7 +1,7 @@
 # Based on: https://github.com/firebase/firebase-android-sdk/blob/main/firebase-crashlytics/src/main/java/com/google/firebase/crashlytics/internal/common/CommonUtils.java
 function Test-AdbRoot {
 
-    [OutputType([bool])]
+    [OutputType([bool[]])]
     [CmdletBinding()]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
