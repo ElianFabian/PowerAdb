@@ -1,15 +1,15 @@
 function Get-AdbBatteryVoltage {
-    
+
     [OutputType([float[]])]
     [CmdletBinding()]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId
     )
-    
+
     process {
         foreach ($id in $DeviceId) {
-            $result = Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys battery" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false`
+            $result = Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys battery" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
             | Select-String -Pattern "  voltage:\s?(\d+)" -AllMatches
 
             if ($result.Matches.Count -eq 0) {
