@@ -40,14 +40,14 @@ function Invoke-AdbExpression {
 
             if (-not $DeviceId) {
                 $adbCommand = "adb $Command"
-                if ($PSCmdlet.ShouldProcess($adbCommand)) {
+                if ($PSCmdlet.ShouldProcess($adbCommand, '', 'Invoke-AdbExpression')) {
                     Invoke-Expression $adbCommand
                 }
             }
             else {
                 foreach ($id in $DeviceId) {
                     $adbCommand = "adb -s $id $Command"
-                    if ($PSCmdlet.ShouldProcess($adbCommand)) {
+                    if ($PSCmdlet.ShouldProcess($adbCommand, '', 'Invoke-AdbExpression')) {
                         Invoke-Expression $adbCommand
                     }
                 }
