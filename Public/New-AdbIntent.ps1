@@ -71,8 +71,10 @@ function New-AdbIntent {
         if ($this.Flags) {
             $adbArguments += " -f 0x$($this.Flags.ToString('x8'))"
         }
-        $this.Extras | ForEach-Object {
-            $adbArguments += " $($_.ToAdbArguments())"
+        if ($this.Extras) {
+            $this.Extras | ForEach-Object {
+                $adbArguments += " $($_.ToAdbArguments())"
+            }
         }
         if ($this.Selector) {
             $adbArguments += " --selector"
