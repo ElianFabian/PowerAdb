@@ -15,7 +15,7 @@ function Start-AdbActivity {
 
     process {
         foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $id -Command "shell am start-activity $intentArgs"
+            Invoke-AdbExpression -DeviceId $id -Command "shell am start-activity $intentArgs" -Verbose:$VerbosePreference
         }
     }
 }

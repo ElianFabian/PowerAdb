@@ -15,7 +15,7 @@ function Send-AdbBroadcast {
 
     process {
         foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $id -Command "shell am broadcast $intentArgs"
+            Invoke-AdbExpression -DeviceId $id -Command "shell am broadcast $intentArgs" -Verbose:$VerbosePreference
         }
     }
 }
