@@ -31,13 +31,13 @@ function New-AdbIntent {
     }
 
     $intent = [PSCustomObject] @{
-        Action        = $Action
-        Data          = $Data
-        Type          = $Type
-        Identifier    = $Identifier
-        Category      = $Category
-        Flags         = $Flags
-        Selector      = $Selector
+        Action     = $Action
+        Data       = $Data
+        Type       = $Type
+        Identifier = $Identifier
+        Category   = $Category
+        Flags      = $Flags
+        Selector   = $Selector
     }
 
     if ($Extras) {
@@ -79,6 +79,26 @@ function New-AdbIntent {
         }
 
         $adbArguments.Trim()
+    }
+
+    $intent | Add-Member -MemberType ScriptProperty -Name HexFlags -Value { "0x$($this.Flags.ToString('x8'))" }
+    $intent | Add-Member -MemberType ScriptProperty -Name FlagsArray -Value { 
+        $flags = $this.Flags
+        0..31 | ForEach-Object {
+            $bit = 1 -shl $_
+            if ($flags -band $bit) {
+                $bit
+            }
+        }
+    }
+    $intent | Add-Member -MemberType ScriptProperty -Name HexFlagsArray -Value { 
+        $flags = $this.Flags
+        0..31 | ForEach-Object {
+            $bit = 1 -shl $_
+            if ($flags -band $bit) {
+                "0x$($bit.ToString('x8'))"
+            }
+        }
     }
 
     return $intent
