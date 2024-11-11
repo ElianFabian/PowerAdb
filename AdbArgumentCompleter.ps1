@@ -77,6 +77,7 @@ Register-ArgumentCompleter -CommandName @(
     "Get-AdbAppFirstInstallDate"
     "Get-AdbAppLastUpdateDate"
     "Get-AdbAppInfo"
+    "Stop-AdbService"
 ) -ParameterName ApplicationId -ScriptBlock $packageCompletion
 
 Register-ArgumentCompleter -CommandName @(
