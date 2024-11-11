@@ -9,6 +9,7 @@ function Set-AdbContent {
         [Parameter(Mandatory)]
         [string] $RemotePath,
 
+        [AllowEmptyString()]
         [Parameter(Mandatory)]
         [string] $Content,
 
