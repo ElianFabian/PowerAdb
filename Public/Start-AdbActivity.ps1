@@ -116,7 +116,7 @@ function Start-AdbActivity {
 
     process {
         foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $id -Command "shell am start-activity $($argumentsSb.ToString().Trim())" -Verbose:$VerbosePreference
+            Invoke-AdbExpression -DeviceId $id -Command "shell am start $($argumentsSb.ToString().Trim())" -Verbose:$VerbosePreference
         }
     }
 }
