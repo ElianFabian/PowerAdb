@@ -359,3 +359,7 @@ Register-ArgumentCompleter -CommandName @(
     "Copy-AdbItem"
     "Move-AdbItem"
 ) -ParameterName RemoteDestination -ScriptBlock $remotePathCompletion
+
+Register-ArgumentCompleter -CommandName @(
+    "Start-AdbActivity"
+) -ParameterName LiteralRemoteProfilerPath -ScriptBlock $remotePathCompletion
