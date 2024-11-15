@@ -42,9 +42,4 @@ $MyInvocation.MyCommand.ScriptBlock.Module.OnRemove = {
     Get-Job | Where-Object { $_.Name.StartsWith("PowerAdb.RemoveCacheFor:") } | Stop-Job -PassThru | Remove-Job -Force
 }
 
-function Get-AdbCache {
-    $AdbCache
-}
-
 Export-ModuleMember -Function $PublicFunction.BaseName
-Export-ModuleMember -Function Get-AdbCache
