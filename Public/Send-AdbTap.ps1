@@ -41,7 +41,7 @@ function Send-AdbTap {
             }
 
             if (-not $DisableCoordinateCheck) {
-                $size = Get-AdbDisplaySize -DeviceId $id -Verbose:$false
+                $size = Get-AdbPhysicalSize -DeviceId $id -Verbose:$false
                 $width = $size.Width
                 $height = $size.Height
             }
