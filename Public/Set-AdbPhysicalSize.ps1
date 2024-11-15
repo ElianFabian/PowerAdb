@@ -1,4 +1,4 @@
-function Set-AdbDisplaySize {
+function Set-AdbPhysicalSize {
 
     [CmdletBinding(
         SupportsShouldProcess,
