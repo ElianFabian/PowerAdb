@@ -1,6 +1,9 @@
 function Set-AdbPhysicalDensity {
 
-    [CmdletBinding(DefaultParameterSetName = "Default")]
+    [CmdletBinding(
+        SupportsShouldProcess,
+        DefaultParameterSetName = "Default"
+    )]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
@@ -22,10 +25,10 @@ function Set-AdbPhysicalDensity {
                 continue
             }
             if ($Reset) {
-                Invoke-AdbExpression -DeviceId $id -Command "shell wm density reset"
+                Invoke-AdbExpression -DeviceId $id -Command "shell wm density reset" -Verbose:$VerbosePreference
                 continue
             }
-            Invoke-AdbExpression -DeviceId $id -Command "shell wm density $Density"
+            Invoke-AdbExpression -DeviceId $id -Command "shell wm density $Density" -Verbose:$VerbosePreference
         }
     }
 }
