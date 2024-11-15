@@ -1,4 +1,4 @@
-function Get-AdbDisplaySize {
+function Get-AdbPhysicalSize {
 
     [CmdletBinding()]
     [OutputType([PSCustomObject[]], [string[]])]
@@ -17,7 +17,9 @@ function Get-AdbDisplaySize {
                 continue
             }
 
-            $result = [string] (Invoke-AdbExpression -DeviceId $id -Command "shell wm size" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false)
+            $result = Invoke-AdbExpression -DeviceId $id -Command "shell wm size" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
+            | Out-String -Stream `
+            | Select-Object -First 1
 
             $resolutionStr = $result.Replace('Physical size: ', '').Trim("`n")
 
