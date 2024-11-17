@@ -12,7 +12,7 @@ function Invoke-AdbExpression {
 
     begin {
         $availableDevicesCount = (adb devices).Count - 2
-        if ($availableDevicesCount -eq 0) {
+        if ($availableDevicesCount -eq 0 -and $DeviceId) {
             Write-Warning "There are no available devices"
             $stopExecution = $true
         }
