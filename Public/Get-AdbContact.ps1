@@ -87,6 +87,8 @@ function Get-AdbContact {
                     }
                 }
 
+                Repair-OutputRendering
+
                 [PSCustomObject] @{
                     Id              = $contactId
                     Name            = $contactName
