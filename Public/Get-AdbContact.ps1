@@ -6,13 +6,22 @@ function Get-AdbContact {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory)]
-        [string] $DeviceId
+        [string] $DeviceId,
+
+        [long] $ContactId = $null
     )
+
+    begin {
+        if ($ContactId) {
+            $contactIdArg = "/$ContactId"
+        }
+    }
 
     process {
         foreach ($id in $DeviceId) {
             Repair-OutputRendering
-            Invoke-AdbExpression -DeviceId $id -Command 'shell content query --uri content://contacts/people' -Verbose:$VerbosePreference `
+
+            Invoke-AdbExpression -DeviceId $id -Command "shell content query --uri content://contacts/people$contactIdArg" -Verbose:$VerbosePreference `
             | Out-String -Stream `
             | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } `
             | ForEach-Object {
@@ -101,3 +110,7 @@ function Get-AdbContact {
         }
     }
 }
+
+# To see later:
+# - content://com.android.contacts/data
+# - content://com.android.contacts/data/emails
