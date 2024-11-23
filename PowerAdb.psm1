@@ -25,7 +25,7 @@ foreach ($import in @($PublicFunction + $PrivateFunction)) {
 }
 
 
-. "$PSScriptRoot/AdbArgumentCompleter.ps1"
+. "$PSScriptRoot/ArgumentCompleter.ps1"
 
 
 if (-not (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue)) {
