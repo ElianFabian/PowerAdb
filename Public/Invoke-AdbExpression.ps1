@@ -23,8 +23,6 @@ function Invoke-AdbExpression {
             return
         }
 
-        Repair-OutputRendering
-
         if (-not $PSBoundParameters.ContainsKey('DeviceId')) {
             if ($availableDevicesCount -gt 1) {
                 Write-Error "There are multiple devices connected, you have to indicate the device id"
@@ -39,14 +37,14 @@ function Invoke-AdbExpression {
             if (-not $DeviceId) {
                 $adbCommand = "adb $Command"
                 if ($PSCmdlet.ShouldProcess($adbCommand, '', 'Invoke-AdbExpression')) {
-                    Invoke-Expression $adbCommand
+                    Invoke-Expression $adbCommand | Repair-OutputRendering
                 }
             }
             else {
                 foreach ($id in $DeviceId) {
                     $adbCommand = "adb -s $id $Command"
                     if ($PSCmdlet.ShouldProcess($adbCommand, '', 'Invoke-AdbExpression')) {
-                        Invoke-Expression $adbCommand
+                        Invoke-Expression $adbCommand | Repair-OutputRendering
                     }
                 }
             }

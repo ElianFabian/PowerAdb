@@ -11,6 +11,7 @@ function Get-AdbContact {
 
     process {
         foreach ($id in $DeviceId) {
+            Repair-OutputRendering
             Invoke-AdbExpression -DeviceId $id -Command 'shell content query --uri content://contacts/people' -Verbose:$VerbosePreference `
             | Out-String -Stream `
             | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } `
@@ -86,8 +87,6 @@ function Get-AdbContact {
                         }
                     }
                 }
-
-                Repair-OutputRendering
 
                 [PSCustomObject] @{
                     Id              = $contactId
