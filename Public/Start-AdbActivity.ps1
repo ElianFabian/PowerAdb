@@ -17,11 +17,11 @@ function Start-AdbActivity {
         [Parameter(ParameterSetName = 'Profiler')]
         [switch] $StopWhenIdle,
 
-        [Parameter(Mandatory, ParameterSetName = 'Profiler')]
+        [Parameter(ParameterSetName = 'Profiler')]
         [string] $LiteralRemoteProfilerPath,
 
         [Parameter(ParameterSetName = 'Profiler')]
-        [uint64] $SamplingIntervalInMicroseconds = 100,
+        [uint64] $SamplingIntervalInMicroseconds,
 
         [Parameter(ParameterSetName = 'Profiler')]
         [switch] $Streaming,
