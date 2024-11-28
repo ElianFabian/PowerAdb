@@ -13,10 +13,8 @@ function New-AdbIntent {
 
         [string[]] $Category = $null,
 
-        [Parameter(Mandatory, ParameterSetName = 'ComponentName')]
         [string] $ApplicationId = $null,
 
-        [Parameter(Mandatory, ParameterSetName = 'ComponentName')]
         [string] $ComponentClassName = $null,
 
         [int] $Flags = 0,
@@ -43,9 +41,12 @@ function New-AdbIntent {
     if ($Extras) {
         $intent | Add-Member -MemberType NoteProperty -Name Extras -Value ($Extras.Invoke())
     }
-    if ($PSCmdlet.ParameterSetName -eq 'ComponentName') {
+    if ($ApplicationId -and $ComponentClassName) {
         $componentName = "$ApplicationId/$ComponentClassName"
         $intent | Add-Member -MemberType NoteProperty -Name ComponentName -Value $componentName
+    }
+    elseif ($ApplicationId) {
+        $intent | Add-Member -MemberType NoteProperty -Name ApplicationId -Value $ApplicationId
     }
 
     $intent | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value {
@@ -63,7 +64,7 @@ function New-AdbIntent {
             $adbArguments += " -i '$($this.Identifier)'"
         }
         if ($this.Category) {
-            $adbArguments += " -c $(($this.Category -join ",") | ForEach-Object { "'$_'" })"
+            $adbArguments += " $($this.Category | ForEach-Object { "-c '$_'" })"
         }
         if ($this.ComponentName) {
             $adbArguments += " -n '$($this.ComponentName)'"
@@ -78,6 +79,10 @@ function New-AdbIntent {
         }
         if ($this.Selector) {
             $adbArguments += " --selector"
+        }
+
+        if ($this.ApplicationId -and -not $this.ComponentName) {
+            $adbArguments += " $($this.ApplicationId)"
         }
 
         $adbArguments.Trim()
