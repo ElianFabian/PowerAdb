@@ -9,7 +9,7 @@ function Get-AdbBootCount {
 
     process {
         foreach ($id in $DeviceId) {
-            [uint32] (Get-AdbSetting -DeviceId $id -Namespace Global -Key 'boot_count' -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false)
+            [uint32] (Get-AdbSetting -DeviceId $id -Namespace Global -Key 'boot_count' -Verbose:$VerbosePreference)
         }
     }
 }
