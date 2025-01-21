@@ -29,7 +29,7 @@ function New-AdbItem {
             switch ($Type) {
                 'File' {
                     if (($Force -or -not (TestItem -DeviceId $id -LiteralRemotePath $LiteralRemotePath))) {
-                        Invoke-AdbExpression -DeviceId $id -Command "shell$runAsCommand ""echo '$Value' > '$LiteralRemotePath'"""  -Verbose:$VerbosePreference
+                        Invoke-AdbExpression -DeviceId $id -Command "shell$runAsCommand ""echo '$Value' > '""$LiteralRemotePath""'"""  -Verbose:$VerbosePreference
                     }
                     else {
                         Write-Error "File '$LiteralRemotePath' already exists on device with id '$id'." -Category ResourceExists
@@ -37,7 +37,7 @@ function New-AdbItem {
                 }
                 'Directory' {
                     if ($Force -or -not (TestItem -DeviceId $id -LiteralRemotePath $LiteralRemotePath)) {
-                        Invoke-AdbExpression -DeviceId $id -Command "shell$runAsCommand mkdir '$LiteralRemotePath'" -Verbose:$VerbosePreference
+                        Invoke-AdbExpression -DeviceId $id -Command "shell$runAsCommand mkdir '""$LiteralRemotePath""'" -Verbose:$VerbosePreference
                     }
                     else {
                         Write-Error "Directory '$LiteralRemotePath' already exists on device with id '$id'." -Category ResourceExists
@@ -55,5 +55,5 @@ function TestItem {
         [string] $LiteralRemotePath
     )
 
-    return (adb -s $DeviceId "shell" "[ -e '$LiteralRemotePath' ] && echo '1' || echo '0'") -eq '1'
+    return (adb -s $DeviceId "shell" "[ -e '""$LiteralRemotePath""' ] && echo '1' || echo '0'") -eq '1'
 }

@@ -20,7 +20,7 @@ function Receive-AdbItem {
             $localPath = Join-Path -Path $LiteralLocalPath -ChildPath $itemName
 
             if ($Force -or -not (Test-Path -Path $localPath)) {
-                Invoke-AdbExpression -DeviceId $id -Command "pull '$LiteralRemotePath' '$LiteralLocalPath'" -Verbose:$VerbosePreference
+                Invoke-AdbExpression -DeviceId $id -Command "pull '""$LiteralRemotePath""' '""$LiteralLocalPath""'" -Verbose:$VerbosePreference
             }
             elseif (Test-Path -Path $localPath) {
                 Write-Error "The file '$localPath' already exists." -Category ResourceExists

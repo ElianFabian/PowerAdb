@@ -14,7 +14,7 @@ function Copy-AdbItem {
 
     process {
         foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $id -Command "shell ""cp '$RemotePath' '$RemoteDestination'""" -Verbose:$VerbosePreference
+            Invoke-AdbExpression -DeviceId $id -Command "shell ""cp '""$RemotePath""' '""$RemoteDestination""'""" -Verbose:$VerbosePreference
         }
     }
 }
