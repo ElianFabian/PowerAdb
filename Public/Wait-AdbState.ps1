@@ -1,9 +1,9 @@
 function Wait-AdbState {
 
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     [OutputType([string[]])]
     param(
-        [Parameter(Mandatory, ValueFromPipeline)]
+        [Parameter(ValueFromPipeline)]
         [string[]] $DeviceId,
 
         [Parameter(Mandatory)]
@@ -21,7 +21,10 @@ function Wait-AdbState {
 
     process {
         if (-not $DeviceId) {
-            return Invoke-AdbExpression -Command "wait-for-$transportLowercase-$stateLowercase" -Verbose:$VerbosePreference
+            if ($PSCmdlet.ShouldProcess("adb wait-for-$transportLowercase-$stateLowercase", "", "Wait-AdbState")) {
+                return adb "wait-for-$transportLowercase-$stateLowercase"
+            }
+            return
         }
 
         $DeviceId | Invoke-AdbExpression -Command "wait-for-$transportLowercase-$stateLowercase" -Verbose:$VerbosePreference
