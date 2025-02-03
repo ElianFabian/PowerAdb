@@ -1,4 +1,4 @@
-function Connect-AdbDeviceById {
+function Connect-AdbDevice2 {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
