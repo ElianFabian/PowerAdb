@@ -1,7 +1,9 @@
 function Stop-AdbServer {
-    
+
     [CmdletBinding(SupportsShouldProcess)]
     param ()
 
-    Invoke-AdbExpression -Command "kill-server" -Verbose:$VerbosePreference
+    if ($PSCmdlet.ShouldProcess("adb kill-server", '', 'Stop-AdbServer')) {
+        adb kill-server
+    }
 }

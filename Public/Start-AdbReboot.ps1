@@ -19,7 +19,9 @@ function Start-AdbReboot {
 
     process {
         foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $id -Command "reboot$mode" -Verbose:$VerbosePreference
+            if ($PSCmdlet.ShouldProcess("adb reboot$mode", '', 'Start-AdbReboot')) {
+                adb reboot$mode
+            }
         }
     }
 }

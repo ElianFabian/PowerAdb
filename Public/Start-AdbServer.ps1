@@ -3,5 +3,7 @@ function Start-AdbServer {
     [CmdletBinding(SupportsShouldProcess)]
     param ()
 
-    Invoke-AdbExpression -Command "start-server" -Verbose:$VerbosePreference
+    if ($PSCmdlet.ShouldProcess("adb start-server", '', 'Start-AdbServer')) {
+        adb start-server
+    }
 }
