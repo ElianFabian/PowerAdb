@@ -9,7 +9,7 @@ function Remove-AdbSetting {
         [ValidateSet("Global", "System", "Secure")]
         [string] $Namespace,
 
-        [Parameter(Mandatory, ParameterSetName = "Default")]
+        [Parameter(Mandatory)]
         [string] $Key
     )
 
