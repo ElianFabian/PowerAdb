@@ -9,7 +9,7 @@ function Connect-AdbDevice2 {
     process {
         foreach ($id in $DeviceId) {
             Start-AdbTcpIp -DeviceId $id -Port 5555 -Verbose:$VerbosePreference
-            $ipAdress = Get-AdbLocalNetworkIp -DeviceId $id -Wait -Verbose:$VerbosePreference
+            $ipAdress = Get-AdbLocalNetworkIp -DeviceId $id -Wait -Verbose:$false
             Connect-AdbDevice -IpAddress $ipAdress -Port 5555 -Verbose:$VerbosePreference
         }
     }
