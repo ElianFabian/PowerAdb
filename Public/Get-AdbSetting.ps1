@@ -24,7 +24,11 @@ function Get-AdbSetting {
     )
 
     begin {
-        $namespaceLowercase = $Namespace.ToLower()
+        $namespaceLowercase = switch ($Namespace) {
+            "Global" { "global" }
+            "System" { "system" }
+            "Secure" { "secure" }
+        }
     }
 
     process {

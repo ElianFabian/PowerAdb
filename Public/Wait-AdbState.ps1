@@ -15,8 +15,19 @@ function Wait-AdbState {
     )
 
     begin {
-        $stateLowercase = $State.ToLower()
-        $transportLowercase = $Transport.ToLower()
+        $stateLowercase = switch ($State) {
+            "Device" { "device" }
+            "Recovery" { "recovery" }
+            "Rescue" { "rescue" }
+            "Sideload" { "sideload" }
+            "Bootloader" { "bootloader" }
+            "Disconnect" { "disconnect" }
+        }
+        $transportLowercase = switch ($Transport) {
+            "Usb" { "usb" }
+            "Local" { "local" }
+            "Any" { "any" }
+        }
     }
 
     process {
