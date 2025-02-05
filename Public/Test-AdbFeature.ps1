@@ -7,20 +7,36 @@ function Test-AdbFeature {
         [string[]] $DeviceId,
 
         [Parameter(Mandatory)]
-        [string[]] $Permission
+        [string[]] $Feature,
+
+        # Fast for multiple features
+        [switch] $Fast
     )
 
     process {
         foreach ($id in $DeviceId) {
-            # Faster than 'adb shell pm has-feature'
-            $supportedFeatures = Get-AdbFeature -DeviceId $id -Verbose:$VerbosePreference
-            foreach ($permissionName in $Permission) {
-                if ($permissionName.Contains(' ')) {
-                    Write-Error "Permission '$permissionName' can't contain any space"
-                    continue
-                }
+            if ($Fast) {
+                $supportedFeatures = Get-AdbFeature -DeviceId $id -Verbose:$VerbosePreference
+                foreach ($featureName in $Feature) {
+                    if ($featureName.Contains(' ')) {
+                        Write-Error "Feature '$featureName' can't contain any space"
+                        continue
+                    }
 
-                $permissionName -in $supportedFeatures
+                    $featureName -in $supportedFeatures
+                }
+            }
+            else {
+                foreach ($featureName in $Feature) {
+                    if ($featureName.Contains(' ')) {
+                        Write-Error "Feature '$featureName' can't contain any space"
+                        continue
+                    }
+
+                    $result = Invoke-AdbExpression -DeviceId $id -Command "shell pm has-feature $featureName" -Verbose:$VerbosePreference
+
+                    [bool]::Parse($result)
+                }
             }
         }
     }
