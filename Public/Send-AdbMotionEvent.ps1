@@ -1,9 +1,13 @@
-function Send-AdbTap {
+function Send-AdbMotionEvent {
 
     [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'Default')]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
+
+        [ValidateSet("Down", "Up", "Move")]
+        [Parameter(Mandatory)]
+        [string] $MotionEvent,
 
         [Parameter(Mandatory, ParameterSetName = 'Default')]
         [float] $X,
@@ -17,8 +21,22 @@ function Send-AdbTap {
         [switch] $DisableCoordinateCheck
     )
 
+    begin {
+        $motionEventUpperCase = switch ($MotionEvent) {
+            'Down' { 'DOWN' }
+            'Up' { 'UP' }
+            'Move' { 'MOVE' }
+        }
+    }
+
     process {
         foreach ($id in $DeviceId) {
+            $apiLevel = Get-AdbApiLevel -DeviceId $id -Verbose:$false
+            if ($apiLevel -lt 29) {
+                Write-Error "Motion event not supported for device with id: '$id' and API level '$apiLevel'. Only API levels 29 and above are supported."
+                continue
+            }
+
             switch ($PSCmdlet.ParameterSetName) {
                 'Default' {
                     $positionX = $X
@@ -49,7 +67,7 @@ function Send-AdbTap {
                 continue
             }
 
-            Invoke-AdbExpression -DeviceId $id -Command "shell input tap $positionX $positionY" -Verbose:$VerbosePreference | Out-Null
+            Invoke-AdbExpression -DeviceId $id -Command "shell input motionevent $motionEventUpperCase $positionX $positionY" -Verbose:$VerbosePreference | Out-Null
         }
     }
 }
