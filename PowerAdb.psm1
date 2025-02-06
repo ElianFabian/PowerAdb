@@ -24,9 +24,11 @@ foreach ($import in @($PublicFunction + $PrivateFunction)) {
     }
 }
 
+$rightFiles = $PublicFunction | Where-Object {
+    $_.FullName -notin $incorrectFiles
+}
 
-. "$PSScriptRoot/ArgumentCompleter.ps1"
-
+. "$PSScriptRoot/ArgumentCompleter.ps1" -PublicFunctionFileName $rightFiles
 
 if (-not (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue)) {
     $startThreadJobContent = Get-Content -LiteralPath "$PSScriptRoot/External/ThreadJob/Microsoft.PowerShell.ThreadJob.cs" -Raw
