@@ -4,6 +4,8 @@ function Start-AdbTcpIp {
     param (
         [Parameter(Mandatory)]
         [string[]] $DeviceId,
+
+        [Parameter(Mandatory)]
         [int] $Port
     )
 
