@@ -10,7 +10,7 @@ function Enable-AdbWifi {
         foreach ($id in $DeviceId) {
             $apiLevel = Get-AdbApiLevel -DeviceId $id -Verbose:$false
             if ($apiLevel -lt 30) {
-                Write-Error "Enable wifi is not supported for device with id '$id' with API level of '$apiLevel'. Only API levels 30 and above are supported."
+                Write-ApiLevelError -DeviceId $id -ApiLevelLessThan 30
                 continue
             }
 

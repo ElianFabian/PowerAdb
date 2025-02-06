@@ -15,7 +15,7 @@ function Get-AdbScreenDensity {
         foreach ($id in $DeviceId) {
             $apiLevel = Get-AdbApiLevel -DeviceId $id -Verbose:$false
             if ($apiLevel -lt 18) {
-                Write-Error "Screen density is not supported for device with id '$id' with API level of '$apiLevel'. Only API levels 18 and above are supported."
+                Write-ApiLevelError -DeviceId $id -ApiLevelLessThan 18
                 continue
             }
 

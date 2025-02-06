@@ -31,7 +31,7 @@ function Remove-AdbSetting {
         foreach ($id in $DeviceId) {
             $apiLevel = Get-AdbApiLevel -DeviceId $id -Verbose:$false
             if ($apiLevel -lt 21) {
-                Write-Error "Removing keys is not supported for device with id '$id' with API level of '$apiLevel'. Only API levels 21 and above are supported."
+                Write-ApiLevelError -DeviceId $id -ApiLevelLessThan 21
                 continue
             }
 

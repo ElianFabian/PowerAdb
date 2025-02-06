@@ -10,7 +10,7 @@ function Get-AdbRealPhysicalDensity {
         foreach ($id in $DeviceId) {
             $apiLevel = Get-AdbApiLevel -DeviceId $id
             if ($apiLevel -lt 17) {
-                Write-Error "Get real physical density is not supported for device with id '$id' with API level of '$apiLevel'. Only API levels 17 and above are supported."
+                Write-ApiLevelError -DeviceId $id -ApiLevelLessThan 17
                 continue
             }
             if ($apiLevel -lt 30) {

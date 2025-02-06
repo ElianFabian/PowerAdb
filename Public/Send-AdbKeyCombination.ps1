@@ -14,7 +14,7 @@ function Send-AdbKeyCombination {
         foreach ($id in $DeviceId) {
             $apiLevel = [uint32] (Get-AdbProperty -DeviceId $id -Name ro.build.version.sdk -Verbose:$false)
             if ($apiLevel -le 30) {
-                Write-Error "Send key combination is not supported for device with id '$id' with API level of '$apiLevel'. Only API levels 30 and above are supported."
+                Write-ApiLevelError -DeviceId $id -ApiLevelLessThan 30
                 continue
             }
             Invoke-AdbExpression -DeviceId $id -Command "shell input keycombination $($KeyCodes | ForEach-Object { "KEYCODE_$_" })" -Verbose:$VerbosePreference | Out-Null
