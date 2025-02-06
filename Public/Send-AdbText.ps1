@@ -9,12 +9,14 @@ function Send-AdbText {
         [string[]] $DeviceId,
 
         [Parameter(Mandatory)]
-        [string] $Text
+        [string] $Text,
+
+        [switch] $Force
     )
 
     begin {
-        if (Compare-Object -ReferenceObject ($script:Ascii.GetBytes($Text)) -DifferenceObject ($script:Latin1.GetBytes($Text))) {
-            Write-Error "'adb shell input text' only accepts ASCII characters. Text: '$Text'"
+        if ((Compare-Object -ReferenceObject ($script:Ascii.GetBytes($Text)) -DifferenceObject ($script:Latin1.GetBytes($Text))) -and -not $Force) {
+            Write-Error "'Send-AdbText' only accepts ASCII characters. Use the '-Force' switch to override this restriction. Text: $Text"
             $skip = $true
         }
     }
