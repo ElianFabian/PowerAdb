@@ -8,11 +8,10 @@ function Test-AdbLockScreen {
 
     process {
         foreach ($id in $DeviceId) {
+            # Get-TopActivity returns null if the user is on the lock screen
             $topActivity = Get-AdbTopActivity -DeviceId $id -Verbose:$false
 
-            $isLocked = -not $topActivity
-
-            $isLocked
+            -not $topActivity
         }
     }
 }
