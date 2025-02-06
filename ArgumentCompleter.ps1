@@ -133,9 +133,9 @@ Register-ArgumentCompleter -CommandName @(
 
     $keys = [string[]] (Get-AdbSetting -DeviceId $deviceId -Namespace $namespace -List -Verbose:$false | Select-Object -ExpandProperty Key)
     $startMatches = [string[]] ($keys | Where-Object { $_ -like "$wordToComplete*" })
-    $containMatches = [string[]] ($keys | Where-Object { $_ -like "*$wordToComplete*" -and $_ -notlike "$wordToComplete*" })
+    $containMatches = [string[]] ($keys | Where-Object { $_ -like "*$wordToComplete*" })
 
-    $startMatches + $containMatches
+    @($startMatches; $containMatches) | Select-Object -Unique
 }
 
 
