@@ -23,7 +23,7 @@ function Test-AdbLocation {
                 $locationProviders -ceq 'gps,network' -or $locationProviders -ceq 'gps' -or $locationProviders -ceq 'network'
             }
             else {
-                Write-Error "Unsupported API level: '$apiLevel'. Only API levels 17 and above are supported."
+                Write-ApiLevelError -DeviceId $id -ApiLevelLessThan 17
             }
         }
     }
