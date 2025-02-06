@@ -11,6 +11,10 @@ function Show-AdbDevice {
     }
 
     $names = [string[]] ($devices | Get-AdbDeviceName)
+    if (-not $names) {
+        Write-Error "Couldn't get device names"
+        return
+    }
     $longestDeviceName = $names | ForEach-Object { $_.Length } | Measure-Object -Maximum | Select-Object -ExpandProperty Maximum
     $longestIdLength = $devices | ForEach-Object { $_.Length } | Measure-Object -Maximum | Select-Object -ExpandProperty Maximum
 
