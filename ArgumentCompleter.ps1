@@ -80,6 +80,7 @@ Register-ArgumentCompleter -CommandName @(
     "Get-AdbAppLastUpdateDate"
     "Get-AdbAppInfo"
     "Stop-AdbService"
+    "Get-AdbPackagePid"
 ) -ParameterName ApplicationId -ScriptBlock $packageCompletion
 
 Register-ArgumentCompleter -CommandName @(
