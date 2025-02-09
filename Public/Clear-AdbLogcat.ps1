@@ -45,7 +45,7 @@ function Clear-AdbLogcat {
 
     process {
         foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $id -Command "logcat --clear$adbArgs"
+            Invoke-AdbExpression -DeviceId $id -Command "logcat --clear$adbArgs" -Verbose:$VerbosePreference
         }
     }
 }

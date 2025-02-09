@@ -191,7 +191,7 @@ function Get-AdbLogcat {
 
     process {
         foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $DeviceId -Command "logcat$adbArgs"
+            Invoke-AdbExpression -DeviceId $DeviceId -Command "logcat$adbArgs" -Verbose:$VerbosePreference
         }
     }
 }
