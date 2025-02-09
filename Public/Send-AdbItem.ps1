@@ -14,7 +14,7 @@ function Send-AdbItem {
 
     process {
         foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $id -Command "push '""$LiteralLocalPath""' '""$LiteralRemotePath""'" -Verbose:$VerbosePreference
+            Invoke-AdbExpression -DeviceId $id -Command "push '$LiteralLocalPath' '$LiteralRemotePath'" -Verbose:$VerbosePreference
         }
     }
 }
