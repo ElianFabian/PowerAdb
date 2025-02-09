@@ -42,6 +42,7 @@ function Get-AdbLogcat {
         [Parameter(ParameterSetName = "Last")]
         [Parameter(ParameterSetName = "LastAt")]
         [Parameter(ParameterSetName = "MaxCount")]
+        [Parameter(ParameterSetName = "IgnoreOld")]
         [Parameter(Mandatory, ParameterSetName = "Print")]
         [string] $Pattern,
 
@@ -57,6 +58,9 @@ function Get-AdbLogcat {
             "^\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+$|^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+$|^\d+\.\d+$"
         )]
         [string] $LastAt,
+
+        [Parameter(ParameterSetName = "IgnoreOld")]
+        [switch] $IgnoreOld,
 
         [Parameter(ParameterSetName = "Last")]
         [Parameter(ParameterSetName = "LastAt")]
@@ -145,6 +149,11 @@ function Get-AdbLogcat {
             elseif ($LastAt) {
                 $countOrTimeFilterArg = " -t '$LastAt'"
             }
+        }
+
+        if ($IgnoreOld) {
+            $currentDate = Get-Date -Format "yyyy-MM-dd HH:mm:ss.fff"
+            $countOrTimeFilterArg = " -T '$currentDate'"
         }
 
         if ($FilteredTag) {
