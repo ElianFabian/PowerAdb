@@ -3,12 +3,18 @@ function Get-AdbProcess {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId
+        [string[]] $DeviceId,
+
+        [int[]] $Id
     )
 
     process {
-        foreach ($id in $DeviceId) {
-            $rawProcesses = Invoke-AdbExpression -DeviceId $id -Command "shell ps" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
+        foreach ($device in $DeviceId) {
+            if ($Id) {
+                $idArg = " -p $($Id -join ',')"
+            }
+
+            $rawProcesses = Invoke-AdbExpression -DeviceId $device -Command "shell ps$idArg" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
             | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
 
             $header = $rawProcesses[0]
@@ -31,7 +37,7 @@ function Get-AdbProcess {
                     $fields = $fields | Where-Object { $_ }
 
                     $user = $fields[0]
-                    $id = $fields[1]
+                    $processId = $fields[1]
                     $parentId = $fields[2]
                     $virtualMemorySize = $fields[3]
                     $residentSetSize = $fields[4]
@@ -43,7 +49,7 @@ function Get-AdbProcess {
 
                     $output = [PSCustomObject]@{
                         User              = $user
-                        Id                = $id
+                        Id                = $processId
                         ParentId          = $parentId
                         VirtualMemorySize = $virtualMemorySize
                         ResidentSetSize   = $residentSetSize
