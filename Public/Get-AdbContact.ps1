@@ -19,8 +19,6 @@ function Get-AdbContact {
 
     process {
         foreach ($device in $DeviceId) {
-            Repair-OutputRendering
-
             Invoke-AdbExpression -DeviceId $device -Command "shell content query --uri content://contacts/people$contactIdArg" -Verbose:$VerbosePreference `
             | Where-Object { $_ -notlike '*No result found.*' } `
             | Out-String -Stream `
