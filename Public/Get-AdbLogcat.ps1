@@ -69,18 +69,11 @@ function Get-AdbLogcat {
         [Parameter(ParameterSetName = "Print")]
         [switch] $PrintUntil,
 
-        [string] $Tag,
-
-        [ValidateSet(
-            "Verbose",
-            "Debug",
-            "Info",
-            "Warn",
-            "Error",
-            "Fatal",
-            "Silent"
-        )]
-        [string] $Priority
+        # Valid formats:
+        # - Tag:Priority
+        # - Tag
+        # - :Priority
+        [string[]] $FilteredTag
     )
 
     begin {
@@ -92,16 +85,6 @@ function Get-AdbLogcat {
             "Crash" { "crash" }
             "Kernel" { "kernel" }
             "Security" { "security" }
-            default { $null }
-        }
-        $priorityCapital = switch ($Priority) {
-            "Verbose" { "V" }
-            "Debug" { "D" }
-            "Info" { "I" }
-            "Warn" { "W" }
-            "Error" { "E" }
-            "Fatal" { "F" }
-            "Silent" { "S" }
             default { $null }
         }
         $formatLowerCase = switch ($Format) {
@@ -164,14 +147,8 @@ function Get-AdbLogcat {
             }
         }
 
-        if ($Tag -and $priorityCapital) {
-            $filterspec = " $Tag`:$priorityCapital"
-        }
-        elseif ($Tag) {
-            $filterspec = " $Tag"
-        }
-        elseif ($priorityCapital) {
-            $filterspec = " *:$priorityCapital"
+        if ($FilteredTag) {
+            $filterspec = " $($FilteredTag -join ' ') *:S"
         }
 
         $adbArgs = @(
