@@ -8,20 +8,20 @@ function Get-AdbContact {
         [Parameter(Mandatory)]
         [string] $DeviceId,
 
-        [long] $ContactId = $null
+        [long] $Id = $null
     )
 
     begin {
-        if ($ContactId) {
-            $contactIdArg = "/$ContactId"
+        if ($Id) {
+            $contactIdArg = "/$Id"
         }
     }
 
     process {
-        foreach ($id in $DeviceId) {
+        foreach ($device in $DeviceId) {
             Repair-OutputRendering
 
-            Invoke-AdbExpression -DeviceId $id -Command "shell content query --uri content://contacts/people$contactIdArg" -Verbose:$VerbosePreference `
+            Invoke-AdbExpression -DeviceId $device -Command "shell content query --uri content://contacts/people$contactIdArg" -Verbose:$VerbosePreference `
             | Where-Object { $_ -notlike '*No result found.*' } `
             | Out-String -Stream `
             | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } `
