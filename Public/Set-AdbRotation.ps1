@@ -6,7 +6,13 @@ function Set-AdbRotation {
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
 
-        [ValidateSet('Portrait', 'Landscape', 'ReversePortrait', 'ReverseLandscape')]
+        [ValidateSet(
+            'Portrait',
+            'Landscape',
+            'ReversePortrait',
+            'ReverseLandscape',
+            '0', '1', '2', '3'
+        )]
         [Parameter(Mandatory)]
         [string] $Rotation
     )
@@ -17,6 +23,7 @@ function Set-AdbRotation {
             Landscape { 1 }
             ReversePortrait { 2 }
             ReverseLandscape { 3 }
+            default { $Rotation }
         }
     }
 
