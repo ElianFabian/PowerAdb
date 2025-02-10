@@ -10,13 +10,13 @@ function Get-AdbNavigationBarFrame {
     process {
         foreach ($id in $DeviceId) {
             Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys window" -Verbose:$VerbosePreference `
-            | Select-String -Pattern "(type=ITYPE_NAVIGATION_BAR|type=navigationBars) frame=\[(?<Left>\d+),(?<Top>\d+)\]\[(?<Right>\d+),(?<Bottom>\d+)\]" `
+            | Select-String -Pattern "(type=TYPE_BOTTOM_GESTURES|type=ITYPE_NAVIGATION_BAR|type=navigationBars) frame=\[(?<Left>\d+),(?<Top>\d+)\]\[(?<Right>\d+),(?<Bottom>\d+)\]" `
             | Select-Object -ExpandProperty Matches -First 1 `
             | ForEach-Object {
                 $output = [PSCustomObject] @{
                     DeviceId = $id
-                    Top      = [int] $_.Groups["Top"].Value
                     Left     = [int] $_.Groups["Left"].Value
+                    Top      = [int] $_.Groups["Top"].Value
                     Right    = [int] $_.Groups["Right"].Value
                     Bottom   = [int] $_.Groups["Bottom"].Value
                 }
