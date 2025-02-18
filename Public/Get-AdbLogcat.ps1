@@ -41,9 +41,8 @@ function Get-AdbLogcat {
         [Parameter(ParameterSetName = "Default")]
         [Parameter(ParameterSetName = "Last")]
         [Parameter(ParameterSetName = "LastAt")]
-        [Parameter(ParameterSetName = "MaxCount")]
         [Parameter(ParameterSetName = "IgnoreOld")]
-        [Parameter(Mandatory, ParameterSetName = "Print")]
+        [Parameter(ParameterSetName = "Print")]
         [string] $Pattern,
 
         [Parameter(ParameterSetName = "Last")]
@@ -53,25 +52,24 @@ function Get-AdbLogcat {
         # - MM-DD hh:mm:ss.mmm...
         # - YYYY-MM-DD hh:mm:ss.mmm...
         # - sssss.mmm...
+        [Parameter(ParameterSetName = "Print")]
         [Parameter(ParameterSetName = "LastAt")]
         [ValidatePattern(
             "^\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+$|^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+$|^\d+\.\d+$"
         )]
         [string] $LastAt,
 
+        [Parameter(ParameterSetName = "Print")]
         [Parameter(ParameterSetName = "IgnoreOld")]
         [switch] $IgnoreOld,
 
+        [Parameter(ParameterSetName = "Print")]
         [Parameter(ParameterSetName = "Last")]
         [Parameter(ParameterSetName = "LastAt")]
         [switch] $Block,
 
         [Parameter(Mandatory, ParameterSetName = "Print")]
-        [Parameter(ParameterSetName = "MaxCount")]
-        [int] $MaxCount,
-
-        [Parameter(ParameterSetName = "Print")]
-        [switch] $PrintUntil,
+        [int] $StopAtMatchCount,
 
         # Valid formats:
         # - Tag:Priority
@@ -125,12 +123,10 @@ function Get-AdbLogcat {
             $binaryArg = " --binary"
         }
         if ($Pattern) {
-            $regexArg = " --regex=$Pattern"
+            $regexArg = " --regex='$Pattern'"
         }
-        if ($MaxCount) {
-            $countOrTimeFilterArg = " --max-count=$MaxCount"
-        }
-        if ($PrintUntil) {
+        if ($PSCmdlet.ParameterSetName -eq "Print") {
+            $maxCountArg = " --max-count=$StopAtMatchCount"
             $printArg = " --print"
         }
 
@@ -170,6 +166,7 @@ function Get-AdbLogcat {
             $binaryArg,
             $regexArg,
             $printArg,
+            $maxCountArg,
             $countOrTimeFilterArg,
             $filterspec
         ) -join ""
