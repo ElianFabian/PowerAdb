@@ -9,8 +9,12 @@ function Get-AdbStatusBarFrame {
 
     process {
         foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys window" -Verbose:$VerbosePreference `
-            | Select-String -Pattern "(type=TYPE_TOP_GESTURES|type=ITYPE_STATUS_BAR|type=statusBars) frame=\[(?<Left>\d+),(?<Top>\d+)\]\[(?<Right>\d+),(?<Bottom>\d+)\]" `
+            $rawData = Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys window d" -Verbose:$VerbosePreference
+            if (-not ($rawData | Select-String -Pattern $script:StatusBarFramePattern)) {
+                $rawData = Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys window w" -Verbose:$VerbosePreference
+            }
+
+            $rawData | Select-String -Pattern $script:StatusBarFramePattern `
             | Select-Object -ExpandProperty Matches -First 1 `
             | ForEach-Object {
                 $output = [PSCustomObject] @{
@@ -29,3 +33,7 @@ function Get-AdbStatusBarFrame {
         }
     }
 }
+
+
+
+$script:StatusBarFramePattern = "m?(type=TYPE_TOP_GESTURES|type=ITYPE_STATUS_BAR|type=statusBars),? m?frame=\[(?<Left>\d+),(?<Top>\d+)\]\[(?<Right>\d+),(?<Bottom>\d+)\]"
