@@ -7,31 +7,7 @@ function Get-AdbAppInfo {
         [string[]] $DeviceId,
 
         [Parameter(Mandatory)]
-        [string[]] $ApplicationId,
-
-        [switch] $AllInfo,
-
-        [switch] $VersionCode,
-
-        [switch] $VersionName,
-
-        [switch] $MinSdkVersion,
-
-        [switch] $TargetSdkVersion,
-
-        [switch] $FirstInstallDate,
-
-        [switch] $LastUpdateDate,
-
-        [switch] $Sha256Signature,
-
-        [switch] $ForceQueryable,
-
-        [switch] $InstallerPackageName,
-
-        [switch] $PackageFlags,
-
-        [switch] $PrivatePackageFlags
+        [string[]] $ApplicationId
     )
 
     process {
@@ -40,113 +16,324 @@ function Get-AdbAppInfo {
                 # For more information: https://developer.android.com/guide/topics/manifest/application-element
                 $rawData = Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys package '$appId'" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false
 
-                if ($AllInfo -or $VersionCode) {
-                    $versionCodeValue = $rawData `
-                    | Select-String -Pattern "versionCode=(\d+)" `
-                    | Select-Object -ExpandProperty Matches -First 1 `
-                    | ForEach-Object { [uint32] $_.Groups[1].Value }
+                $output = [PSCustomObject] @{
+                    DeviceId      = $id
+                    ApplicationId = $appId
                 }
-                if ($AllInfo -or $VersionName) {
-                    $versionNameValue = $rawData `
-                    | Select-String -Pattern "versionName=(\S+)" `
-                    | Select-Object -ExpandProperty Matches -First 1 `
-                    | ForEach-Object { $_.Groups[1].Value }
-                }
-                if ($AllInfo -or $MinSdkVersion) {
-                    $minSdkVersionValue = $rawData `
-                    | Select-String -Pattern "minSdk=(\d+)" `
-                    | Select-Object -ExpandProperty Matches -First 1 `
-                    | ForEach-Object { [uint32] $_.Groups[1].Value }
-                }
-                if ($AllInfo -or $TargetSdkVersion) {
-                    $targetSdkVersionValue = $rawData `
-                    | Select-String -Pattern "targetSdk=(\d+)" `
-                    | Select-Object -ExpandProperty Matches -First 1 `
-                    | ForEach-Object { [uint32] $_.Groups[1].Value }
-                }
-                if ($AllInfo -or $FirstInstallDate) {
-                    $firstInstallDateValue = $rawData `
-                    | Select-String -Pattern "firstInstallTime=(\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d)" `
-                    | Select-Object -ExpandProperty Matches -First 1 `
-                    | ForEach-Object { Get-Date -Date $_.Groups[1].Value }
-                }
-                if ($AllInfo -or $LastUpdateDate) {
-                    $lastUpdateDateValue = $rawData `
-                    | Select-String -Pattern "lastUpdateTime=(\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d)" `
-                    | Select-Object -ExpandProperty Matches -First 1 `
-                    | ForEach-Object { Get-Date -Date $_.Groups[1].Value }
-                }
-                if ($AllInfo -or $Sha256Signature) {
-                    $sha256SignatureValue = $rawData `
-                    | Select-String -Pattern "Signatures: \[(.+)\]" `
-                    | Select-Object -ExpandProperty Matches -First 1 `
-                    | ForEach-Object { $_.Groups[1].Value }
-                }
-                if ($AllInfo -or $ForceQueryable) {
-                    $forceQueryableValue = $rawData `
-                    | Select-String -Pattern "forceQueryable=(true|false)" `
-                    | Select-Object -ExpandProperty Matches -First 1 `
-                    | ForEach-Object { [bool]::Parse($_.Groups[1].Value) }
-                }
-                if ($AllInfo -or $InstallerPackageName) {
-                    $installerPackageNameValue = $rawData `
-                    | Select-String -Pattern "installerPackageName=(.+)" `
-                    | Select-Object -ExpandProperty Matches -First 1 `
-                    | ForEach-Object { $_.Groups[1].Value }
-                }
-                if ($AllInfo -or $PackageFlags) {
-                    $rawFlags = $rawData `
-                    | Select-String -Pattern "flags=\[\s.+\s\]" `
-                    | Select-Object -ExpandProperty Matches -First 1 `
-                    | ForEach-Object { $_.Value }
 
-                    if ($rawFlags) {
-                        $packageFlagsValue = [PSCustomObject]@{
-                            AllowBackup          = $rawFlags.Contains("ALLOW_BACKUP")
-                            AllowClearUserData   = $rawFlags.Contains("ALLOW_CLEAR_USER_DATA")
-                            AllowTaskReparenting = $rawFlags.Contains("ALLOW_TASK_REPARENTING")
-                            Debuggable           = $rawFlags.Contains("DEBUGGABLE")
-                            DirectBootAware      = $rawFlags.Contains("PARTIALLY_DIRECT_BOOT_AWARE")
-                            HasCode              = $rawFlags.Contains("HAS_CODE")
-                            LargeHeap            = $rawFlags.Contains("LARGE_HEAP")
-                            KillAfterRestore     = $rawFlags.Contains("KILL_AFTER_RESTORE")
-                            TestOnly             = $rawFlags.Contains("TEST_ONLY")
-                            VmSafeMode           = $rawFlags.Contains("VM_SAFE_MODE")
-                        }
+                $lineEnumerator = ConvertToLineEnumerator ($rawData.GetEnumerator())
+
+                $lineEnumerator.MoveNextIgnoringBlank() > $null
+
+                if ($lineEnumerator.Current.Contains('Activity Resolver Table:')) {
+                    $output | Add-Member -MemberType NoteProperty -Name 'ActivityResolverTable' -Value ([PSCustomOBject] @{})
+                    $lineEnumerator.MoveNextIgnoringBlank() > $null
+
+                    if ($lineEnumerator.Current.Contains('  Schemes:')) {
+                        $lineEnumerator.MoveNextIgnoringBlank() > $null
+                        $output.ActivityResolverTable | Add-Member -MemberType NoteProperty -Name 'Schemes' -Value @()
+
+                        ParseScheme -LineEnumerator $lineEnumerator -InputObject $output.ActivityResolverTable
+                    }
+                    if ($lineEnumerator.Current.Contains('Non-Data Actions:')) {
+                        $output.ActivityResolverTable | Add-Member -MemberType NoteProperty -Name 'NonDataActions' -Value @()
+                        $lineEnumerator.MoveNextIgnoringBlank() > $null
+
+                        ParseNonDataAction -LineEnumerator $lineEnumerator -InputObject $output.ActivityResolverTable -ComponentType 'Activity'
                     }
                 }
-                if ($AllInfo -or $PrivatePackageFlags) {
-                    $privateRawFlags = $rawData `
-                    | Select-String -Pattern "privateFlags=\[\s.+\s\]" `
-                    | Select-Object -ExpandProperty Matches -First 1 `
-                    | ForEach-Object { $_.Value }
+                if ($lineEnumerator.Current.Contains('Receiver Resolver Table:')) {
+                    $output | Add-Member -MemberType NoteProperty -Name 'ReceiverResolverTable' -Value ([PSCustomOBject] @{})
+                    $lineEnumerator.MoveNextIgnoringBlank() > $null
 
-                    if ($privateRawFlags) {
-                        $privatePackageFlagsValue = [PSCustomObject]@{
-                            AllowAudioPlaybackCapture     = $privateRawFlags.Contains("ALLOW_AUDIO_PLAYBACK_CAPTURE")
-                            AllowNativeHeapPointerTagging = $privateRawFlags.Contains("PRIVATE_FLAG_ALLOW_NATIVE_HEAP_POINTER_TAGGING")
-                            # The opposite flag for ResizableActivity is "PRIVATE_FLAG_ACTIVITIES_RESIZE_MODE_UNRESIZEABLE"
-                            ResizableActivity             = $privateRawFlags.Contains("PRIVATE_FLAG_ACTIVITIES_RESIZE_MODE_RESIZEABLE")
-                        }
+                    if ($lineEnumerator.Current.Contains('Non-Data Actions:')) {
+                        $output.ReceiverResolverTable | Add-Member -MemberType NoteProperty -Name 'NonDataActions' -Value @()
+                        $lineEnumerator.MoveNextIgnoringBlank() > $null
+
+                        ParseNonDataAction -LineEnumerator $lineEnumerator -InputObject $output.ReceiverResolverTable -ComponentType 'Receiver'
                     }
                 }
+                if ($lineEnumerator.Current.Contains('Service Resolver Table:')) {
+                    $output | Add-Member -MemberType NoteProperty -Name 'ServiceResolverTable' -Value ([PSCustomOBject] @{})
+                    $lineEnumerator.MoveNextIgnoringBlank() > $null
 
-                [PSCustomObject]@{
-                    DeviceId             = $id
-                    ApplicationId        = $appId
-                    VersionCode          = $versionCodeValue
-                    VersionName          = $versionNameValue
-                    MinSdkVersion        = $minSdkVersionValue
-                    TargetSdkVersion     = $targetSdkVersionValue
-                    FirstInstallDate     = $firstInstallDateValue
-                    LastUpdateDate       = $lastUpdateDateValue
-                    Sha256Signature      = $sha256SignatureValue
-                    ForceQueryable       = $forceQueryableValue
-                    InstallerPackageName = $installerPackageNameValue
-                    PackageFlags         = $packageFlagsValue
-                    PrivatePackageFlags  = $privatePackageFlagsValue
+                    if ($lineEnumerator.Current.Contains('Non-Data Actions:')) {
+                        $output.ServiceResolverTable | Add-Member -MemberType NoteProperty -Name 'NonDataActions' -Value @()
+                        $lineEnumerator.MoveNextIgnoringBlank() > $null
+
+                        ParseNonDataAction -LineEnumerator $lineEnumerator -InputObject $output.ServiceResolverTable -ComponentType 'Service'
+                    }
                 }
+                while ($lineEnumerator.Current.Contains('Permissions:')) {
+                    if ($output.PSObject.Properties.Name -notcontains 'Permissions') {
+                        $output | Add-Member -MemberType NoteProperty -Name 'Permissions' -Value @()
+                    }
+
+                    $lineEnumerator.MoveNextIgnoringBlank() > $null
+                    while ($lineEnumerator.Current -match $script:PermissionPattern) {
+                        $permissionMatches = $lineEnumerator.Current | Select-String -Pattern $script:PermissionPattern `
+                        | Select-Object -ExpandProperty Matches -First 1
+
+                        $permissionMatchGroups = $permissionMatches.Groups
+
+                        $permission = [PSCustomObject]@{
+                            Name = $permissionMatchGroups['permission'].Value
+                            Hash = $permissionMatchGroups['permissionHash'].Value
+                        }
+
+                        $output.Permissions += $permission
+
+                        $lineEnumerator.MoveNextIgnoringBlank() > $null
+                        $lineEnumerator.MoveNextIgnoringBlank() > $null
+                        $lineEnumerator.MoveNextIgnoringBlank() > $null
+                        $lineEnumerator.MoveNextIgnoringBlank() > $null
+                    }
+                }
+                if ($lineEnumerator.Current.Contains('Registered ContentProviders:')) {
+                    if ($output.PSObject.Properties.Name -notcontains 'RegisteredContentProviders') {
+                        $output | Add-Member -MemberType NoteProperty -Name 'RegisteredContentProviders' -Value @()
+                    }
+
+                    $lineEnumerator.MoveNextIgnoringBlank() > $null
+                    $lineEnumerator.MoveNextIgnoringBlank() > $null
+                    while ($lineEnumerator.Current -match $script:ProviderPattern) {
+                        $providerMatches = $lineEnumerator.Current | Select-String -Pattern $script:ProviderPattern `
+                        | Select-Object -ExpandProperty Matches -First 1
+
+                        $providerMatchGroups = $providerMatches.Groups
+
+                        $provider = [PSCustomObject]@{
+                            Package            = $providerMatchGroups['package'].Value
+                            ComponentClassName = $providerMatchGroups['componentClassName'].Value
+                            Hash               = $providerMatchGroups['providerHash'].Value
+                        }
+
+                        $output.RegisteredContentProviders += $provider
+
+                        $lineEnumerator.MoveNextIgnoringBlank() > $null
+                        if ($lineEnumerator.Current -notmatch '(?<package>[a-zA-Z0-9\.]+)\/(?<componentClassName>[a-zA-Z0-9\.\/_]+):') {
+                            break
+                        }
+                        $lineEnumerator.MoveNextIgnoringBlank() > $null
+                    }
+                }
+                if ($lineEnumerator.Current.Contains('ContentProvider Authorities:')) {
+                    if ($output.PSObject.Properties.Name -notcontains 'ContentProviderAuthorities') {
+                        $output | Add-Member -MemberType NoteProperty -Name 'ContentProviderAuthorities' -Value @()
+                    }
+
+                    $lineEnumerator.MoveNextIgnoringBlank() > $null
+                    $lineEnumerator.MoveNextIgnoringBlank() > $null
+                    while ($lineEnumerator.Current -match $script:ProviderPattern) {
+                        $providerMatches = $lineEnumerator.Current | Select-String -Pattern $script:ProviderPattern `
+                        | Select-Object -ExpandProperty Matches -First 1
+
+                        $providerMatchGroups = $providerMatches.Groups
+
+                        $provider = [PSCustomObject]@{
+                            Package            = $providerMatchGroups['package'].Value
+                            ComponentClassName = $providerMatchGroups['componentClassName'].Value
+                            Hash               = $providerMatchGroups['providerHash'].Value
+                        }
+
+                        $output.ContentProviderAuthorities += $provider
+
+                        $lineEnumerator.MoveNextIgnoringBlank() > $null
+                        $lineEnumerator.MoveNextIgnoringBlank() > $null
+                        if ($lineEnumerator.Current -notmatch '\[(?<package>[a-zA-Z0-9\.\-]+)\]:') {
+                            break
+                        }
+                        $lineEnumerator.MoveNextIgnoringBlank() > $null
+                    }
+                }
+                if ($lineEnumerator.Current.Contains('Key Set Manager:')) {
+                    $lineEnumerator.MoveNextIgnoringBlank() > $null
+                    $lineEnumerator.MoveNextIgnoringBlank() > $null
+
+                    $signingKeySetsMatches = $lineEnumerator.Current | Select-String -Pattern 'Signing KeySets: (?<keySets>\d+)'
+                    $output | Add-Member -MemberType NoteProperty -Name 'SigningKeySets' -Value ([int] $signingKeySetsMatches.Matches[0].Groups['keySets'].Value)
+                }
+
+                $output
             }
+        }
+    }
+}
+
+
+
+$script:ComponentPattern = '(?<componentHash>[a-f0-9]+)\s(?<package>[a-zA-Z0-9\.]+)\/(?<componentClassName>[a-zA-Z0-9\.\/_]+)\sfilter\s(?<filterHash>[a-f0-9]+)'
+$script:ActionPattern = '\s{6}([\w]+\.[\w\.\d_]+):'
+$script:AttributePattern = '(?<attributeName>\w+)(:\s|=)(?<value>[^,^\s]+)'
+$script:PermissionPattern = ' Permission \[(?<permission>[a-zA-Z0-9\._]+)\] \((?<permissionHash>[a-f0-9]+)\):'
+$script:ProviderPattern = 'Provider{(?<providerHash>[a-f0-9]+) (?<package>[a-zA-Z0-9\.]+)\/(?<componentClassName>[a-zA-Z0-9\.\/_]+)}'
+
+
+
+function ConvertToLineEnumerator {
+
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory)]
+        [System.Collections.IEnumerator] $InputObject
+    )
+
+    process {
+        $lineEnumerator = [PSCustomObject]@{
+            enumerator = $InputObject
+        }
+
+        $lineEnumerator | Add-Member -MemberType ScriptMethod -Name MoveNextIgnoringBlank -Value {
+            while ($this.enumerator.MoveNext()) {
+                if ([string]::IsNullOrWhiteSpace($this.enumerator.Current)) {
+                    continue
+                }
+                return $true
+            }
+            return $false
+        }
+        $lineEnumerator | Add-Member -MemberType ScriptProperty -Name Current -Value {
+            $this.enumerator.Current
+        }
+
+        return $lineEnumerator
+    }
+}
+
+function ParseScheme {
+
+    [OutputType([PSCustomObject[]])]
+    param (
+        [Parameter(Mandatory)]
+        [PSCustomObject] $LineEnumerator,
+
+        [Parameter(Mandatory)]
+        [PSCustomObject] $InputObject
+    )
+
+    while ($LineEnumerator.Current -match "\s{6}\w+:") {
+        $scheme = [PSCustomObject]@{
+            Name = $LineEnumerator.Current.Trim().Replace(':', '')
+        }
+
+        $LineEnumerator.MoveNextIgnoringBlank() > $null
+
+        ParseComponent -LineEnumerator $LineEnumerator -InputObject $scheme -ComponentType 'Activity'
+
+        $InputObject.Schemes += $scheme
+    }
+}
+
+function ParseNonDataAction {
+
+    [OutputType([PSCustomObject[]])]
+    param (
+        [Parameter(Mandatory)]
+        [PSCustomObject] $LineEnumerator,
+
+        [Parameter(Mandatory)]
+        [PSCustomObject] $InputObject,
+
+        [string] $ComponentType
+    )
+
+    while ($LineEnumerator.Current -match $script:ActionPattern) {
+        $actionMatches = $LineEnumerator.Current | Select-String -Pattern $script:ActionPattern `
+        | Select-Object -ExpandProperty Matches -First 1
+
+        $actionMatchGroups = $actionMatches.Groups
+
+        $actionName = $actionMatchGroups[1].Value
+
+        $action = [PSCustomObject]@{
+            Name = $actionName
+        }
+
+        $LineEnumerator.MoveNextIgnoringBlank() > $null
+
+        ParseComponent -LineEnumerator $LineEnumerator -InputObject $action -ComponentType $ComponentType
+
+        $InputObject.NonDataActions += $action
+    }
+}
+
+
+function ParseComponent {
+
+    [OutputType([PSCustomObject[]])]
+    param (
+        [Parameter(Mandatory)]
+        [PSCustomObject] $LineEnumerator,
+
+        [Parameter(Mandatory)]
+        [PSCustomObject] $InputObject,
+
+        [string] $ComponentType
+    )
+
+    while ($LineEnumerator.Current -match $script:ComponentPattern) {
+        $rawComponentData = $lineEnumerator.Current
+
+        $componentMatches = $rawComponentData | Select-String -Pattern $script:ComponentPattern `
+        | Select-Object -ExpandProperty Matches -First 1
+
+        $componentMatchGroups = $componentMatches.Groups
+
+        $componentInfo = [PSCustomObject] @{
+            ComponentHash      = $componentMatchGroups['componentHash'].Value
+            Package            = $componentMatchGroups['package'].Value
+            ComponentClassName = $componentMatchGroups['componentClassName'].Value
+            FilterHash         = $componentMatchGroups['filterHash'].Value
+            Type               = $ComponentType
+        }
+
+        if ($InputObject.PSObject.Properties.Name -contains 'Components') {
+            $InputObject.Components += $componentInfo
+        }
+        else {
+            $InputObject | Add-Member -MemberType NoteProperty -Name 'Components' -Value @($componentInfo)
+        }
+
+        $lineEnumerator.MoveNextIgnoringBlank() > $null
+
+        ParseComponentAttribute -LineEnumerator $lineEnumerator -InputObject $componentInfo
+    }
+}
+
+function ParseComponentAttribute {
+
+    [OutputType([PSCustomObject[]])]
+    param (
+        [Parameter(Mandatory)]
+        [PSCustomObject] $LineEnumerator,
+
+        [Parameter(Mandatory)]
+        [PSCustomObject] $InputObject
+    )
+
+    while ($LineEnumerator.Current -match $script:AttributePattern) {
+        if ($InputObject.PSObject.Properties.Name -notcontains 'Properties') {
+            $properties = [PSCustomObject]@{}
+            $InputObject | Add-Member -MemberType NoteProperty -Name 'Properties' -Value $properties
+        }
+
+        $LineEnumerator.Current | Select-String -Pattern $script:AttributePattern -AllMatches `
+        | Select-Object -ExpandProperty Matches `
+        | ForEach-Object {
+            $attributeName = $_.Groups['attributeName'].Value
+            $attributeValue = $_.Groups['value'].Value.Trim('"')
+    
+            if ($attributeName -in $properties.PSObject.Properties.Name) {
+                if ($properties.$attributeName.Count -eq 1) {
+                    $properties.$attributeName = @($properties.$attributeName)
+                }
+                $properties.$attributeName += $attributeValue
+            }
+            else {
+                $properties | Add-Member -MemberType NoteProperty -Name $attributeName -Value $attributeValue
+            }
+
+            $LineEnumerator.MoveNextIgnoringBlank() > $null
         }
     }
 }
