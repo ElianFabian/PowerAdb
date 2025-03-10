@@ -65,6 +65,11 @@ function Get-AdbAppInfo {
 
                     $signingKeySetsMatches = $lineEnumerator.Current | Select-String -Pattern 'Signing KeySets: (?<keySets>\d+)'
                     $output | Add-Member -MemberType NoteProperty -Name 'SigningKeySets' -Value ([int] $signingKeySetsMatches.Matches[0].Groups['keySets'].Value)
+
+                    $lineEnumerator.MoveNextIgnoringBlank() > $null     
+                }
+                if ($lineEnumerator.Current.Contains('Packages:')) {
+                    ParsePackages -LineEnumerator $lineEnumerator -InputObject $output
                 }
 
                 $output
@@ -85,8 +90,7 @@ $script:FullMimeTypeHeaderPattern = '\s{6}[a-zA-Z*\d+_.]+\/[a-zA-Z*\d+_.-]+:'
 $script:BaseMimeTypeHeaderPattern = '\s{6}[a-zA-Z*\d+_.]+:'
 $script:WildMimeTypeHeaderPattern = '\s{6}[a-zA-Z*\d+_.]+:'
 $script:SchemeHeaderPattern = '\s{6}[\w.]*:'
-
-
+$script:PackageHeaderPattern = '\s{2}Package \[(?<package>[a-zA-Z0-9\.]+)\] \((?<packageHash>[a-f0-9]+)\):'
 
 function ConvertToLineEnumerator {
 
@@ -424,4 +428,117 @@ function ParseComponentAttribute {
 
         $LineEnumerator.MoveNextIgnoringBlank() > $null
     }
+}
+
+function ParsePackages {
+
+    param (
+        [Parameter(Mandatory)]
+        [PSCustomObject] $LineEnumerator,
+
+        [Parameter(Mandatory)]
+        [PSCustomObject] $InputObject
+    )
+
+    $InputObject | Add-Member -MemberType NoteProperty -Name 'Packages' -Value @()
+
+    $LineEnumerator.MoveNextIgnoringBlank() > $null
+    while ($LineEnumerator.Current -match $script:PackageHeaderPattern) {
+        $packageMatches = $LineEnumerator.Current | Select-String -Pattern $script:PackageHeaderPattern `
+        | Select-Object -ExpandProperty Matches -First 1
+
+        $package = [PSCustomObject]@{
+            Name = $packageMatches.Groups['package'].Value
+            Hash = $packageMatches.Groups['packageHash'].Value
+        }
+
+        $InputObject.Packages += $package
+
+        $properties = [PSCustomObject]@{}
+        $package | Add-Member -MemberType NoteProperty -Name 'Properties' -Value $properties
+
+
+        $LineEnumerator.MoveNextIgnoringBlank() > $null
+        while ($LineEnumerator.Current.EndsWith(':') -or $LineEnumerator.Current.Contains('=')) {
+            if ($LineEnumerator.Current.StartsWith('    User 0:')) {
+                # We don't plan to parse beyond User 0 yet
+                break
+            }
+
+            if ($LineEnumerator.Current.Contains('versionCode') -or $LineEnumerator.Current.Contains('userId') -or $LineEnumerator.Current.Contains('permissionsFixed')) {
+                $LineEnumerator.Current | Select-String -Pattern '(?<attributeName>\w+)=(?<attributeValue>(\d+|\w+))' -AllMatches `
+                | Select-Object -ExpandProperty Matches `
+                | ForEach-Object {
+                    $attributeName = $_.Groups['attributeName'].Value
+                    $attributeValue = $_.Groups['attributeValue'].Value
+
+                    $properties | Add-Member -MemberType NoteProperty -Name $attributeName -Value $attributeValue
+                }
+                $LineEnumerator.MoveNextIgnoringBlank() > $null
+                continue
+            }
+            
+            if ($LineEnumerator.Current.EndsWith(':')) {
+                $attributeName = $LineEnumerator.Current.Trim().Replace(':', '')
+                if ($attributeName.Contains(' ')) {
+                    $attributeName = ConvertToCamelCase $attributeName
+                }
+                $LineEnumerator.MoveNextIgnoringBlank() > $null
+
+                $values = @()
+
+                while ($LineEnumerator.Current.StartsWith('      ')) {
+                    $values += $LineEnumerator.Current.Trim()
+                    $LineEnumerator.MoveNextIgnoringBlank() > $null
+                }
+
+                $properties | Add-Member -MemberType NoteProperty -Name $attributeName -Value $values
+            }
+            elseif ($LineEnumerator.Current.Contains('=')) {
+                $attributeNameSb = [System.Text.StringBuilder]::new()
+                $valueSb = [System.Text.StringBuilder]::new()
+                $equalsCharFound = $false
+                foreach ($char in $LineEnumerator.Current.GetEnumerator()) {
+                    if ($char -eq '=' -and -not $equalsCharFound) {
+                        $equalsCharFound = $true
+                        continue
+                    }
+                    if ($equalsCharFound) {
+                        $valueSb.Append($char) > $null
+                        continue
+                    }
+                    $attributeNameSb.Append($char) > $null
+                }
+                $attributeName = $attributeNameSb.ToString().Trim()
+                $value = $valueSb.ToString().Trim()
+
+                $properties | Add-Member -MemberType NoteProperty -Name $attributeName -Value $value
+
+                $LineEnumerator.MoveNextIgnoringBlank() > $null
+            }
+        }
+
+        $LineEnumerator.MoveNextIgnoringBlank() > $null
+    }
+}
+
+
+function ConvertToCamelCase {
+
+    param (
+        [string] $InputObject
+    )
+
+    $words = $InputObject -split '\s+'
+    
+    if ($words.Count -gt 0) {
+        $camelCase = $words[0].ToLower()
+        
+        foreach ($word in $words[1..($words.Count - 1)]) {
+            $camelCase += $word.Substring(0, 1).ToUpper() + $word.Substring(1).ToLower()
+        }
+        return $camelCase
+    }
+    
+    return ""
 }
