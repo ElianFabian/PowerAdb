@@ -78,7 +78,7 @@ function Get-AdbAppInfo {
 
 $script:ComponentPattern = '(?<componentHash>[a-f0-9]+)\s(?<package>[a-zA-Z0-9\.]+)\/(?<componentClassName>[a-zA-Z0-9\.\/_$]+)(\sfilter\s(?<filterHash>[a-f0-9]+))?'
 $script:ActionPattern = '\s{6}([\w\.\d_]+):'
-$script:AttributePattern = '(?<attributeName>\w+)(:\s|=)(?<value>[^,^\n\r]+)'
+$script:AttributePattern = '(?<attributeName>\w+)(:\s|=)(?<attributeValue>[^,^\n\r]+)'
 $script:PermissionPattern = ' Permission \[(?<permission>[a-zA-Z0-9\._]+)\] \((?<permissionHash>[a-f0-9]+)\):'
 $script:PermissionAttributePattern = '(?<attributeName>\w+)=(?<attributeValue>[a-zA-Z]+{.+}|[^\s]+)'
 $script:ProviderPattern = 'Provider{(?<providerHash>[a-f0-9]+) (?<package>[a-zA-Z0-9\.]+)(\/(?<componentClassName>[a-zA-Z0-9\.\/_]+))?}'
@@ -409,7 +409,7 @@ function ParseComponentAttribute {
         | Select-Object -ExpandProperty Matches `
         | ForEach-Object {
             $attributeName = $_.Groups['attributeName'].Value
-            $attributeValue = $_.Groups['value'].Value.Trim('"')
+            $attributeValue = $_.Groups['attributeValue'].Value.Trim('"')
     
             if ($attributeName -in $properties.PSObject.Properties.Name) {
                 if ($properties.$attributeName.Count -eq 1) {
