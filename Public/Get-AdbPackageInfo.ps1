@@ -37,12 +37,12 @@ function Get-AdbPackageInfo {
                     $output | Add-Member -MemberType NoteProperty -Name 'PreferredActivities' -Value @()
 
                     while ($lineEnumerator.Current -match 'Preferred Activities User \d+:') {
-                        $userIndex = $lineEnumerator.Current | Select-String -Pattern 'Preferred Activities User (?<userIndex>\d+):' `
+                        $userId = $lineEnumerator.Current | Select-String -Pattern 'Preferred Activities User (?<userId>\d+):' `
                         | Select-Object -ExpandProperty Matches -First 1 `
-                        | ForEach-Object { $_.Groups['userIndex'].Value }
+                        | ForEach-Object { $_.Groups['userId'].Value }
 
                         $userActivity = [PSCustomObject]@{
-                            UserIndex = $userIndex
+                            UserId = $userId
                         }
                         ParseResolverTable -LineEnumerator $lineEnumerator -ResolverTableName 'Table' -InputObject $userActivity -ComponentType 'Activity'
 
