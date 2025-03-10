@@ -13,7 +13,6 @@ function Get-AdbAppInfo {
     process {
         foreach ($id in $DeviceId) {
             foreach ($appId in $ApplicationId) {
-                # For more information: https://developer.android.com/guide/topics/manifest/application-element
                 $rawData = Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys package '$appId'" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false
 
                 $output = [PSCustomObject] @{
