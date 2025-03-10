@@ -536,6 +536,9 @@ function ParsePackages {
                 elseif ($value -match '\[\s*([\w.-]+(?:\s*,\s*[\w.-]+)*)\s*\]') {
                     $value = $value.Trim('[', ']', ' ') -split '\s*,\s*'
                 }
+                elseif ($value -eq '[]') {
+                    $value = @()
+                }
 
                 $properties | Add-Member -MemberType NoteProperty -Name $attributeName -Value $value
 
