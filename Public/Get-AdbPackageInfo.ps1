@@ -34,7 +34,7 @@ function Get-AdbPackageInfo {
                     ParseResolverTable -LineEnumerator $lineEnumerator -ResolverTableName 'ServiceResolverTable' -InputObject $output -ComponentType 'Service'
                 }
                 if ($lineEnumerator.Current -match 'Preferred Activities User \d+:') {
-                    $output | Add-Member -MemberType NoteProperty -Name 'PreferredActivitiesUser' -Value @()
+                    $output | Add-Member -MemberType NoteProperty -Name 'PreferredActivities' -Value @()
 
                     while ($lineEnumerator.Current -match 'Preferred Activities User \d+:') {
                         $userIndex = $lineEnumerator.Current | Select-String -Pattern 'Preferred Activities User (?<userIndex>\d+):' `
@@ -46,7 +46,7 @@ function Get-AdbPackageInfo {
                         }
                         ParseResolverTable -LineEnumerator $lineEnumerator -ResolverTableName 'Table' -InputObject $userActivity -ComponentType 'Activity'
 
-                        $output.PreferredActivitiesUser += $userActivity
+                        $output.PreferredActivities += $userActivity
                     }
                 }
                 while ($lineEnumerator.Current.Contains('Permissions:')) {
