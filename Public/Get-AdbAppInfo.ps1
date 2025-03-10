@@ -34,8 +34,22 @@ function Get-AdbAppInfo {
                 if ($lineEnumerator.Current.Contains('Service Resolver Table:')) {
                     ParseResolverTable -LineEnumerator $lineEnumerator -ResolverTableName 'ServiceResolverTable' -InputObject $output -ComponentType 'Service'
                 }
-                if ($lineEnumerator.Current.Contains('Preferred Activities User 0:')) {
-                    ParseResolverTable -LineEnumerator $lineEnumerator -ResolverTableName 'PreferredActivitiesUser0' -InputObject $output -ComponentType 'Activity'
+                if ($lineEnumerator.Current -match 'Preferred Activities User \d+:') {
+                    $userIndex = $lineEnumerator.Current | Select-String -Pattern 'Preferred Activities User (?<userIndex>\d+):' `
+                    | Select-Object -ExpandProperty Matches -First 1 `
+                    | ForEach-Object { $_.Groups['userIndex'].Value }
+
+                    $output | Add-Member -MemberType NoteProperty -Name 'PreferredActivitiesUser' -Value @()
+
+                    $userActivity = [PSCustomObject]@{
+                        UserIndex = $userIndex
+                    }
+
+                    while ($lineEnumerator.Current -match 'Preferred Activities User \d+:') {
+                        ParseResolverTable -LineEnumerator $lineEnumerator -ResolverTableName 'Table' -InputObject $userActivity -ComponentType 'Activity'
+                    }
+
+                    $output.PreferredActivitiesUser += $userActivity
                 }
                 while ($lineEnumerator.Current.Contains('Permissions:')) {
                     ParsePermissions -LineEnumerator $lineEnumerator -InputObject $output
@@ -171,7 +185,6 @@ function ParseComponentContainer {
         [Parameter(Mandatory)]
         [PSCustomObject] $InputObject,
 
-        [Parameter(Mandatory)]
         [string] $Name,
 
         [Parameter(Mandatory)]
