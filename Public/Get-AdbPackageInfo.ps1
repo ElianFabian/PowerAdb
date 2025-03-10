@@ -1,4 +1,4 @@
-function Get-AdbAppInfo {
+function Get-AdbPackageInfo {
 
     [OutputType([PSCustomObject[]])]
     [CmdletBinding()]
@@ -7,17 +7,17 @@ function Get-AdbAppInfo {
         [string[]] $DeviceId,
 
         [Parameter(Mandatory)]
-        [string[]] $ApplicationId
+        [string[]] $PackageName
     )
 
     process {
         foreach ($id in $DeviceId) {
-            foreach ($appId in $ApplicationId) {
-                $rawData = Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys package '$appId'" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false
+            foreach ($package in $PackageName) {
+                $rawData = Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys package '$package'" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false
 
                 $output = [PSCustomObject] @{
-                    DeviceId      = $id
-                    ApplicationId = $appId
+                    DeviceId    = $id
+                    PackageName = $package
                 }
 
                 $lineEnumerator = ConvertToLineEnumerator ($rawData.GetEnumerator())

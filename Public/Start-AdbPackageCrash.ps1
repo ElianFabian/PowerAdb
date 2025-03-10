@@ -1,4 +1,4 @@
-function Uninstall-AdbApp {
+function Start-AdbPackageCrash {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
@@ -6,13 +6,13 @@ function Uninstall-AdbApp {
         [string[]] $DeviceId,
 
         [Parameter(Mandatory)]
-        [string[]] $ApplicationId
+        [string[]] $PackageName
     )
 
     process {
         foreach ($id in $DeviceId) {
-            foreach ($appId in $ApplicationId) {
-                Invoke-AdbExpression -DeviceId $id -Command "uninstall '$appId'" -Verbose:$VerbosePreference
+            foreach ($package in $PackageName) {
+                $id | Invoke-AdbExpression -Command "shell am crash '$package'" -Verbose:$VerbosePreference
             }
         }
     }

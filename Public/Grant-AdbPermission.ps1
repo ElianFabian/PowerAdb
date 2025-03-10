@@ -6,7 +6,7 @@ function Grant-AdbPermission {
         [string[]] $DeviceId,
 
         [Parameter(Mandatory)]
-        [string[]] $ApplicationId,
+        [string[]] $PackageName,
 
         [Parameter(Mandatory)]
         [string[]] $Permission
@@ -14,9 +14,9 @@ function Grant-AdbPermission {
 
     process {
         foreach ($id in $DeviceId) {
-            foreach ($appId in $ApplicationId) {
+            foreach ($package in $PackageName) {
                 foreach ($permissionName in $Permission) {
-                    $id | Invoke-AdbExpression -Command "shell pm grant '$appId' '$permissionName'" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false | Out-Null
+                    $id | Invoke-AdbExpression -Command "shell pm grant '$package' '$permissionName'" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false | Out-Null
                 }
             }
         }

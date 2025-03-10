@@ -45,43 +45,43 @@ $packageCompletion = {
 
     $WarningPreference = 'SilentlyContinue'
 
-    $applicationIds = Get-AdbPackage -DeviceId $deviceId -Verbose:$false
+    $packageNames = Get-AdbPackage -DeviceId $deviceId -Verbose:$false
 
-    $startMatches = $applicationIds | Where-Object { $_ -like "$wordToComplete*" }
-    $containMatches = $applicationIds | Where-Object { $_ -like "*$wordToComplete*" -and $_ -notlike "$wordToComplete*" }
+    $startMatches = $packageNames | Where-Object { $_ -like "$wordToComplete*" }
+    $containMatches = $packageNames | Where-Object { $_ -like "*$wordToComplete*" -and $_ -notlike "$wordToComplete*" }
 
     @($startMatches) + @($containMatches)
 }
 
 Register-ArgumentCompleter -CommandName @(
-    "Start-AdbApp"
-    "Get-AdbAppPid"
+    "Start-AdbPackage"
+    "Get-AdbPackagePid"
     "Grant-AdbPermission"
     "Revoke-AdbPermission"
-    "Start-AdbAppCrash"
+    "Start-AdbPackageCrash"
     "Invoke-AdbDeepLink"
-    "Stop-AdbApp"
-    "Start-AdbAppProcessDeath"
-    "Install-AdbApp"
-    "Uninstall-AdbApp"
-    "Clear-AdbAppInfo"
-    "Get-AdbAppMinSdkVersion"
-    "Get-AdbAppSha256Signature"
-    "Get-AdbAppTargetSdkVersion"
-    "Get-AdbAppVersionCode"
-    "Get-AdbAppVersionName"
+    "Stop-AdbPackage"
+    "Start-AdbPackageProcessDeath"
+    "Install-AdbPackage"
+    "Uninstall-AdbPackage"
+    "Clear-AdbPackageInfo"
+    "Get-AdbPackageMinSdkVersion"
+    "Get-AdbPackageSha256Signature"
+    "Get-AdbPackageTargetSdkVersion"
+    "Get-AdbPackageVersionCode"
+    "Get-AdbPackageVersionName"
     "Get-AdbFileContent"
-    "Test-AdbAppAllowClearUserData"
-    "Test-AdbAppHasCode"
-    "Test-AdbAppDebuggable"
-    "Test-AdbAppTestOnly"
-    "Test-AdbAppLargeHeap"
-    "Get-AdbAppFirstInstallDate"
-    "Get-AdbAppLastUpdateDate"
-    "Get-AdbAppInfo"
+    "Test-AdbPackageAllowClearUserData"
+    "Test-AdbPackageHasCode"
+    "Test-AdbPackageDebuggable"
+    "Test-AdbPackageTestOnly"
+    "Test-AdbPackageLargeHeap"
+    "Get-AdbPackageFirstInstallDate"
+    "Get-AdbPackageLastUpdateDate"
+    "Get-AdbPackageInfo"
     "Stop-AdbService"
     "Get-AdbPackagePid"
-) -ParameterName ApplicationId -ScriptBlock $packageCompletion
+) -ParameterName PackageName -ScriptBlock $packageCompletion
 
 Register-ArgumentCompleter -CommandName @(
     "Test-AdbPath"

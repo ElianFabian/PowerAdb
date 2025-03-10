@@ -51,10 +51,10 @@ function Get-AdbDiskInfo {
                     OtherSize           = if ($otherSize) { [uint64] $otherSize } else { $null }
                     InstalledApps       = for ($i = 0; $i -lt $packageNames.Count; $i++) {
                         [PSCustomObject]@{
-                            ApplicationId = $packageNames[$i]
-                            AppSize       = $appSizes[$i]
-                            AppDataSize   = $appDataSizes[$i]
-                            CacheSize     = $cacheSizes[$i]
+                            PackageName = $packageNames[$i]
+                            AppSize     = $appSizes[$i]
+                            AppDataSize = $appDataSizes[$i]
+                            CacheSize   = $cacheSizes[$i]
                         }
                     }
                 }

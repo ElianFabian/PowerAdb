@@ -24,7 +24,7 @@ function New-AdbBundlePair {
         [uri] $Uri,
 
         [Parameter(Mandatory, ParameterSetName = 'ComponentName')]
-        [string] $ApplicationId,
+        [string] $PackageName,
 
         [Parameter(Mandatory, ParameterSetName = 'ComponentName')]
         [string] $ClassName,
@@ -88,7 +88,7 @@ function New-AdbBundlePair {
             $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value { "--eu '$($this.Key)' '$($this.Value)'" }
         }
         'ComponentName' {
-            $pair | Add-Member -MemberType NoteProperty -Name Value -Value "$ApplicationId/$ClassName"
+            $pair | Add-Member -MemberType NoteProperty -Name Value -Value "$PackageName/$ClassName"
             $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value { "--ecn '$($this.Key)' '$($this.Value)'" }
         }
         'IntArray' {

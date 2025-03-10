@@ -1,5 +1,5 @@
 # Starts an application or resumes it if it's already been open
-function Start-AdbApp {
+function Start-AdbPackage {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
@@ -7,13 +7,13 @@ function Start-AdbApp {
         [string[]] $DeviceId,
 
         [Parameter(Mandatory)]
-        [string[]] $ApplicationId
+        [string[]] $PackageName
     )
 
     process {
         foreach ($id in $DeviceId) {
-            foreach ($appId in $ApplicationId) {
-                $id | Invoke-AdbExpression -Command "shell monkey -p '$appId' -c android.intent.category.LAUNCHER 1" -Verbose:$VerbosePreference | Out-Null
+            foreach ($package in $PackageName) {
+                $id | Invoke-AdbExpression -Command "shell monkey -p '$package' -c android.intent.category.LAUNCHER 1" -Verbose:$VerbosePreference | Out-Null
             }
         }
     }

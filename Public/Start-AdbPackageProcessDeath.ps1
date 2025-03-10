@@ -1,5 +1,5 @@
 # Frees up app memory if possible
-function Start-AdbAppProcessDeath {
+function Start-AdbPackageProcessDeath {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
@@ -7,13 +7,13 @@ function Start-AdbAppProcessDeath {
         [string[]] $DeviceId,
 
         [Parameter(Mandatory)]
-        [string[]] $ApplicationId
+        [string[]] $PackageName
     )
 
     process {
         foreach ($id in $DeviceId) {
-            foreach ($appId in $ApplicationId) {
-                Invoke-AdbExpression -DeviceId $id -Command "shell am kill '$appId'" -Verbose:$VerbosePreference
+            foreach ($package in $PackageName) {
+                Invoke-AdbExpression -DeviceId $id -Command "shell am kill '$package'" -Verbose:$VerbosePreference
             }
         }
     }

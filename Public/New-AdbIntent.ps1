@@ -13,7 +13,7 @@ function New-AdbIntent {
 
         [string[]] $Category = $null,
 
-        [string] $ApplicationId = $null,
+        [string] $PackageName = $null,
 
         [string] $ComponentClassName = $null,
 
@@ -41,12 +41,12 @@ function New-AdbIntent {
     if ($Extras) {
         $intent | Add-Member -MemberType NoteProperty -Name Extras -Value ($Extras.Invoke())
     }
-    if ($ApplicationId -and $ComponentClassName) {
-        $componentName = "$ApplicationId/$ComponentClassName"
+    if ($PackageName -and $ComponentClassName) {
+        $componentName = "$PackageName/$ComponentClassName"
         $intent | Add-Member -MemberType NoteProperty -Name ComponentName -Value $componentName
     }
-    elseif ($ApplicationId) {
-        $intent | Add-Member -MemberType NoteProperty -Name ApplicationId -Value $ApplicationId
+    elseif ($PackageName) {
+        $intent | Add-Member -MemberType NoteProperty -Name PackageName -Value $PackageName
     }
 
     $intent | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value {
@@ -81,8 +81,8 @@ function New-AdbIntent {
             $adbArguments += " --selector"
         }
 
-        if ($this.ApplicationId -and -not $this.ComponentName) {
-            $adbArguments += " $($this.ApplicationId)"
+        if ($this.PackageName -and -not $this.ComponentName) {
+            $adbArguments += " $($this.PackageName)"
         }
 
         $adbArguments.Trim()

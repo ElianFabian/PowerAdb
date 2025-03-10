@@ -1,4 +1,4 @@
-function Get-AdbForegroundAppId {
+function Get-AdbForegroundPackage {
 
     [OutputType([string[]])]
     [CmdletBinding()]

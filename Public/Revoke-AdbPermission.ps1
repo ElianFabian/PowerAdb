@@ -6,7 +6,7 @@ function Revoke-AdbPermission {
         [string[]] $DeviceId,
 
         [Parameter(Mandatory)]
-        [string[]] $ApplicationId,
+        [string[]] $PackageName,
 
         [Parameter(Mandatory)]
         [string[]] $Permission
@@ -14,9 +14,9 @@ function Revoke-AdbPermission {
 
     process {
         foreach ($id in $DeviceId) {
-            foreach ($appId in $ApplicationId) {
+            foreach ($package in $PackageName) {
                 foreach ($permissionName in $Permission) {
-                    $id | Invoke-AdbExpression -Command "shell pm revoke '$appId' '$permissionName'" -Verbose:$VerbosePreference
+                    $id | Invoke-AdbExpression -Command "shell pm revoke '$package' '$permissionName'" -Verbose:$VerbosePreference
                 }
             }
         }

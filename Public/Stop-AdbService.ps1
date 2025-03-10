@@ -9,7 +9,7 @@ function Stop-AdbService {
         [PSCustomObject] $Intent,
 
         [Parameter(Mandatory, ParameterSetName = 'ComponentName')]
-        [string] $ApplicationId,
+        [string] $PackageName,
 
         [Parameter(Mandatory, ParameterSetName = 'ComponentName')]
         [string] $ServiceName
@@ -21,7 +21,7 @@ function Stop-AdbService {
                 $adbArgs = $Intent.ToAdbArguments()
             }
             'ComponentName' {
-                $adbArgs = "-n '$ApplicationId/$ServiceName'"
+                $adbArgs = "-n '$PackageName/$ServiceName'"
             }
         }
     }
