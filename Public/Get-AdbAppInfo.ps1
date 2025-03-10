@@ -34,21 +34,20 @@ function Get-AdbAppInfo {
                     ParseResolverTable -LineEnumerator $lineEnumerator -ResolverTableName 'ServiceResolverTable' -InputObject $output -ComponentType 'Service'
                 }
                 if ($lineEnumerator.Current -match 'Preferred Activities User \d+:') {
-                    $userIndex = $lineEnumerator.Current | Select-String -Pattern 'Preferred Activities User (?<userIndex>\d+):' `
-                    | Select-Object -ExpandProperty Matches -First 1 `
-                    | ForEach-Object { $_.Groups['userIndex'].Value }
-
                     $output | Add-Member -MemberType NoteProperty -Name 'PreferredActivitiesUser' -Value @()
 
-                    $userActivity = [PSCustomObject]@{
-                        UserIndex = $userIndex
-                    }
-
                     while ($lineEnumerator.Current -match 'Preferred Activities User \d+:') {
-                        ParseResolverTable -LineEnumerator $lineEnumerator -ResolverTableName 'Table' -InputObject $userActivity -ComponentType 'Activity'
-                    }
+                        $userIndex = $lineEnumerator.Current | Select-String -Pattern 'Preferred Activities User (?<userIndex>\d+):' `
+                        | Select-Object -ExpandProperty Matches -First 1 `
+                        | ForEach-Object { $_.Groups['userIndex'].Value }
 
-                    $output.PreferredActivitiesUser += $userActivity
+                        $userActivity = [PSCustomObject]@{
+                            UserIndex = $userIndex
+                        }
+                        ParseResolverTable -LineEnumerator $lineEnumerator -ResolverTableName 'Table' -InputObject $userActivity -ComponentType 'Activity'
+
+                        $output.PreferredActivitiesUser += $userActivity
+                    }
                 }
                 while ($lineEnumerator.Current.Contains('Permissions:')) {
                     ParsePermissions -LineEnumerator $lineEnumerator -InputObject $output
@@ -402,10 +401,27 @@ function ParseComponentAttribute {
         [PSCustomObject] $InputObject
     )
 
-    while ($LineEnumerator.Current -match $script:AttributePattern) {
+    while ($LineEnumerator.Current -match $script:AttributePattern -or ($LineEnumerator.Current.EndsWith(':') -and $LineEnumerator.Current.StartsWith('          '))) {
         if ($InputObject.PSObject.Properties.Name -notcontains 'Properties') {
             $properties = [PSCustomObject]@{}
             $InputObject | Add-Member -MemberType NoteProperty -Name 'Properties' -Value $properties
+        }
+
+        if ($LineEnumerator.Current.EndsWith(':')) {
+            $attributeName = $LineEnumerator.Current.Trim().Replace(':', '')
+            if ($attributeName.Contains(' ')) {
+                $attributeName = ConvertToCamelCase $attributeName
+            }
+            $LineEnumerator.MoveNextIgnoringBlank() > $null
+
+            $values = @()
+
+            while ($LineEnumerator.Current -notmatch $script:AttributePattern) {
+                $values += $LineEnumerator.Current.Trim()
+                $LineEnumerator.MoveNextIgnoringBlank() > $null
+            }
+
+            $properties | Add-Member -MemberType NoteProperty -Name $attributeName -Value $values
         }
 
         $LineEnumerator.Current | Select-String -Pattern $script:AttributePattern -AllMatches `
@@ -511,6 +527,15 @@ function ParsePackages {
                 }
                 $attributeName = $attributeNameSb.ToString().Trim()
                 $value = $valueSb.ToString().Trim()
+
+                # [ HAS_CODE ALLOW_CLEAR_USER_DATA ]
+                if ($value -match '\[\s*(\w+(?:\s+\w+)*)\s*\]') {
+                    $value = $value.Trim('[', ']', ' ') -split '\s+'
+                }
+                # [base, chrome, config.en, config.es, config.fr]
+                elseif ($value -match '\[\s*([\w.-]+(?:\s*,\s*[\w.-]+)*)\s*\]') {
+                    $value = $value.Trim('[', ']', ' ') -split '\s*,\s*'
+                }
 
                 $properties | Add-Member -MemberType NoteProperty -Name $attributeName -Value $value
 
