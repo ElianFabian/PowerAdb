@@ -165,14 +165,14 @@ function ParseResolverTable {
         ParseComponentContainer -LineEnumerator $LineEnumerator -InputObject $InputObject.$ResolverTableName -Name 'Schemes' -ComponentType $ComponentType -Pattern $script:SchemeHeaderPattern
     }
     if ($LineEnumerator.Current.Contains('  Non-Data Actions:')) {
-        $InputObject.$ResolverTableName | Add-Member -MemberType NoteProperty -Name 'NonDataActions' -Value @()
         $LineEnumerator.MoveNextIgnoringBlank() > $null
+        $InputObject.$ResolverTableName | Add-Member -MemberType NoteProperty -Name 'NonDataActions' -Value @()
 
         ParseComponentContainer -LineEnumerator $LineEnumerator -InputObject $InputObject.$ResolverTableName -Name 'NonDataActions' -ComponentType $ComponentType -Pattern $script:ActionPattern
     }
     if ($LineEnumerator.Current.Contains('  MIME Typed Actions:')) {
-        $InputObject.$ResolverTableName | Add-Member -MemberType NoteProperty -Name 'MimeTypedActions' -Value @()
         $LineEnumerator.MoveNextIgnoringBlank() > $null
+        $InputObject.$ResolverTableName | Add-Member -MemberType NoteProperty -Name 'MimeTypedActions' -Value @()
 
         ParseComponentContainer -LineEnumerator $LineEnumerator -InputObject $InputObject.$ResolverTableName -Name 'MimeTypedActions' -ComponentType $ComponentType -Pattern $script:ActionPattern
     }
@@ -416,7 +416,7 @@ function ParseComponentAttribute {
 
             $values = @()
 
-            while ($LineEnumerator.Current -notmatch $script:AttributePattern) {
+            while ($LineEnumerator.Current -notmatch $script:AttributePattern -or -not $LineEnumerator.Current.EndsWith(':')) {
                 $values += $LineEnumerator.Current.Trim()
                 $LineEnumerator.MoveNextIgnoringBlank() > $null
             }
@@ -428,11 +428,26 @@ function ParseComponentAttribute {
         | Select-Object -ExpandProperty Matches `
         | ForEach-Object {
             $attributeName = $_.Groups['attributeName'].Value
+            if ($attributeName.Contains(' ')) {
+                $attributeName = ConvertToCamelCase $attributeName
+            }
             $attributeValue = $_.Groups['attributeValue'].Value.Trim('"')
+
+            # [ HAS_CODE ALLOW_CLEAR_USER_DATA ]
+            if ($attributeValue -match '^\[\s*(\w+(?:\s+\w+)*)\s*\]$') {
+                $attributeValue = $attributeValue.Trim('[', ']', ' ') -split '\s+'
+            }
+            # [base, chrome, config.en, config.es, config.fr]
+            elseif ($attributeValue -match '^\[\s*(.+(?:\s*,\s*[\w.-]+)*)\s*\]$') {
+                $attributeValue = $attributeValue.Trim('[', ']', ' ') -split '\s*,\s*'
+            }
+            elseif ($attributeValue -eq '[]') {
+                $attributeValue = @()
+            }
     
             if ($attributeName -in $properties.PSObject.Properties.Name) {
-                if ($properties.$attributeName.Count -eq 1) {
-                    $properties.$attributeName = @($properties.$attributeName)
+                if ($object.$attributeName.Count -eq 1) {
+                    $properties.$attributeName = @($object.$attributeName)
                 }
                 $properties.$attributeName += $attributeValue
             }
@@ -441,10 +456,12 @@ function ParseComponentAttribute {
             }
         }
 
-
         $LineEnumerator.MoveNextIgnoringBlank() > $null
     }
 }
+
+
+# SEE-LATER: The logic for parsing attributes is kind of duplicated in ParseComponentAttribute and ParsePermissions
 
 function ParsePackages {
 
@@ -476,9 +493,34 @@ function ParsePackages {
 
         $LineEnumerator.MoveNextIgnoringBlank() > $null
         while ($LineEnumerator.Current.EndsWith(':') -or $LineEnumerator.Current.Contains('=')) {
-            if ($LineEnumerator.Current.StartsWith('    User 0:')) {
-                # We don't plan to parse beyond User 0 yet
+            if (-not $LineEnumerator.Current.StartsWith(' ')) {
                 break
+            }
+            if ($LineEnumerator.Current -match 'User \d+:') {
+                $userId = $LineEnumerator.Current | Select-String -Pattern 'User (?<userId>\d+):' `
+                | Select-Object -ExpandProperty Matches -First 1 `
+                | ForEach-Object { $_.Groups['userId'].Value }
+
+                $user = [PSCustomObject]@{
+                    UserId = $userId
+                }
+                if ($properties.PSObject.Properties.Name -notcontains 'Users') {
+                    $properties | Add-Member -MemberType NoteProperty -Name 'Users' -Value @()
+                }
+                $properties.Users += $user
+
+                # $userProperties = [PSCustomObject]@{}
+                # $user | Add-Member -MemberType NoteProperty -Name 'Properties' -Value $userProperties
+                
+                $LineEnumerator.MoveNextIgnoringBlank() > $null
+                while ($LineEnumerator.Current -notmatch 'User \d+:') {
+                    if (-not $LineEnumerator.Current.StartsWith(' ')) {
+                        break
+                    }
+                    $LineEnumerator.MoveNextIgnoringBlank() > $null
+                }
+
+                continue
             }
 
             if ($LineEnumerator.Current.Contains('versionCode') -or $LineEnumerator.Current.Contains('userId') -or $LineEnumerator.Current.Contains('permissionsFixed')) {
@@ -493,7 +535,7 @@ function ParsePackages {
                 $LineEnumerator.MoveNextIgnoringBlank() > $null
                 continue
             }
-            
+
             if ($LineEnumerator.Current.EndsWith(':')) {
                 $attributeName = $LineEnumerator.Current.Trim().Replace(':', '')
                 if ($attributeName.Contains(' ')) {
@@ -526,21 +568,21 @@ function ParsePackages {
                     $attributeNameSb.Append($char) > $null
                 }
                 $attributeName = $attributeNameSb.ToString().Trim()
-                $value = $valueSb.ToString().Trim()
+                $attributeValue = $valueSb.ToString().Trim()
 
                 # [ HAS_CODE ALLOW_CLEAR_USER_DATA ]
-                if ($value -match '\[\s*(\w+(?:\s+\w+)*)\s*\]') {
-                    $value = $value.Trim('[', ']', ' ') -split '\s+'
+                if ($attributeValue -match '^\[\s*(\w+(?:\s+\w+)*)\s*\]$') {
+                    $attributeValue = $attributeValue.Trim('[', ']', ' ') -split '\s+'
                 }
                 # [base, chrome, config.en, config.es, config.fr]
-                elseif ($value -match '\[\s*([\w.-]+(?:\s*,\s*[\w.-]+)*)\s*\]') {
-                    $value = $value.Trim('[', ']', ' ') -split '\s*,\s*'
+                elseif ($attributeValue -match '^\[\s*(.+(?:\s*,\s*[\w.-]+)*)\s*\]$') {
+                    $attributeValue = $attributeValue.Trim('[', ']', ' ') -split '\s*,\s*'
                 }
-                elseif ($value -eq '[]') {
-                    $value = @()
+                elseif ($attributeValue -eq '[]') {
+                    $attributeValue = @()
                 }
 
-                $properties | Add-Member -MemberType NoteProperty -Name $attributeName -Value $value
+                $properties | Add-Member -MemberType NoteProperty -Name $attributeName -Value $attributeValue
 
                 $LineEnumerator.MoveNextIgnoringBlank() > $null
             }
