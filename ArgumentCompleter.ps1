@@ -4,6 +4,20 @@ param (
 
 $functionNames = $PublicFunctionFileName | Select-Object -ExpandProperty BaseName
 
+function AssertFunctionExists {
+
+    param (
+        [string[]] $FunctionName
+    )
+
+    foreach ($functionName in $FunctionName) {
+        if ($functionName -notin $functionNames) {
+            Write-Error "Trying to add an argument completer for a non-existent function: $functionName"
+        }
+    }
+}
+
+
 Register-ArgumentCompleter `
     -CommandName (Get-Command -Name $functionNames) `
     -ParameterName DeviceId -ScriptBlock {
@@ -53,47 +67,42 @@ $packageCompletion = {
     @($startMatches) + @($containMatches)
 }
 
-Register-ArgumentCompleter -CommandName @(
+$packageFunctions = @(
     "Start-AdbPackage"
     "Get-AdbPackagePid"
     "Grant-AdbPermission"
     "Revoke-AdbPermission"
     "Start-AdbPackageCrash"
-    "Invoke-AdbDeepLink"
     "Stop-AdbPackage"
     "Start-AdbPackageProcessDeath"
     "Install-AdbPackage"
     "Uninstall-AdbPackage"
-    "Clear-AdbPackageInfo"
-    "Get-AdbPackageMinSdkVersion"
-    "Get-AdbPackageSha256Signature"
-    "Get-AdbPackageTargetSdkVersion"
-    "Get-AdbPackageVersionCode"
-    "Get-AdbPackageVersionName"
-    "Get-AdbFileContent"
-    "Test-AdbPackageAllowClearUserData"
-    "Test-AdbPackageHasCode"
-    "Test-AdbPackageDebuggable"
-    "Test-AdbPackageTestOnly"
-    "Test-AdbPackageLargeHeap"
-    "Get-AdbPackageFirstInstallDate"
-    "Get-AdbPackageLastUpdateDate"
-    "Get-AdbPackageInfo"
+    "Clear-AdbPackageData"
     "Stop-AdbService"
     "Get-AdbPackagePid"
-) -ParameterName PackageName -ScriptBlock $packageCompletion
+)
+AssertFunctionExists $packageFunctions
 
-Register-ArgumentCompleter -CommandName @(
+Register-ArgumentCompleter -CommandName $packageFunctions -ParameterName PackageName -ScriptBlock $packageCompletion
+
+
+$runAsFunctions = @(
     "Test-AdbPath"
     "Get-AdbContent"
     "Get-AdbChildItem"
-) -ParameterName RunAs -ScriptBlock $packageCompletion
+)
+AssertFunctionExists $runAsFunctions
+
+Register-ArgumentCompleter -CommandName $runAsFunctions -ParameterName RunAs -ScriptBlock $packageCompletion
 
 
-Register-ArgumentCompleter -CommandName @(
+$propertyFunctions = @(
     "Get-AdbProperty"
     "Set-AdbProperty"
-) -ParameterName Name -ScriptBlock {
+)
+AssertFunctionExists $propertyFunctions
+
+Register-ArgumentCompleter -CommandName $propertyFunctions -ParameterName Name -ScriptBlock {
 
     param(
         $commandName,
@@ -114,12 +123,15 @@ Register-ArgumentCompleter -CommandName @(
     $startMatches + $containMatches
 }
 
-Register-ArgumentCompleter -CommandName @(
+
+$settingFunctions = @(
     "Get-AdbSetting"
     "Set-AdbSetting"
     "Remove-AdbSetting"
-) `
-    -ParameterName Key -ScriptBlock {
+)
+AssertFunctionExists $settingFunctions
+
+Register-ArgumentCompleter -CommandName $settingFunctions -ParameterName Key -ScriptBlock {
 
     param(
         $commandName,
@@ -248,10 +260,13 @@ $script:AdbKeyCodes = @(
     "PICTSYMBOLS"
 )
 
-Register-ArgumentCompleter -CommandName @(
+
+$keyCodeFunction = @(
     "Send-AdbKeyEvent"
-) `
-    -ParameterName KeyCode -ScriptBlock {
+)
+AssertFunctionExists $keyCodeFunction
+
+Register-ArgumentCompleter -CommandName $keyCodeFunction -ParameterName KeyCode -ScriptBlock {
 
     param(
         $commandName,
@@ -264,10 +279,13 @@ Register-ArgumentCompleter -CommandName @(
     $script:AdbKeyCodes | Where-Object { $_ -like "$wordToComplete*" }
 }
 
-Register-ArgumentCompleter -CommandName @(
+
+$keyCodesFunction = @(
     "Send-AdbKeyCombination"
-) `
-    -ParameterName KeyCodes -ScriptBlock {
+)
+AssertFunctionExists $keyCodesFunction
+
+Register-ArgumentCompleter -CommandName $keyCodesFunction -ParameterName KeyCodes -ScriptBlock {
 
     param(
         $commandName,
@@ -341,29 +359,46 @@ $remotePathCompletion = {
     }
 }
 
-Register-ArgumentCompleter -CommandName @(
+
+$literalRemotePathFunctions = @(
     "Receive-AdbItem"
     "Send-AdbItem"
     "New-AdbItem"
     "Test-AdbPath"
     "Remove-AdbItem"
     "Move-AdbItem"
-) -ParameterName LiteralRemotePath -ScriptBlock $remotePathCompletion
+)
+AssertFunctionExists $literalRemotePathFunctions
 
-Register-ArgumentCompleter -CommandName @(
+Register-ArgumentCompleter -CommandName $literalRemotePathFunctions -ParameterName LiteralRemotePath -ScriptBlock $remotePathCompletion
+
+
+$remotePathFunctions = @(
     "Get-AdbContent"
     "Get-AdbChildItem"
     "Set-AdbContent"
     "Add-AdbContent"
     "Copy-AdbItem"
     "Move-AdbItem"
-) -ParameterName RemotePath -ScriptBlock $remotePathCompletion
+    "Start-AdbActivity"
+)
+AssertFunctionExists $remotePathFunctions
 
-Register-ArgumentCompleter -CommandName @(
+Register-ArgumentCompleter -CommandName $remotePathFunctions -ParameterName RemotePath -ScriptBlock $remotePathCompletion
+
+
+$remoteDestinationFunctions = @(
     "Copy-AdbItem"
     "Move-AdbItem"
-) -ParameterName RemoteDestination -ScriptBlock $remotePathCompletion
+)
+AssertFunctionExists $remoteDestinationFunctions
 
-Register-ArgumentCompleter -CommandName @(
+Register-ArgumentCompleter -CommandName $remoteDestinationFunctions -ParameterName RemoteDestination -ScriptBlock $remotePathCompletion
+
+
+$literalRemoteProfilerPathFunctions = @(
     "Start-AdbActivity"
-) -ParameterName LiteralRemoteProfilerPath -ScriptBlock $remotePathCompletion
+)
+AssertFunctionExists $literalRemoteProfilerPathFunctions
+
+Register-ArgumentCompleter -CommandName $literalRemoteProfilerPathFunctions -ParameterName LiteralRemoteProfilerPath -ScriptBlock $remotePathCompletion
