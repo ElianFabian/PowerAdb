@@ -11,7 +11,7 @@ function Test-AdbWifiConnection {
         foreach ($id in $DeviceId) {
             Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys wifi" -Verbose:$VerbosePreference `
             | Select-Object -First 1 `
-            | Select-String -Pattern "Wi-Fi is (enabled|disabled)" -AllMatches `
+            | Select-String -Pattern "Wi-Fi is (enabled|disabled)" `
             | ForEach-Object {
                 $rawWifiEnabled = $_.Matches.Groups[1].Value
                 switch ($rawWifiEnabled) {
