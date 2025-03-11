@@ -11,7 +11,7 @@ function Test-AdbAirPlaneMode {
         foreach ($id in $DeviceId) {
             $apiLevel = Get-AdbApiLevel -DeviceId $id -Verbose:$false
             if ($apiLevel -lt 28) {
-                Write-Error "Unsupported API level: '$apiLevel'. Only API levels 28 and above are supported."
+                Write-ApiLevelError -DeviceId $id -ApiLevelLessThan 28
                 continue
             }
 

@@ -48,7 +48,7 @@ function Get-AdbSystemLocale {
                 }
             }
             else {
-                Write-Error "Unsupported API level: '$apiLevel'. Only API levels 16 and above are supported."
+                Write-ApiLevelError -DeviceId $id -ApiLevelLessThan 16
             }
         }
     }

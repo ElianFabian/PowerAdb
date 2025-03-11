@@ -33,7 +33,7 @@ function Send-AdbMotionEvent {
         foreach ($id in $DeviceId) {
             $apiLevel = Get-AdbApiLevel -DeviceId $id -Verbose:$false
             if ($apiLevel -lt 29) {
-                Write-Error "Motion event not supported for device with id: '$id' and API level '$apiLevel'. Only API levels 29 and above are supported."
+                Write-ApiLevelError -DeviceId $id -ApiLevelLessThan 29
                 continue
             }
 

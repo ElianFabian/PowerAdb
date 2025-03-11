@@ -30,7 +30,7 @@ function Stop-AdbService {
         foreach ($id in $DeviceId) {
             $apiLevel = Get-AdbApiLevel -DeviceId $id -Verbose:$false
             if ($apiLevel -lt 19) {
-                Write-Error "The device $id does not support stopping services. Only API level 19 or above are supported."
+                Write-ApiLevelError -DeviceId $id -ApiLevelLessThan 19
                 continue
             }
             Invoke-AdbExpression -DeviceId $id -Command "shell am stopservice $adbArgs" -Verbose:$VerbosePreference

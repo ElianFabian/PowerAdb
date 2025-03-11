@@ -17,7 +17,7 @@ function Enable-AdbLocation {
                 Set-AdbSetting -DeviceId $id -Namespace Secure -Key location_providers_allowed -Value 'gps' -Verbose:$VerbosePreference
             }
             else {
-                Write-Error "Unsupported API level: '$apiLevel'. Only API levels 17 and above are supported."
+                Write-ApiLevelError -DeviceId $id -ApiLevelLessThan 17
             }
         }
     }

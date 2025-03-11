@@ -16,7 +16,7 @@ function Send-AdbText {
 
     begin {
         if ((Compare-Object -ReferenceObject ($script:Ascii.GetBytes($Text)) -DifferenceObject ($script:Latin1.GetBytes($Text))) -and -not $Force) {
-            Write-Error "'Send-AdbText' only accepts ASCII characters. Use the '-Force' switch to override this restriction. Text: $Text"
+            Write-Error "'$($MyInvocation.MyCommand)' only accepts ASCII characters. Use the '-Force' switch to override this restriction. Text: $Text"
             $skip = $true
         }
     }
