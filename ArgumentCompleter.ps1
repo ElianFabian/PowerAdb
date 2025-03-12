@@ -80,6 +80,7 @@ $packageFunctions = @(
     "Clear-AdbPackageData"
     "Stop-AdbService"
     "Get-AdbPackagePid"
+    "Get-AdbPackageInfo"
 )
 AssertFunctionExists $packageFunctions
 
