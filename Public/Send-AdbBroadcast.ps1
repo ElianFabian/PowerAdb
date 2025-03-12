@@ -15,7 +15,7 @@ function Send-AdbBroadcast {
 
     process {
         foreach ($id in $DeviceId) {
-            $rawResult = Invoke-AdbExpression -DeviceId $id -Command "shell am broadcast $intentArgs" -Verbose:$VerbosePreference -Confirm:$ConfirmPreference -WhatIf:$WhatIfPreference `
+            $rawResult = Invoke-AdbExpression -DeviceId $id -Command "shell am broadcast $intentArgs" -Verbose:$VerbosePreference `
             | Out-String
 
             $broadcastingIntentLine = $rawResult -split '\r?\n' | Select-Object -First 1
