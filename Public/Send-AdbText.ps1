@@ -42,10 +42,11 @@ function Send-AdbText {
             $sb.Replace('`', '\`') > $null
             $sb.Replace('%', '\%') > $null
             $sb.Replace(" ", "%s") > $null
+            $sb.Replace('"', '\"') > $null
 
             $encodedText = $sb.ToString()
 
-            Invoke-AdbExpression -DeviceId $id -Command "shell input text ""$encodedText""" -Verbose:$VerbosePreference
+            Invoke-AdbExpression -DeviceId $id -Command "shell input text '$encodedText'" -Verbose:$VerbosePreference
         }
     }
 }
