@@ -416,7 +416,7 @@ function ParseComponentAttribute {
 
             $values = @()
 
-            while ($LineEnumerator.Current -notmatch $script:AttributePattern -or -not $LineEnumerator.Current.EndsWith(':')) {
+            while ($LineEnumerator.Current -notmatch $script:AttributePattern -and -not $LineEnumerator.Current.EndsWith(':')) {
                 $values += $LineEnumerator.Current.Trim()
                 $LineEnumerator.MoveNextIgnoringBlank() > $null
             }
