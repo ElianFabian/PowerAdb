@@ -15,12 +15,8 @@ function Send-AdbBroadcast {
 
     process {
         foreach ($id in $DeviceId) {
-            $rawResult = Invoke-AdbExpression -DeviceId $id -Command "shell am broadcast $intentArgs" -Verbose:$VerbosePreference `
+            $rawResult = Invoke-AdbExpression -DeviceId $id -Command "shell am broadcast $intentArgs" -Verbose:$VerbosePreference -Confirm:$ConfirmPreference -WhatIf:$WhatIfPreference `
             | Out-String
-
-            if ($WhatIfPreference) {
-                continue
-            }
 
             $broadcastingIntentLine = $rawResult -split '\r?\n' | Select-Object -First 1
             $actualHexFlags = $broadcastingIntentLine | Select-String -Pattern "Broadcasting: Intent \{ act=.* flg=(0x.+) cmp=.* \}" -AllMatches `
