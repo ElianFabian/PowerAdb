@@ -33,6 +33,9 @@ function Get-AdbPackageInfo {
                 if ($lineEnumerator.Current.Contains('Service Resolver Table:')) {
                     ParseResolverTable -LineEnumerator $lineEnumerator -ResolverTableName 'ServiceResolverTable' -InputObject $output -ComponentType 'Service'
                 }
+                if ($lineEnumerator.Current.Contains('Provider Resolver Table:')) {
+                    ParseResolverTable -LineEnumerator $lineEnumerator -ResolverTableName 'ProviderResolverTable' -InputObject $output -ComponentType 'Provider'
+                }
                 if ($lineEnumerator.Current -match 'Preferred Activities User \d+:') {
                     $output | Add-Member -MemberType NoteProperty -Name 'PreferredActivities' -Value @()
 
