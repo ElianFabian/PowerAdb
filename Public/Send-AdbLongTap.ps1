@@ -50,7 +50,11 @@ function Send-AdbLongTap {
                 continue
             }
 
-            Send-AdbSwipe -DeviceId $id -X1 $positionX -Y1 $positionY -X2 $positionX -Y2 $positionY -DelayInMilliseconds 500 -DisableCoordinateCheck:$DisableCoordinateCheck -Verbose:$VerbosePreference
+            $longPressTimeout = Get-AdbSetting -DeviceId $id -Namespace Secure -Key long_press_timeout -Verbose:$false
+            if (-not $longPressTimeout) {
+                $longPressTimeout = 400
+            }
+            Send-AdbSwipe -DeviceId $id -X1 $positionX -Y1 $positionY -X2 $positionX -Y2 $positionY -DelayInMilliseconds $longPressTimeout -DisableCoordinateCheck:$DisableCoordinateCheck -Verbose:$VerbosePreference
         }
     }
 }
