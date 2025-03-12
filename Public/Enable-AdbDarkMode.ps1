@@ -10,7 +10,7 @@ function Enable-AdbDarkMode {
         foreach ($id in $DeviceId) {
             $apiLevel = Get-AdbApiLevel -DeviceId $id
             if ($apiLevel -lt 29) {
-                Write-ApiLevelError -DeviceId $id -ApiLevelLessThan 28
+                Write-ApiLevelError -DeviceId $id -ApiLevelLessThan 29
                 continue
             }
             Invoke-AdbExpression -DeviceId $id -Command "shell cmd uimode night yes" -Verbose:$VerbosePreference > $null
