@@ -62,7 +62,10 @@ function New-AdbBundlePair {
     switch ($PSCmdlet.ParameterSetName) {
         'String' {
             $pair | Add-Member -MemberType NoteProperty -Name Value -Value $String
-            $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value { "--es '$($this.Key)' ""'$($this.Value)'""" }
+            $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value {
+                $sanitizedValue = ConvertTo-ValidAdbStringArgument $this.Value
+                "--es '$($this.Key)' '""$sanitizedValue""'"
+            }
         }
         'Boolean' {
             $booleanStr = if ($Boolean) { 'true' } else { 'false' }
@@ -122,15 +125,17 @@ function New-AdbBundlePair {
         'StringArray' {
             $pair | Add-Member -MemberType NoteProperty -Name Value -Value $StringArray
             $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value {
-                $stringArrayStr = ($this.Value | ForEach-Object { "'$_'" }) -join ','
-                "--esa '$($this.Key)' ""$stringArrayStr"""
+                $sanitizedValues = $this.Value | ForEach-Object { ConvertTo-ValidAdbStringArgument $_ }
+                $sanitizedValuesStr = ($sanitizedValues | ForEach-Object { "''$_''" }) -join ','
+                "--esa '$($this.Key)' '""$sanitizedValuesStr""'"
             }
         }
         'StringArrayList' {
             $pair | Add-Member -MemberType NoteProperty -Name Value -Value $StringArrayList
             $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value {
-                $stringArrayListStr = ($this.Value | ForEach-Object { "'$_'" }) -join ','
-                "--esal '$($this.Key)' ""$stringArrayListStr"""
+                $sanitizedValues = $this.Value | ForEach-Object { ConvertTo-ValidAdbStringArgument $_ }
+                $sanitizedValuesStr = ($sanitizedValues | ForEach-Object { "''$_''" }) -join ','
+                "--esal '$($this.Key)' '""$sanitizedValuesStr""'"
             }
         }
     }
