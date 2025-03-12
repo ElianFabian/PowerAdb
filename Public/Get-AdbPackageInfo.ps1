@@ -449,8 +449,8 @@ function ParseComponentAttribute {
             }
     
             if ($attributeName -in $properties.PSObject.Properties.Name) {
-                if ($object.$attributeName.Count -eq 1) {
-                    $properties.$attributeName = @($object.$attributeName)
+                if ($properties.$attributeName.Count -eq 1) {
+                    $properties.$attributeName = @($properties.$attributeName)
                 }
                 $properties.$attributeName += $attributeValue
             }
