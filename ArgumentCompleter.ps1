@@ -144,15 +144,22 @@ Register-ArgumentCompleter -CommandName $settingFunctions -ParameterName Key -Sc
 
     $deviceId = $fakeBoundParameters['DeviceId']
     $namespace = $fakeBoundParameters['Namespace']
+    $type = $fakeBoundParameters['Type']
+
+    # There doesn't seem to be a way to get the default value of a parameter
+    if (-not $type) {
+        $type = 'Default'
+    }
 
     $WarningPreference = 'SilentlyContinue'
 
-    $keys = [string[]] (Get-AdbSetting -DeviceId $deviceId -Namespace $namespace -List -Verbose:$false | Select-Object -ExpandProperty Key)
+    $keys = [string[]] (Get-AdbSetting -DeviceId $deviceId -Namespace $namespace -List -Type $type -Verbose:$false | Select-Object -ExpandProperty Key)
     $startMatches = [string[]] ($keys | Where-Object { $_ -like "$wordToComplete*" })
     $containMatches = [string[]] ($keys | Where-Object { $_ -like "*$wordToComplete*" })
 
     @($startMatches; $containMatches) | Select-Object -Unique
 }
+
 
 
 $script:AdbKeyCodes = @(
