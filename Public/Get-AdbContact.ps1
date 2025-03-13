@@ -8,18 +8,24 @@ function Get-AdbContact {
         [Parameter(Mandatory)]
         [string] $DeviceId,
 
-        [long] $Id = $null
+        [AllowNull()]
+        [System.Nullable[long]] $Id,
+
+
+        [ValidateSet('People', "Phones")]
+        [string] $Type = 'People'
     )
 
     begin {
         if ($Id) {
             $contactIdArg = "/$Id"
         }
+        $typeArg = if ($Type -eq 'People') { 'people' } else { 'phones' }
     }
 
     process {
         foreach ($device in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $device -Command "shell content query --uri content://contacts/people$contactIdArg" -Verbose:$VerbosePreference `
+            Invoke-AdbExpression -DeviceId $device -Command "shell content query --uri content://contacts/$typeArg/$contactIdArg" -Verbose:$VerbosePreference `
             | Where-Object { $_ -notlike '*No result found.*' } `
             | Out-String -Stream `
             | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } `
