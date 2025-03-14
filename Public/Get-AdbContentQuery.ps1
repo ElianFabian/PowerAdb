@@ -26,6 +26,7 @@ function Get-AdbContentQuery {
                 if ($isEnd) {
                     Write-Output ($lineGroupList -join "`n")
                     $lineGroupList.Clear()
+                    Write-Output $script:EndObject
                 }
                 else {
                     if ($lineGroupList.Count -ne 0 -and $_.StartsWith('Row: ')) {
