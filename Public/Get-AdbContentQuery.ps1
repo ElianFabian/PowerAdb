@@ -1,4 +1,4 @@
-# It's not possible to perfectly parse the output of 'adb shell content query --uri content://'
+# It's not possible to perfectly parse the output of 'adb shell content query --uri content://*'
 # since the format is ambiguous.
 # We do our best to make it work in most cases, but it's not guaranteed.
 function Get-AdbContentQuery {
@@ -7,20 +7,17 @@ function Get-AdbContentQuery {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
-        [string] $DeviceId,
+        [string[]] $DeviceId,
 
         [Parameter(Mandatory)]
         [string] $Uri
     )
 
     process {
-        foreach ($device in $DeviceId) {
+        foreach ($id in $DeviceId) {
             $lineGroupList = New-Object System.Collections.Generic.List[string]
 
-            {
-                Invoke-AdbExpression -DeviceId $device -Command "shell content query --uri '$Uri'" -Verbose:$VerbosePreference
-                Write-Output $script:EndObject
-            }.Invoke() `
+            GetAdbContentQueryInternal -DeviceId $id -Uri $Uri -Verbose:$VerbosePreference `
             | Where-Object { -not [string]::IsNullOrWhiteSpace($_) -and $_ -notlike '*No result found.*' } `
             | ForEach-Object {
                 # Sometimes a row is split into multiple lines, so we group them together
@@ -38,7 +35,7 @@ function Get-AdbContentQuery {
                     $lineGroupList.Add($_)
                 }
             } `
-            | Where-Object { -not [System.Object]::ReferenceEquals($_, $script:SkipObject) } `
+            | Select-Object -SkipLast 1 `
             | ForEach-Object {
                 $output = [PSCustomObject] @{
                     RowIndex   = $_ | Select-String -Pattern 'Row: (\d+)' | ForEach-Object { [int] $_.Matches[0].Groups[1].Value }
@@ -121,6 +118,27 @@ function Get-AdbContentQuery {
     }
 }
 
+
+
+function GetAdbContentQueryInternal {
+
+    [OutputType([string[]])]
+    param (
+        [Parameter(Mandatory)]
+        [string] $DeviceId,
+
+        [Parameter(Mandatory)]
+        [string] $Uri
+    )
+
+    process {
+        Invoke-AdbExpression -DeviceId $id -Command "shell content query --uri '$Uri'" -Verbose:$VerbosePreference
+    }
+
+    end {
+        Write-Output $script:EndObject
+    }
+}
 
 
 # Use check if the current line is the last line of a row
