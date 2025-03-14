@@ -42,7 +42,7 @@ function Invoke-AdbExpression {
             }
             else {
                 foreach ($id in $DeviceId) {
-                    $adbCommand = "adb -s $id $Command"
+                    $adbCommand = "adb -s '$id' $Command"
                     if ($PSCmdlet.ShouldProcess($adbCommand, '', 'Invoke-AdbExpression')) {
                         Invoke-Expression $adbCommand | Repair-OutputRendering
                     }
