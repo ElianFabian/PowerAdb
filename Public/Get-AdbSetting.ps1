@@ -84,7 +84,7 @@ function Get-AdbSetting {
                 continue
             }
 
-            $values = if ($QueryFromList) {
+            if ($QueryFromList) {
                 switch ($Type) {
                     'Default' {
                         $properties = Get-AdbSetting -DeviceId $id -Namespace $Namespace -List -Verbose:$VerbosePreference
@@ -136,10 +136,6 @@ function Get-AdbSetting {
                         }
                     }
                 }
-            }
-
-            $values | Where-Object {
-                -not [string]::IsNullOrWhiteSpace($_)
             }
         }
     }
