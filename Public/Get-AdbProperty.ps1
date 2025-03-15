@@ -34,8 +34,8 @@ function Get-AdbProperty {
                 continue
             }
 
-            $values = if ($QueryFromList) {
-                $properties = Get-AdbProperty -DeviceId $id -List -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false
+            if ($QueryFromList) {
+                $properties = Get-AdbProperty -DeviceId $id -List -Verbose:$VerbosePreference
                 $targetProperties = foreach ($propName in $Name) {
                     $properties | Where-Object {
                         $_.Name -ceq $propName
@@ -55,10 +55,6 @@ function Get-AdbProperty {
 
                     Invoke-AdbExpression -DeviceId $id -Command "shell getprop '$_'" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false
                 }
-            }
-
-            $values | Where-Object {
-                -not [string]::IsNullOrWhiteSpace($_)
             }
         }
     }
