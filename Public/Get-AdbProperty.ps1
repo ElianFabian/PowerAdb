@@ -23,7 +23,7 @@ function Get-AdbProperty {
             if ($List) {
                 Invoke-AdbExpression -DeviceId $id -Command 'shell getprop' -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
                 | Out-String `
-                | Select-String -Pattern "\[(.+)\]: \[(.+)\]" -AllMatches `
+                | Select-String -Pattern "\[(.+)\]: \[(.*)\]" -AllMatches `
                 | Select-Object -ExpandProperty Matches `
                 | ForEach-Object {
                     [PSCustomObject]@{
