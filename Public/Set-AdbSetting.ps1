@@ -22,7 +22,7 @@ function Set-AdbSetting {
             return
         }
         if ($Key.Contains('=')) {
-            # This is not a real restriction, we rely on this to proper parse key-value pairs in settings
+            # This is not a real restriction, we rely on this to proper parse key-value pairs in 'Get-AdbSetting -List'
             # this is the format: key=value
             Write-Error "Key '$Key' can't contain the character '='"
             return
@@ -33,6 +33,8 @@ function Set-AdbSetting {
             "System" { "system" }
             "Secure" { "secure" }
         }
+
+        $sanitizedValue = ConvertTo-ValidAdbStringArgument $Value
     }
 
     process {
@@ -42,7 +44,8 @@ function Set-AdbSetting {
                 Write-ApiLevelError -DeviceId $id -ApiLevelLessThan 17
                 continue
             }
-            Invoke-AdbExpression -DeviceId $id -Command "shell settings put $namespaceLowercase '$Key' '$Value'" -Verbose:$VerbosePreference
+
+            Invoke-AdbExpression -DeviceId $id -Command "shell settings put $namespaceLowercase '$Key' '$sanitizedValue'" -Verbose:$VerbosePreference
         }
     }
 }

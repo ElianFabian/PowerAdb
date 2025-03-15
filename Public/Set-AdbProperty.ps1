@@ -17,10 +17,8 @@ function Set-AdbProperty {
             Write-Error "Property name '$Name' can't contain space characters"
             return
         }
-        if ($Value.Contains(" ")) {
-            Write-Error "Value '$Value' can't contain space characters"
-            return
-        }
+
+        $sanitizedValue = ConvertTo-ValidAdbStringArgument $Value
     }
 
     process {
@@ -37,7 +35,7 @@ function Set-AdbProperty {
                 continue
             }
 
-            Invoke-AdbExpression -DeviceId $id -Command "shell setprop $Name '$Value'" -Verbose:$VerbosePreference
+            Invoke-AdbExpression -DeviceId $id -Command "shell setprop $Name $sanitizedValue" -Verbose:$VerbosePreference
         }
     }
 }
