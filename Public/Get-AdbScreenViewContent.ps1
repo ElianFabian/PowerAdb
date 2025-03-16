@@ -11,7 +11,7 @@ function Get-AdbScreenViewContent {
         foreach ($id in $DeviceId) {
             $apiLevel = [uint32] (Get-AdbProperty -DeviceId $id -Name 'ro.build.version.sdk' -Verbose:$false)
             if ($apiLevel -le 23) {
-                Write-ApiLevelError -DeviceId $id -ApiLevelLessThan 24
+                Write-ApiLevelError -DeviceId $id -ApiLevelLessThan 23
                 continue
             }
         }
