@@ -1,5 +1,5 @@
 # https://stackoverflow.com/questions/21409044/how-to-tell-if-screen-is-on-with-adb
-# TODO(check later): https://android.stackexchange.com/questions/191086/adb-commands-to-get-screen-state-and-locked-state
+
 function Test-AdbScreenOn {
 
     [CmdletBinding()]

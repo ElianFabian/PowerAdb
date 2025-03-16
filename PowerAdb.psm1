@@ -4,8 +4,6 @@ $PublicFunction = @(Get-ChildItem -Path "$PSScriptRoot/Public/*.ps1" -File -Erro
 $PrivateFunction = @(Get-ChildItem -Path "$PSScriptRoot/Private/*.ps1" -File -ErrorAction SilentlyContinue)
 
 $incorrectFiles = $PublicFunction | Where-Object {
-    #FIXME: This script is called in AdbArgumentCompleter.ps1 and in here
-    # that makes importing the script slow, we'll try to fix it
     & "$PSScriptRoot/Test-IncorrectFileFunction.ps1" -Path $_.FullName
 }
 
