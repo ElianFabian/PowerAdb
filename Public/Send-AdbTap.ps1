@@ -17,24 +17,26 @@ function Send-AdbTap {
         [switch] $DisableCoordinateCheck
     )
 
+    begin {
+        switch ($PSCmdlet.ParameterSetName) {
+            'Default' {
+                $positionX = $X
+                $positionY = $Y
+            }
+            'Node' {
+                $bounds = Get-NodeBounds -Node $Node
+                if (-not $bounds) {
+                    continue
+                }
+
+                $positionX = $bounds.CenterX
+                $positionY = $bounds.CenterY
+            }
+        }
+    }
+
     process {
         foreach ($id in $DeviceId) {
-            switch ($PSCmdlet.ParameterSetName) {
-                'Default' {
-                    $positionX = $X
-                    $positionY = $Y
-                }
-                'Node' {
-                    $bounds = Get-NodeBounds -Node $Node
-                    if (-not $bounds) {
-                        continue
-                    }
-
-                    $positionX = $bounds.CenterX
-                    $positionY = $bounds.CenterY
-                }
-            }
-
             if (-not $DisableCoordinateCheck) {
                 $size = Get-AdbScreenSize -DeviceId $id -Verbose:$false
                 $width = $size.Width
