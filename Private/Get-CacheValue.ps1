@@ -11,7 +11,7 @@ function Get-CacheValue {
 
     $cacheKey = "$DeviceId.$Key"
 
-    $cachedValue = $AdbCache[$cacheKey]
+    $cachedValue = $PowerAdbCache[$cacheKey]
 
     return $cachedValue
 }

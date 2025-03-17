@@ -35,11 +35,11 @@ if (-not (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue)) {
 
 
 # Used to store immutable values
-New-Variable -Name AdbCache -Value @{} -Scope Script -Force -Option ReadOnly
+New-Variable -Name PowerAdbCache -Value @{} -Scope Script -Force -Option ReadOnly
 
 $MyInvocation.MyCommand.ScriptBlock.Module.OnRemove = {
-    Remove-Variable -Name AdbCache -Scope Script -Force
-    Get-Job | Where-Object { $_.Name.StartsWith("PowerAdb") } | Stop-Job -PassThru | Remove-Job -Force
+    Remove-Variable -Name PowerAdbCache -Scope Script -Force
+    Get-Job | Where-Object { $_.Name.EndsWith($PowerAdbJobNameSuffix) } | Stop-Job -PassThru | Remove-Job -Force
 }
 
 Export-ModuleMember -Function $PublicFunction.BaseName

@@ -13,15 +13,15 @@ function Remove-CacheValue {
     )
 
     if ($All) {
-        $targetKeys = $AdbCache.Keys | Where-Object { $_.StartsWith("$DeviceId.") }
+        $targetKeys = $PowerAdbCache.Keys | Where-Object { $_.StartsWith("$DeviceId.") }
 
         foreach ($keyName in $targetKeys) {
-            $AdbCache.Remove($keyName)
+            $PowerAdbCache.Remove($keyName)
         }
     }
     else {
         $cacheKey = "$DeviceId.$Key"
 
-        $AdbCache.Remove($cacheKey)
+        $PowerAdbCache.Remove($cacheKey)
     }
 }

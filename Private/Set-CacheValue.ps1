@@ -13,10 +13,10 @@ function Set-CacheValue {
 
     $cacheKey = "$DeviceId.$Key"
 
-    $cachedValue = $AdbCache[$cacheKey]
+    $cachedValue = $PowerAdbCache[$cacheKey]
 
     if ($null -eq $cachedValue) {
-        $AdbCache[$cacheKey] = $Value
+        $PowerAdbCache[$cacheKey] = $Value
 
         $jobName = "PowerAdb.RemoveCacheFor:$DeviceId"
 
@@ -26,13 +26,13 @@ function Set-CacheValue {
         }
 
         $removeCachedValuesJob = Start-ThreadJob -Name $jobName -ScriptBlock {
-            $id, $AdbCache, $scriptRoot = $args
+            $id, $PowerAdbCache, $scriptRoot = $args
 
             . "$scriptRoot/Remove-CacheValue.ps1"
 
             & 'adb' '-s' "$id" 'wait-for-any-disconnect'
             Remove-CacheValue -DeviceId $id -All
-        } -ArgumentList $DeviceId, $AdbCache, $PSScriptRoot
+        } -ArgumentList $DeviceId, $PowerAdbCache, $PSScriptRoot
 
         # Cleanup the job automatically after completion
         Register-ObjectEvent -InputObject $removeCachedValuesJob -EventName 'StateChanged' -Action {
