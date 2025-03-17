@@ -39,7 +39,7 @@ New-Variable -Name AdbCache -Value @{} -Scope Script -Force -Option ReadOnly
 
 $MyInvocation.MyCommand.ScriptBlock.Module.OnRemove = {
     Remove-Variable -Name AdbCache -Scope Script -Force
-    Get-Job | Where-Object { $_.Name.StartsWith("PowerAdb.RemoveCacheFor:") } | Stop-Job -PassThru | Remove-Job -Force
+    Get-Job | Where-Object { $_.Name.StartsWith("PowerAdb") } | Stop-Job -PassThru | Remove-Job -Force
 }
 
 Export-ModuleMember -Function $PublicFunction.BaseName
