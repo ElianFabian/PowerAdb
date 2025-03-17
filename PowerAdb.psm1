@@ -37,6 +37,9 @@ if (-not (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue)) {
 # Used to store immutable values
 New-Variable -Name PowerAdbCache -Value @{} -Scope Script -Force -Option ReadOnly
 
+# Used to create jobs with unique names that we can remove when needed
+New-Variable -Name PowerAdbJobNameSuffix -Value ":$(New-Guid)" -Scope Script -Force -Option ReadOnly
+
 $MyInvocation.MyCommand.ScriptBlock.Module.OnRemove = {
     Remove-Variable -Name PowerAdbCache -Scope Script -Force
     Get-Job | Where-Object { $_.Name.EndsWith($PowerAdbJobNameSuffix) } | Stop-Job -PassThru | Remove-Job -Force

@@ -43,8 +43,9 @@ function Send-AdbDoubleTap {
             1..3 | ForEach-Object {
                 $boundParametersCopy = [hashtable] $PSBoundParameters
                 $boundParametersCopy['DeviceId'] = $id
-                $jobName = "PowerAdb.Send-AdbDoubleTap-$DeviceId|$($_)"
+                $jobName = New-PowerAdbJobName -Tag "SendAdbDoubleTap.$id.$_"
                 $jobNames.Add($jobName)
+
                 $job = ForEach-Object {
                     Start-Job -Name $jobName -ScriptBlock {
                         param ($boundParametersCopy, $scriptRoot)
