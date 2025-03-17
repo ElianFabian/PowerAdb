@@ -45,6 +45,7 @@ function Send-AdbDoubleTap {
                 $jobName = New-PowerAdbJobName -Tag "SendAdbDoubleTap.$id.$_"
 
                 $job = ForEach-Object {
+                    # I'd like to use Start-ThreadJob, but it's not working as expected in this case.
                     Start-Job -Name $jobName -ScriptBlock {
                         param ($boundParametersCopy, $scriptRoot)
                         $verbose = $boundParametersCopy['Verbose']
