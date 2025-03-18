@@ -33,32 +33,41 @@ function Get-AdbProcess {
 
             if ($processes) {
                 $processes | ForEach-Object {
-                    $fields = $_ -split '\s+'
-                    $fields = $fields | Where-Object { $_ }
-
-                    $user = $fields[0]
-                    $processId = $fields[1]
-                    $parentId = $fields[2]
-                    $virtualMemorySize = $fields[3]
-                    $residentSetSize = $fields[4]
-                    $waitingChannel = $fields[5]
-                    $programCounterOrKernelAddress = $fields[6]
-                    $state = $fields[7]
-                    $processName = $fields[8]
-
 
                     $output = [PSCustomObject]@{
-                        User              = $user
-                        Id                = $processId
-                        ParentId          = $parentId
-                        VirtualMemorySize = $virtualMemorySize
-                        ResidentSetSize   = $residentSetSize
-                        WaitingChannel    = $waitingChannel
-                        State             = $state
-                        ProcessName       = $processName
+                        DeviceId = $device
+                        RawContent = $_
                     }
 
-                    $output | Add-Member -MemberType NoteProperty -Name $programCounterOrKernelAddressField -Value $programCounterOrKernelAddress
+                    $output | Add-Member -MemberType ScriptProperty -Name Properties -Value {
+                        $fields = $this.RawContent -split '\s+'
+                        $fields = $fields | Where-Object { $_ }
+
+                        $user = $fields[0]
+                        $processId = $fields[1]
+                        $parentId = $fields[2]
+                        $virtualMemorySize = $fields[3]
+                        $residentSetSize = $fields[4]
+                        $waitingChannel = $fields[5]
+                        $programCounterOrKernelAddress = $fields[6]
+                        $state = $fields[7]
+                        $processName = $fields[8]
+
+                        $properties = [PSCustomObject]@{
+                            User              = $user
+                            Id                = $processId
+                            ParentId          = $parentId
+                            VirtualMemorySize = $virtualMemorySize
+                            ResidentSetSize   = $residentSetSize
+                            WaitingChannel    = $waitingChannel
+                            State             = $state
+                            ProcessName       = $processName
+                        }
+
+                        $output | Add-Member -MemberType NoteProperty -Name $programCounterOrKernelAddressField -Value $programCounterOrKernelAddress
+
+                        $properties
+                    }
 
                     $output
                 }
