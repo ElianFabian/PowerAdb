@@ -9,19 +9,27 @@ function Start-AdbPackageProcessDeath {
         [Parameter(Mandatory)]
         [string[]] $PackageName,
 
-        [switch] $Force
+        [Parameter(ParameterSetName = 'Force')]
+        [switch] $Force,
+
+        [Parameter(ParameterSetName = 'ForceAndReturnToApp')]
+        [switch] $ForceAndReturnToApp
     )
 
     process {
         foreach ($id in $DeviceId) {
             foreach ($package in $PackageName) {
-                if ($Force) {
+                if ($Force -or $ForceAndReturnToApp) {
                     $topActivity = Get-AdbTopActivity -DeviceId $id -Verbose:$false
                     if ($topActivity.PackageName -eq $package) {
                         Send-AdbKeyEvent -DeviceId $id -KeyCode HOME -Verbose:$VerbosePreference
                     }
                 }
                 Invoke-AdbExpression -DeviceId $id -Command "shell am kill '$package'" -Verbose:$VerbosePreference
+
+                if ($ForceAndReturnToApp) {
+                    Start-AdbPackage -DeviceId $id -PackageName $package -Verbose:$VerbosePreference
+                }
             }
         }
     }
