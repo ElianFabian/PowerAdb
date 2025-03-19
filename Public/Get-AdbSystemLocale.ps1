@@ -9,7 +9,7 @@ function Get-AdbSystemLocale {
 
     process {
         foreach ($id in $DeviceId) {
-            $apiLevel = Get-AdbApiLevel -DeviceId $id
+            $apiLevel = Get-AdbApiLevel -DeviceId $id -Verbose:$false
             if (-not $apiLevel) {
                 Write-Error "Failed to retrieve the API level for device with id '$id'."
                 continue
