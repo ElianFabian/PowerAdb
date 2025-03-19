@@ -1,4 +1,4 @@
-function Test-AdbMobileDataConnection {
+function Test-AdbMobileData {
 
     [OutputType([bool[]])]
     [CmdletBinding()]

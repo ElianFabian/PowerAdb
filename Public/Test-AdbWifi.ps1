@@ -1,4 +1,4 @@
-function Test-AdbWifiConnection {
+function Test-AdbWifi {
 
     [OutputType([bool[]])]
     [CmdletBinding()]
