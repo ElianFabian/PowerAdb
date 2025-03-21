@@ -24,7 +24,10 @@ function Get-AdbContentQuery {
 
                 $isEnd = [System.Object]::ReferenceEquals($_, $script:EndObject)
                 if ($isEnd) {
-                    Write-Output ($lineGroupList -join "`n")
+                    if ($lineGroupList.Count -ne 0) {
+                        Write-Output ($lineGroupList -join "`n")
+                        $lineGroupList.Clear()
+                    }
                     $lineGroupList.Clear()
                     Write-Output $script:EndObject
                 }
@@ -53,12 +56,12 @@ function Get-AdbContentQuery {
                     while ($rawData[$charIndex] -ge '0' -and $rawData[$charIndex] -le '9') {
                         $charIndex++
                     }
-    
+
                     $lastKey = $null
                     $flag = 'key'
                     while ($true) {
                         $charIndex++
-    
+
                         if ($charIndex -eq $rawData.Length) {
                             $data.$lastKey = $tokenSb.ToString()
                             $tokenSb.Clear() > $null
@@ -67,20 +70,20 @@ function Get-AdbContentQuery {
                             break
                         }
 
-    
+
                         $currentChar = $rawData[$charIndex]
-    
+
                         switch ($flag) {
                             'value' {
                                 $nextChar = $rawData[$charIndex + 1]
                                 $nextNextChar = $rawData[$charIndex + 2]
-            
+
                                 if ($currentChar -eq ',' -and $nextChar -eq ' ' -and (($nextNextChar -ge 'a') -and ($nextNextChar -le 'z') -or $nextNextChar -eq '_' )) {
                                     $tempIndex = $charIndex + 2
                                     while ($rawData[$tempIndex] -ne '=' -and $rawData[$tempIndex] -ne ' ' -and $tempIndex -ne ($rawData.Length - 1)) {
                                         $tempIndex++
                                     }
-    
+
                                     if ($rawData[$tempIndex] -eq '=') {
                                         $data.$lastKey = $tokenSb.ToString()
                                         $flag = 'key'
@@ -104,7 +107,7 @@ function Get-AdbContentQuery {
                             }
                         }
                     }
-    
+
                     if ($data.Keys) {
                         [PSCustomObject] $data
                     }
