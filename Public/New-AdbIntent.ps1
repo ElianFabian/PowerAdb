@@ -7,7 +7,7 @@ function New-AdbIntent {
 
         [uri] $Data = $null,
 
-        [string] $Type = $null,
+        [string] $MimeType = $null,
 
         [string] $Identifier = $null,
 
@@ -24,14 +24,14 @@ function New-AdbIntent {
         [scriptblock] $Extras = $null
     )
 
-    if ($Selector.IsPresent -and (-not $Data -or -not $Type)) {
-        throw "The -Selector parameter can only be used when both -Data and -Type are set."
+    if ($Selector.IsPresent -and (-not $Data -or -not $MimeType)) {
+        throw "The -Selector parameter can only be used when both -Data and -MimeType are set."
     }
 
     $intent = [PSCustomObject] @{
         Action     = $Action
         Data       = $Data
-        Type       = $Type
+        MimeType   = $MimeType
         Identifier = $Identifier
         Category   = $Category
         Flags      = $Flags
@@ -57,8 +57,8 @@ function New-AdbIntent {
         if ($this.Data) {
             $adbArguments += " -d '$($this.Data)'"
         }
-        if ($this.Type) {
-            $adbArguments += " -t '$($this.Type)'"
+        if ($this.MimeType) {
+            $adbArguments += " -t '$($this.MimeType)'"
         }
         if ($this.Identifier) {
             $adbArguments += " -i '$($this.Identifier)'"
