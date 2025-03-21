@@ -34,7 +34,20 @@ function Invoke-AdbExpression {
             $previousEncoding = [System.Console]::OutputEncoding
             [System.Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
-            AdbInternal -DeviceId $DeviceId -Command $Command -Verbose:$VerbosePreference
+            if (-not $DeviceId) {
+                $adbCommand = "adb $Command"
+                if ($PSCmdlet.ShouldProcess($adbCommand, '', 'Invoke-AdbExpression')) {
+                    Invoke-Expression $adbCommand | Repair-OutputRendering
+                }
+            }
+            else {
+                foreach ($id in $DeviceId) {
+                    $adbCommand = "adb -s '$id' $Command"
+                    if ($PSCmdlet.ShouldProcess($adbCommand, '', 'Invoke-AdbExpression')) {
+                        Invoke-Expression $adbCommand | Repair-OutputRendering
+                    }
+                }
+            }
         }
         finally {
             [System.Console]::OutputEncoding = $previousEncoding
