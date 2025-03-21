@@ -10,14 +10,34 @@ function Get-AdbContentQuery {
         [string[]] $DeviceId,
 
         [Parameter(Mandatory)]
-        [string] $Uri
+        [string] $Uri,
+
+        [Alias('Projection')]
+        [string[]] $ColumnName,
+
+        [string] $Where
+
+        # TODO: I tried some examples but this doesn't seem to make a difference, I might check it later
+        # [string] $SortBy
     )
+
+    begin {
+        if ($ColumnName) {
+            $projectionArg = " --projection $(ConvertTo-ValidAdbStringArgument ($ColumnName -join ':'))"
+        }
+        if ($Where) {
+            $whereArg = " --where $(ConvertTo-ValidAdbStringArgument $Where)"
+        }
+        # if ($SortBy) {
+        #     $sortArg = " --sort $(ConvertTo-ValidAdbStringArgument $SortBy)"
+        # }
+    }
 
     process {
         foreach ($id in $DeviceId) {
             $lineGroupList = New-Object System.Collections.Generic.List[string]
 
-            GetAdbContentQueryInternal -DeviceId $id -Uri $Uri -Verbose:$VerbosePreference `
+            InvokeAdbExpressionInternal -DeviceId $id -Command "shell content query --uri '$Uri'$projectionArg$whereArg" -Verbose:$VerbosePreference `
             | Where-Object { -not [string]::IsNullOrWhiteSpace($_) -and $_ -notlike '*No result found.*' } `
             | ForEach-Object {
                 # Sometimes a row is split into multiple lines, so we group them together
@@ -39,6 +59,9 @@ function Get-AdbContentQuery {
                     $lineGroupList.Add($_)
                 }
             } `
+            | Where-Object {
+                $_ -cne 'No result found.'
+            }
             | Select-Object -SkipLast 1 `
             | ForEach-Object {
                 $output = [PSCustomObject] @{
@@ -69,7 +92,6 @@ function Get-AdbContentQuery {
                             $lastKey = $null
                             break
                         }
-
 
                         $currentChar = $rawData[$charIndex]
 
@@ -124,7 +146,7 @@ function Get-AdbContentQuery {
 
 
 
-function GetAdbContentQueryInternal {
+function InvokeAdbExpressionInternal {
 
     [OutputType([string[]])]
     param (
@@ -132,11 +154,11 @@ function GetAdbContentQueryInternal {
         [string] $DeviceId,
 
         [Parameter(Mandatory)]
-        [string] $Uri
+        [string] $Command
     )
 
     process {
-        Invoke-AdbExpression -DeviceId $id -Command "shell content query --uri '$Uri'" -Verbose:$VerbosePreference
+        Invoke-AdbExpression -DeviceId $id -Command $Command -Verbose:$VerbosePreference
     }
 
     end {
