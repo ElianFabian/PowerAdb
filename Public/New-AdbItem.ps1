@@ -22,6 +22,8 @@ function New-AdbItem {
         if ($RunAs) {
             $runAsCommand = " run-as '$RunAs'"
         }
+
+        $sanitizedValue = ConvertTo-ValidAdbStringArgument $Value
     }
 
     process {
@@ -29,7 +31,7 @@ function New-AdbItem {
             switch ($Type) {
                 'File' {
                     if (($Force -or -not (TestItem -DeviceId $id -LiteralRemotePath $LiteralRemotePath))) {
-                        Invoke-AdbExpression -DeviceId $id -Command "shell$runAsCommand ""echo '$Value' > '$LiteralRemotePath'"""  -Verbose:$VerbosePreference
+                        Invoke-AdbExpression -DeviceId $id -Command "shell$runAsCommand echo $sanitizedValue ``>`` '$LiteralRemotePath'"  -Verbose:$VerbosePreference
                     }
                     else {
                         Write-Error "File '$LiteralRemotePath' already exists on device with id '$id'." -Category ResourceExists
