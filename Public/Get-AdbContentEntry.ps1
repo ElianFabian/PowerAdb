@@ -1,7 +1,7 @@
 # It's not possible to perfectly parse the output of 'adb shell content query --uri content://*'
 # since the format is ambiguous.
 # We do our best to make it work in most cases, but it's not guaranteed.
-function Get-AdbContentQuery {
+function Get-AdbContentEntry {
 
     [OutputType([PSCustomObject[]])]
     [CmdletBinding()]
