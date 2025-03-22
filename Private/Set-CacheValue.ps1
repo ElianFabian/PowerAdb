@@ -5,13 +5,19 @@ function Set-CacheValue {
         [Parameter(Mandatory, ValueFromPipeline)]
         [string] $DeviceId,
 
-        [string] $Key =  (Get-PSCallStack | Select-Object -First 1 -ExpandProperty Command),
+        [string] $FunctionName =  (Get-PSCallStack | Select-Object -First 1 -ExpandProperty Command),
 
+        [string] $Key,
+
+        [AllowEmptyString()]
         [Parameter(Mandatory)]
         [string] $Value
     )
 
-    $cacheKey = "$DeviceId.$Key"
+    $cacheKey = "$DeviceId`:$FunctionName"
+    if ($Key) {
+        $cacheKey = "$cacheKey`:$Key"
+    }
 
     $cachedValue = $PowerAdbCache[$cacheKey]
 

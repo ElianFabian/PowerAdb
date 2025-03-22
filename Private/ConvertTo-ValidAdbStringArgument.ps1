@@ -3,6 +3,7 @@ function ConvertTo-ValidAdbStringArgument {
     [OutputType([string])]
     [CmdletBinding()]
     param (
+        [AllowEmptyString()]
         [Parameter(Mandatory)]
         [string] $InputObject
     )

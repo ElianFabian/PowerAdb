@@ -12,6 +12,7 @@ function Set-AdbSetting {
         [Parameter(Mandatory)]
         [string] $Key,
 
+        [AllowEmptyString()]
         [Parameter(Mandatory)]
         [string] $Value
     )
