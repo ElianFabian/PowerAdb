@@ -1,5 +1,4 @@
 
-# TODO: Refactor and maybe use Events to wait instead of while loop.
 function Send-AdbDoubleTap {
 
     [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'Default')]
