@@ -38,7 +38,7 @@ function Get-AdbScreenPixel {
             if ($AsByteArray) {
                 $reader.ReadBytes($imageBytesWithoutHeaderCount)
             }
-            else {                
+            else {
                 $screenPixels = [PSCustomObject]@{
                     DeviceId = $id
                     Width    = $screenSize.Width

@@ -1,5 +1,5 @@
 function Disable-AdbMobileData {
-    
+
     [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]

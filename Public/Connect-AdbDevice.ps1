@@ -4,7 +4,7 @@ function Connect-AdbDevice {
     param (
         [Parameter(Mandatory)]
         [string[]] $IpAddress,
-        
+
         [Parameter(Mandatory)]
         [int] $Port
     )

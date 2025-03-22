@@ -1,5 +1,5 @@
 function Enable-AdbWifi {
-    
+
     [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]

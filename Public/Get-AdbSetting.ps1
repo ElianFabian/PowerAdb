@@ -47,7 +47,7 @@ function Get-AdbSetting {
             }
             if ($List) {
                 switch ($Type) {
-                    'Default' { 
+                    'Default' {
                         Invoke-AdbExpression -DeviceId $id -Command "shell settings list $namespaceLowercase" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
                         | Out-String -Stream `
                         | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } `

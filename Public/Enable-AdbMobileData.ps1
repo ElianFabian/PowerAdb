@@ -1,5 +1,5 @@
 function Enable-AdbMobileData {
-    
+
     [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]

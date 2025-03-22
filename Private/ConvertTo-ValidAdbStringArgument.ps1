@@ -8,6 +8,5 @@ function ConvertTo-ValidAdbStringArgument {
         [string] $InputObject
     )
 
-
     return "'" + '"' + $InputObject.Replace("\", "\\").Replace('"', '\"').Replace("'", "''") + '"' + "'"
 }

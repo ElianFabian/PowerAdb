@@ -1,5 +1,5 @@
 function Copy-AdbItem {
-   
+
     [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]

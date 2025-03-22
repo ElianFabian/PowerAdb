@@ -68,7 +68,7 @@ function Get-AdbPackageInfo {
                     $signingKeySetsMatches = $lineEnumerator.Current | Select-String -Pattern 'Signing KeySets: (?<keySets>\d+)'
                     $output | Add-Member -MemberType NoteProperty -Name 'SigningKeySets' -Value ([int] $signingKeySetsMatches.Matches[0].Groups['keySets'].Value)
 
-                    $lineEnumerator.MoveNextIgnoringBlank() > $null     
+                    $lineEnumerator.MoveNextIgnoringBlank() > $null
                 }
                 if ($lineEnumerator.Current.Contains('Packages:')) {
                     ParsePackages -LineEnumerator $lineEnumerator -InputObject $output
@@ -328,7 +328,7 @@ function ParseContentProviderAuthorities {
         $providerName = $LineEnumerator.Current | Select-String -Pattern $pattern `
         | Select-Object -ExpandProperty Matches -First 1 `
         | ForEach-Object { $_.Groups['providerName'].Value }
-        
+
         $LineEnumerator.MoveNextIgnoringBlank() > $null
 
         $providerMatches = $LineEnumerator.Current | Select-String -Pattern $script:ProviderPattern `
@@ -447,7 +447,7 @@ function ParseComponentAttribute {
             elseif ($attributeValue -eq '[]') {
                 $attributeValue = @()
             }
-    
+
             if ($attributeName -in $properties.PSObject.Properties.Name) {
                 if ($properties.$attributeName.Count -eq 1) {
                     $properties.$attributeName = @($properties.$attributeName)
@@ -514,7 +514,7 @@ function ParsePackages {
 
                 # $userProperties = [PSCustomObject]@{}
                 # $user | Add-Member -MemberType NoteProperty -Name 'Properties' -Value $userProperties
-                
+
                 $LineEnumerator.MoveNextIgnoringBlank() > $null
                 while ($LineEnumerator.Current -notmatch 'User \d+:') {
                     if (-not $LineEnumerator.Current.StartsWith(' ')) {
@@ -603,15 +603,15 @@ function ConvertToCamelCase {
     )
 
     $words = $InputObject -split '\s+'
-    
+
     if ($words.Count -gt 0) {
         $camelCase = $words[0].ToLower()
-        
+
         foreach ($word in $words[1..($words.Count - 1)]) {
             $camelCase += $word.Substring(0, 1).ToUpper() + $word.Substring(1).ToLower()
         }
         return $camelCase
     }
-    
+
     return ""
 }

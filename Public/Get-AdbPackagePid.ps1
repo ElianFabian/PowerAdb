@@ -13,7 +13,7 @@ function Get-AdbPackagePid {
     process {
         foreach ($id in $DeviceId) {
             $processId = Invoke-AdbExpression -DeviceId $id -Command "shell pidof '$PackageName'" -Verbose:$VerbosePreference
-            
+
             if ($processId) {
                 [int] $processId
             }

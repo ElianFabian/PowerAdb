@@ -58,7 +58,7 @@ function Send-AdbSwipe {
                     $positionX2 = $bounds2.CenterX
                     $positionY2 = $bounds2.CenterY
                 }
-            } 
+            }
 
             if (-not $DisableCoordinateCheck -and ($positionX1 -lt 0.0 -or $positionX1 -gt $width)) {
                 Write-Error "X1 coordinate in device with id '$id' must be between 0 and $width, but was '$positionX1'"
