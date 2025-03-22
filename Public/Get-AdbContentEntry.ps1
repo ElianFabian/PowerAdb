@@ -167,6 +167,16 @@ function InvokeAdbExpressionInternal {
 }
 
 
+# TODO: Add --user, --sort, and --extra options
+# usage: adb shell content query --uri <URI> [--user <USER_ID>] [--projection <PROJECTION>] [--where <WHERE>] [--sort <SORT_ORDER>] [--extra <BINDING>...]
+#   <PROJECTION> is a list of colon separated column names and is formatted:
+#   <COLUMN_NAME>[:<COLUMN_NAME>...]
+#   <SORT_ORDER> is the order in which rows in the result should be sorted.
+#   Example:
+#   # Select "name" and "value" columns from secure settings where "name" is equal to "new_setting" and sort the result by name in ascending order.
+#   adb shell content query --uri content://settings/secure --projection name:value --where "name='new_setting'" --sort "name ASC"
+
+
 # Use check if the current line is the last line of a row
 $script:EndObject = @{}
 
