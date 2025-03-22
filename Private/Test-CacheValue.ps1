@@ -1,4 +1,4 @@
-function Get-CacheValue {
+function Test-CacheValue {
 
     [CmdletBinding()]
     [OutputType([string])]
@@ -16,7 +16,5 @@ function Get-CacheValue {
         $cacheKey = "$cacheKey`:$Key"
     }
 
-    $cachedValue = $PowerAdbCache[$cacheKey]
-
-    return $cachedValue
+    return $PowerAdbCache.ContainsKey($cacheKey)
 }

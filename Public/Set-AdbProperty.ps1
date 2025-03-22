@@ -8,6 +8,7 @@ function Set-AdbProperty {
         [Parameter(Mandatory)]
         [string] $Name,
 
+        [AllowEmptyString()]
         [Parameter(Mandatory)]
         [string] $Value
     )
@@ -30,10 +31,10 @@ function Set-AdbProperty {
             | ForEach-Object { $_.Groups[1].Value } `
             | Where-Object { -not $_.StartsWith("debug.") }
 
-            if ($Name -notin $deviceProperties -and -not $Name.StartsWith("debug.")) {
-                Write-Error "Custom property '$Name' must start with 'debug.'"
-                continue
-            }
+            # if ($Name -notin $deviceProperties -and -not $Name.StartsWith("debug.")) {
+            #     Write-Error "Custom property '$Name' must start with 'debug.'"
+            #     continue
+            # }
 
             Invoke-AdbExpression -DeviceId $id -Command "shell setprop $Name $sanitizedValue" -Verbose:$VerbosePreference
         }

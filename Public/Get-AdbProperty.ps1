@@ -53,7 +53,21 @@ function Get-AdbProperty {
                         continue
                     }
 
-                    Invoke-AdbExpression -DeviceId $id -Command "shell getprop '$_'" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false
+                    $isImmutable = Test-ImmutableProperty $_
+                    if ($isImmutable) {
+                        if (Test-CacheValue -DeviceId $id -Key $_) {
+                            Write-Verbose "Get cached value for property '$_' for device with id '$id'"
+                            Get-CacheValue -DeviceId $id -Key $_
+                        }
+                        else {
+                            $value = Invoke-AdbExpression -DeviceId $id -Command "shell getprop '$_'" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false
+                            Set-CacheValue -DeviceId $id -Key $_ -Value $value
+                            $value
+                        }
+                    }
+                    else {
+                        Invoke-AdbExpression -DeviceId $id -Command "shell getprop '$_'" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false
+                    }
                 }
             }
         }
