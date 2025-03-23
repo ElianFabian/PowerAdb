@@ -100,6 +100,16 @@ function Get-AdbContentEntry {
                         $currentChar = $rawData[$charIndex]
 
                         switch ($flag) {
+                            'key' {
+                                if ($currentChar -ne '=') {
+                                    $tokenSb.Append($currentChar) > $null
+                                }
+                                else {
+                                    $flag = 'value'
+                                    $lastKey = $tokenSb.ToString().Trim()
+                                    $tokenSb.Clear() > $null
+                                }
+                            }
                             'value' {
                                 $nextChar = $rawData[$charIndex + 1]
                                 $nextNextChar = $rawData[$charIndex + 2]
@@ -119,16 +129,6 @@ function Get-AdbContentEntry {
                                 }
                                 else {
                                     $tokenSb.Append($currentChar) > $null
-                                }
-                            }
-                            'key' {
-                                if ($currentChar -ne '=') {
-                                    $tokenSb.Append($currentChar) > $null
-                                }
-                                else {
-                                    $flag = 'value'
-                                    $lastKey = $tokenSb.ToString().Trim()
-                                    $tokenSb.Clear() > $null
                                 }
                             }
                         }
@@ -208,5 +208,6 @@ $script:EndObject = @{}
 # - content://sms/draft
 # - content://sms/conversations
 # - content://mms/inbox
-# - content://settings/system
 # - content://settings/global
+# - content://settings/secure
+# - content://settings/system
