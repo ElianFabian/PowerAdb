@@ -13,14 +13,13 @@ function Invoke-AdbExpression {
     begin {
         $availableDevicesCount = (Get-AdbDevice -Verbose:$false).Count
         if ($availableDevicesCount -eq 0 -and $DeviceId) {
-            Write-Warning "There are no available devices"
             $stopExecution = $true
         }
     }
 
     process {
         if ($stopExecution) {
-            return
+            Write-Error "No devices connected" -Category NotEnabled -ErrorAction Stop
         }
 
         if (-not $PSBoundParameters.ContainsKey('DeviceId')) {

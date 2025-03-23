@@ -56,7 +56,6 @@ function Get-AdbProperty {
                     $isImmutable = Test-ImmutableProperty $_
                     if ($isImmutable) {
                         if (Test-CacheValue -DeviceId $id -Key $_) {
-                            Write-Verbose "Get cached value for property '$_' for device with id '$id'"
                             Get-CacheValue -DeviceId $id -Key $_
                         }
                         else {

@@ -18,5 +18,7 @@ function Get-CacheValue {
 
     $cachedValue = $PowerAdbCache[$cacheKey]
 
+    Write-Host "Get cached value for key '$cacheKey'"
+
     return $cachedValue
 }
