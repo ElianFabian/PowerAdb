@@ -38,7 +38,7 @@ if (-not (Get-Command -Name Start-ThreadJob -ErrorAction SilentlyContinue)) {
 New-Variable -Name PowerAdbCache -Value @{} -Scope Script -Force -Option ReadOnly
 
 # Used to create jobs with unique names that we can remove when needed
-New-Variable -Name PowerAdbJobNameSuffix -Value ":$(New-Guid)" -Scope Script -Force -Option ReadOnly
+New-Variable -Name PowerAdbJobNameSuffix -Value "$(New-Guid)" -Scope Script -Force -Option ReadOnly
 
 $MyInvocation.MyCommand.ScriptBlock.Module.OnRemove = {
     Remove-Variable -Name PowerAdbCache -Scope Script -Force

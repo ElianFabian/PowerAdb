@@ -19,13 +19,10 @@ function Set-CacheValue {
         $cacheKey = "$cacheKey`:$Key"
     }
 
-    $cachedValue = $PowerAdbCache[$cacheKey]
-
-    if ($null -eq $cachedValue) {
+    if (-not $PowerAdbCache.ContainsKey($cacheKey)) {
         $PowerAdbCache[$cacheKey] = $Value
 
         $jobName = New-PowerAdbJobName -Tag "RemoveCacheFor.$DeviceId"
-
         $job = Get-Job -Name $jobName -ErrorAction SilentlyContinue
         if ($job -and $job.State -eq 'Running') {
             return
