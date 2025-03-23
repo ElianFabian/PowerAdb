@@ -17,7 +17,7 @@ function Get-AdbProcess {
             $rawProcesses = Invoke-AdbExpression -DeviceId $device -Command "shell ps$idArg" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
             | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
 
-            $header = $rawProcesses[0]
+            $header = $rawProcesses | Select-Object -First 1
 
             $programCounterOrKernelAddressField = if ($header.Contains('PC')) {
                 'ProgramCounter'
