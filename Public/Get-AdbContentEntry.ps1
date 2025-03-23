@@ -37,6 +37,8 @@ function Get-AdbContentEntry {
         foreach ($id in $DeviceId) {
             $lineGroupList = New-Object System.Collections.Generic.List[string]
 
+            $lastRowIndex = 0
+
             InvokeAdbExpressionInternal -DeviceId $id -Command "shell content query --uri '$Uri'$projectionArg$whereArg" -Verbose:$VerbosePreference `
             | Where-Object { -not [string]::IsNullOrWhiteSpace($_) -and $_ -notlike '*No result found.*' } `
             | ForEach-Object {
@@ -52,9 +54,11 @@ function Get-AdbContentEntry {
                     Write-Output $script:EndObject
                 }
                 else {
-                    if ($lineGroupList.Count -ne 0 -and $_.StartsWith('Row: ')) {
+                    if ($lineGroupList.Count -ne 0 -and $_.StartsWith("Row: $($lastRowIndex + 1) ")) {
                         Write-Output ($lineGroupList -join "`n")
                         $lineGroupList.Clear()
+
+                        $lastRowIndex++
                     }
                     $lineGroupList.Add($_)
                 }
