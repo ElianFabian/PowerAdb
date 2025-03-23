@@ -56,7 +56,7 @@ function Get-AdbProperty {
                     $isImmutable = Test-ImmutableProperty $_
                     if ($isImmutable) {
                         if (Test-CacheValue -DeviceId $id -Key $_) {
-                            Get-CacheValue -DeviceId $id -Key $_
+                            Get-CacheValue -DeviceId $id -Key $_ -Verbose:$VerbosePreference
                         }
                         else {
                             $value = Invoke-AdbExpression -DeviceId $id -Command "shell getprop '$_'" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false
