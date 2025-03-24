@@ -91,7 +91,7 @@ $script:ProviderPattern = 'Provider{(?<providerHash>[a-f0-9]+) (?<package>[a-zA-
 $script:FullMimeTypeHeaderPattern = '\s{6}[a-zA-Z*\d+_.]+\/[a-zA-Z*\d+_.-]+:'
 $script:BaseMimeTypeHeaderPattern = '\s{6}[a-zA-Z*\d+_.]+:'
 $script:WildMimeTypeHeaderPattern = '\s{6}[a-zA-Z*\d+_.]+:'
-$script:SchemeHeaderPattern = '\s{6}[\w.]*:'
+$script:SchemeHeaderPattern = '\s{6}[\w..\-+]*:'
 $script:PackageHeaderPattern = '\s{2}Package \[(?<package>[a-zA-Z0-9\.]+)\] \((?<packageHash>[a-f0-9]+)\):'
 
 function ConvertToLineEnumerator {
