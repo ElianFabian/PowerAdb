@@ -18,6 +18,7 @@ function Get-AdbProcess {
             | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
 
             $header = $rawProcesses | Select-Object -First 1
+            $processes = $rawProcesses | Select-Object -Skip 1
 
             $programCounterOrKernelAddressField = if ($header.Contains('PC')) {
                 'ProgramCounter'
@@ -29,19 +30,15 @@ function Get-AdbProcess {
                 'Unknown'
             }
 
-            $processes = $rawProcesses | Select-Object -Skip 1
-
             if ($processes) {
                 $processes | ForEach-Object {
-
                     $output = [PSCustomObject]@{
-                        DeviceId = $device
+                        DeviceId   = $device
                         RawContent = $_
                     }
 
                     $output | Add-Member -MemberType ScriptProperty -Name Properties -Value {
-                        $fields = $this.RawContent -split '\s+'
-                        $fields = $fields | Where-Object { $_ }
+                        $fields = $this.RawContent -split '\s+' | Where-Object { $_ }
 
                         $user = $fields[0]
                         $processId = $fields[1]
@@ -64,10 +61,10 @@ function Get-AdbProcess {
                             ProcessName       = $processName
                         }
 
-                        $output | Add-Member -MemberType NoteProperty -Name $programCounterOrKernelAddressField -Value $programCounterOrKernelAddress
+                        $properties | Add-Member -MemberType NoteProperty -Name $programCounterOrKernelAddressField -Value $programCounterOrKernelAddress
 
                         $properties
-                    }
+                    }.GetNewClosure()
 
                     $output
                 }
