@@ -36,7 +36,8 @@ function Write-AdbLog {
         $priorityArg = "-p '$priorityArgValue'"
 
         if ($Tag) {
-            $tagArg = "-t '$Tag'"
+            $sanitizedTag = ConvertTo-ValidAdbStringArgument $Tag
+            $tagArg = "-t $sanitizedTag"
         }
 
         $sanitizedMessage = ConvertTo-ValidAdbStringArgument $Message
