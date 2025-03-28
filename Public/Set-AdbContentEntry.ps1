@@ -8,6 +8,9 @@ function Set-AdbContentEntry {
         [Parameter(Mandatory)]
         [string] $Uri,
 
+        [AllowNull()]
+        [Nullable[uint32]] $UserId,
+
         [Parameter(Mandatory)]
         [string] $Where,
 
@@ -17,23 +20,24 @@ function Set-AdbContentEntry {
     )
 
     begin {
-        $valueAsPsCustomObject = [PSCustomObject] $Values
-
+        if ($null -ne $UserId) {
+            $userArg = " --user $UserId"
+        }
         $whereArg = " --where $(ConvertTo-ValidAdbStringArgument $Where)"
 
+        $valueAsPsCustomObject = [PSCustomObject] $Values
         $bindingArgs = ConvertTo-ContentBindingArg $valueAsPsCustomObject
     }
 
     process {
         foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $id -Command "shell content update --uri '$Uri'$bindingArgs$whereArg" -Verbose:$VerbosePreference
+            Invoke-AdbExpression -DeviceId $id -Command "shell content update --uri '$Uri'$userArg$bindingArgs$whereArg" -Verbose:$VerbosePreference
         }
     }
 }
 
 
 
-# TODO: Add --user, and --extra options
 # usage: adb shell content update --uri <URI> [--user <USER_ID>] [--where <WHERE>] [--extra <BINDING>...]
 #   <WHERE> is a SQL style where clause in quotes (You have to escape single quotes - see example below).
 #   Example:

@@ -8,27 +8,32 @@ function Add-AdbContentEntry {
         [Parameter(Mandatory)]
         [string] $Uri,
 
+        [AllowNull()]
+        [Nullable[uint32]] $UserId,
+
         [Alias('Bindings')]
         [Parameter(Mandatory)]
         [object] $Values
     )
 
     begin {
-        $valueAsPsCustomObject = [PSCustomObject] $Values
+        if ($null -ne $UserId) {
+            $userArg = " --user $UserId"
+        }
 
+        $valueAsPsCustomObject = [PSCustomObject] $Values
         $bindingArgs = ConvertTo-ContentBindingArg $valueAsPsCustomObject
     }
 
     process {
         foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $id -Command "shell content insert --uri '$Uri'$bindingArgs" -Verbose:$VerbosePreference
+            Invoke-AdbExpression -DeviceId $id -Command "shell content insert --uri '$Uri'$userArg$bindingArgs" -Verbose:$VerbosePreference
         }
     }
 }
 
 
 
-# TODO: Add --user, and --extra options
 # usage: adb shell content insert --uri <URI> [--user <USER_ID>] --bind <BINDING> [--bind <BINDING>...] [--extra <BINDING>...]
 #   <URI> a content provider URI.
 #   <BINDING> binds a typed value to a column and is formatted:

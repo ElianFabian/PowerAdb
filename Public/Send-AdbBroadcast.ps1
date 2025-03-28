@@ -1,21 +1,41 @@
 function Send-AdbBroadcast {
 
-    [CmdletBinding(SupportsShouldProcess)]
+    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'UserId')]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
 
         [Parameter(Mandatory)]
-        [PSCustomObject] $Intent
+        [PSCustomObject] $Intent,
+
+        [Parameter(ParameterSetName = 'UserId')]
+        [AllowNull()]
+        [Nullable[uint32]] $UserId,
+
+        [Parameter(ParameterSetName = 'AllUsers')]
+        [switch] $AllUsers,
+
+        [Parameter(ParameterSetName = 'CurrentUser')]
+        [switch] $CurrentUser
     )
 
     begin {
         $intentArgs = $Intent.ToAdbArguments()
+
+        if ($null -ne $UserId) {
+            $userArg = " --user $UserId"
+        }
+        elseif ($AllUsers) {
+            $userArg = " --user all"
+        }
+        elseif ($CurrentUser) {
+            $userArg = " --user current"
+        }
     }
 
     process {
         foreach ($id in $DeviceId) {
-            $rawResult = Invoke-AdbExpression -DeviceId $id -Command "shell am broadcast $intentArgs" -Verbose:$VerbosePreference `
+            $rawResult = Invoke-AdbExpression -DeviceId $id -Command "shell am broadcast$userArg $intentArgs" -Verbose:$VerbosePreference `
             | Out-String
 
             $broadcastingIntentLine = $rawResult -split '\r?\n' | Select-Object -First 1
@@ -68,6 +88,5 @@ function Send-AdbBroadcast {
 }
 
 # TODO: add support for the following parameters:
-# --user
 # --receiver-permission
 # --allow-background-activity-starts

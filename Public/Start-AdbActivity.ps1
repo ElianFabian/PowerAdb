@@ -1,6 +1,6 @@
 function Start-AdbActivity {
 
-    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'Default')]
+    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'UserId')]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
@@ -11,13 +11,13 @@ function Start-AdbActivity {
 
         [switch] $WaitForLaunch,
 
-        [Parameter(ParameterSetName = 'Profiler')]
+        [Parameter(Mandatory, ParameterSetName = 'Profiler')]
         [switch] $StartProfiler,
 
         [Parameter(ParameterSetName = 'Profiler')]
         [switch] $StopWhenIdle,
 
-        [Parameter(ParameterSetName = 'Profiler')]
+        [Parameter(Mandatory, ParameterSetName = 'Profiler')]
         [string] $LiteralRemoteProfilerPath,
 
         [Parameter(ParameterSetName = 'Profiler')]
@@ -31,6 +31,9 @@ function Start-AdbActivity {
         [switch] $ForceStopBeforeStartingActivity,
 
         [switch] $TrackAllocation,
+
+        [AllowNull()]
+        [Nullable[uint32]] $UserId,
 
         [ValidateSet(
             'Undefined',
@@ -105,6 +108,12 @@ function Start-AdbActivity {
         if ($TrackAllocation) {
             $argumentsSb.Append(' --track-allocation') > $null
         }
+        if ($null -ne $UserId) {
+            $argumentsSb.Append(" --user $UserId") > $null
+        }
+        elseif ($CurrentUser) {
+            $argumentsSb.Append(' --user current') > $null
+        }
         if ($windowingModeCode -ne 0) {
             $argumentsSb.Append(" --windowingMode $windowingModeCode") > $null
         }
@@ -124,5 +133,4 @@ function Start-AdbActivity {
 # TODO: add support for the following parameters:
 # --attach-agent
 # --attach-agent-bind
-# --user
 # --display

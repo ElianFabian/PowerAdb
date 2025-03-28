@@ -1,5 +1,7 @@
 function New-AdbUser {
 
+    [OutputType([int[]])]
+    [CmdletBinding()]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
@@ -8,12 +10,16 @@ function New-AdbUser {
         [string] $UserName
     )
 
+    begin {
+        $userSucessText = 'Success: created user id '
+    }
+
     process {
         foreach ($id in $DeviceId) {
             $rawResult = Invoke-AdbExpression -DeviceId $id -Command "shell pm create-user '$UserName'" -Verbose:$VerbosePreference
 
-            if ( $result -and $rawResult.StartsWith('Success: created user id ')) {
-                [int] $rawResult.Substring('Success: created user id '.Length)
+            if ( $result -and $rawResult.StartsWith($userSucessText)) {
+                [int] $rawResult.Substring($userSucessText.Length)
             }
         }
     }

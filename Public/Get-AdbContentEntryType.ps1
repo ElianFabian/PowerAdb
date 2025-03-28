@@ -6,21 +6,23 @@ function Get-AdbContentEntryType {
         [string[]] $DeviceId,
 
         [Parameter(Mandatory)]
-        [string] $Uri
+        [string] $Uri,
+
+        [AllowNull()]
+        [Nullable[uint32]] $UserId
     )
+
+    begin {
+        if ($null -ne $UserId) {
+            $userArg = " --user $UserId"
+        }
+    }
 
     process {
         foreach ($id in $DeviceId) {
-            $rawResult = Invoke-AdbExpression -DeviceId $id -Command "shell content gettype --uri '$Uri'" -Verbose:$VerbosePreference
+            $rawResult = Invoke-AdbExpression -DeviceId $id -Command "shell content gettype --uri '$Uri'$userArg" -Verbose:$VerbosePreference
 
             $rawResult.Substring('Result: '.Length)
         }
     }
 }
-
-
-
-# TODO: Add --user option
-# usage: adb shell content gettype --uri <URI> [--user <USER_ID>]
-#   Example:
-#   adb shell content gettype --uri content://media/internal/audio/media/

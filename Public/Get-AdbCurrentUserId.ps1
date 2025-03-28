@@ -1,5 +1,7 @@
 function Get-AdbCurrentUserId {
 
+    [OutputType([int[]])]
+    [CmdletBinding()]
     param (
         [Parameter(Mandatory)]
         [string] $DeviceId

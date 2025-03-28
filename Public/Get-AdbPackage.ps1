@@ -7,7 +7,10 @@ function Get-AdbPackage {
         [string[]] $DeviceId,
 
         [ValidateSet('All', 'Disabled', 'Enabled', 'System', 'ThirdParty', 'Apex')]
-        [string] $FilterBy = 'All'
+        [string] $FilterBy = 'All',
+
+        [AllowNull()]
+        [Nullable[uint32]] $UserId
     )
 
     begin {
@@ -19,10 +22,13 @@ function Get-AdbPackage {
             'ThirdParty' { ' -3' }
             'Apex' { ' --apex-only' }
         }
+        if ($null -ne $UserId) {
+            $userArg = " --user $UserId"
+        }
     }
 
     process {
-        $DeviceId | Invoke-AdbExpression -Command "shell pm list packages$paramFilterBy" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
+        $DeviceId | Invoke-AdbExpression -Command "shell pm list packages$paramFilterBy$userArg" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
         | Out-String -Stream `
         | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } `
         | ForEach-Object { $_.Replace('package:', '') }

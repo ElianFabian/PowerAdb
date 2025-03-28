@@ -8,24 +8,29 @@ function Remove-AdbContentEntry {
         [Parameter(Mandatory)]
         [string] $Uri,
 
+        [AllowNull()]
+        [Nullable[uint32]] $UserId,
+
         [Parameter(Mandatory)]
         [string] $Where
     )
 
     begin {
+        if ($null -ne $UserId) {
+            $userArg = " --user $UserId"
+        }
         $whereArg = " --where $(ConvertTo-ValidAdbStringArgument $Where)"
     }
 
     process {
         foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $id -Command "shell content delete --uri '$Uri' $bindingArgs$whereArg" -Verbose:$VerbosePreference
+            Invoke-AdbExpression -DeviceId $id -Command "shell content delete --uri '$Uri' $userArg$whereArg" -Verbose:$VerbosePreference
         }
     }
 }
 
 
 
-# TODO: Add --user, and --extra options (according to the documentation --bind is supported, but it does not work)
 # usage: adb shell content delete --uri <URI> [--user <USER_ID>] --bind <BINDING> [--bind <BINDING>...] [--where <WHERE>] [--extra <BINDING>...]
 #   Example:
 #   # Remove "new_setting" secure setting.

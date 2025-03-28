@@ -6,15 +6,21 @@ function Disable-AdbPackage {
         [string[]] $DeviceId,
 
         [Parameter(Mandatory)]
-        [string] $PackageName
+        [string] $PackageName,
+
+        [AllowNull()]
+        [Nullable[uint32]] $UserId
     )
+
+    begin {
+        if ($null -ne $UserId) {
+            $userArg = " --user $UserId"
+        }
+    }
 
     process {
         foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $id -Command "shell pm disable $PackageName" -Verbose:$VerbosePreference > $null
+            Invoke-AdbExpression -DeviceId $id -Command "shell pm disable $PackageName$userArg" -Verbose:$VerbosePreference > $null
         }
     }
 }
-
-
-# TODO: Add --user parameter

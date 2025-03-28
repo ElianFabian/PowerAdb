@@ -391,7 +391,6 @@ $remotePathFunctions = @(
     "Add-AdbContent"
     "Copy-AdbItem"
     "Move-AdbItem"
-    "Start-AdbActivity"
 )
 AssertFunctionExists $remotePathFunctions
 
@@ -445,3 +444,17 @@ $userIdFunctions = @(
 AssertFunctionExists $userIdFunctions
 
 Register-ArgumentCompleter -CommandName $userIdFunctions -ParameterName Id -ScriptBlock $userIdCompletion
+
+
+
+$longUserIdParamFunctions = @(
+    "Get-AdbPackage"
+    "Enable-AdbPackage"
+    "Disable-AdbPackage"
+    "Get-AdbContentEntry"
+    "Get-AdbContentEntryType"
+    "Remove-AdbContentEntry"
+    "Set-AdbContentEntry"
+)
+
+Register-ArgumentCompleter -CommandName $longUserIdParamFunctions -ParameterName UserId -ScriptBlock $userIdCompletion

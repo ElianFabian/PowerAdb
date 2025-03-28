@@ -1,5 +1,6 @@
 function Remove-AdbUser {
 
+    [CmdletBinding()]
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
