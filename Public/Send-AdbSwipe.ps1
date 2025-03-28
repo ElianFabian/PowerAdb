@@ -44,11 +44,11 @@ function Send-AdbSwipe {
                     $positionY2 = $Y2
                 }
                 'Node' {
-                    $bounds1 = Get-NodeBounds -Node $Node1
+                    $bounds1 = Get-ScreenNodeBounds -Node $Node1
                     if (-not $bounds1) {
                         continue
                     }
-                    $bounds2 = Get-NodeBounds -Node $Node2
+                    $bounds2 = Get-ScreenNodeBounds -Node $Node2
                     if (-not $bounds2) {
                         continue
                     }

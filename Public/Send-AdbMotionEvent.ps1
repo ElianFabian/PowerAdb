@@ -43,7 +43,7 @@ function Send-AdbMotionEvent {
                     $positionY = $Y
                 }
                 'Node' {
-                    $bounds = Get-NodeBounds -Node $Node
+                    $bounds = Get-ScreenNodeBounds -Node $Node
                     if (-not $bounds) {
                         continue
                     }

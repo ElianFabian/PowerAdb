@@ -1,4 +1,4 @@
-function Get-NodeBounds {
+function Get-ScreenNodeBounds {
 
     [CmdletBinding()]
     param (
