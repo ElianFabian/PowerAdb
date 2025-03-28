@@ -440,6 +440,7 @@ $userIdCompletion = {
 
 $userIdFunctions = @(
     "Remove-AdbUser"
+    "Switch-AdbUser"
 )
 AssertFunctionExists $userIdFunctions
 
