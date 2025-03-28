@@ -413,3 +413,35 @@ $literalRemoteProfilerPathFunctions = @(
 AssertFunctionExists $literalRemoteProfilerPathFunctions
 
 Register-ArgumentCompleter -CommandName $literalRemoteProfilerPathFunctions -ParameterName LiteralRemoteProfilerPath -ScriptBlock $remotePathCompletion
+
+
+
+$userIdCompletion = {
+    param(
+        $commandName,
+        $parameterName,
+        $wordToComplete,
+        $commandAst,
+        $fakeBoundParameters
+    )
+
+    $deviceId = $fakeBoundParameters['DeviceId']
+
+    $WarningPreference = 'SilentlyContinue'
+
+    Get-AdbUser -DeviceId $deviceId -Verbose:$false | Where-Object { $_.Name -like "$wordToComplete*" } | ForEach-Object {
+        New-Object -Type System.Management.Automation.CompletionResult -ArgumentList @(
+            $_.Id
+            "$($_.Id) ($($_.Name))"
+            'ParameterValue'
+            "$($_.Id) ($($_.Name))"
+        )
+    }
+}
+
+$userIdFunctions = @(
+    "Remove-AdbUser"
+)
+AssertFunctionExists $userIdFunctions
+
+Register-ArgumentCompleter -CommandName $userIdFunctions -ParameterName Id -ScriptBlock $userIdCompletion
