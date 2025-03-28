@@ -42,7 +42,8 @@ function Get-AdbContentEntry {
             InvokeAdbExpressionInternal -DeviceId $id -Command "shell content query --uri '$Uri'$projectionArg$whereArg" -Verbose:$VerbosePreference `
             | Where-Object { -not [string]::IsNullOrWhiteSpace($_) -and $_ -notlike '*No result found.*' } `
             | ForEach-Object {
-                # Sometimes a row is split into multiple lines, so we group them together
+                # Sometimes a row is split into multiple lines because a value contains a new line character
+                # We need to group these lines together to parse the row correctly
 
                 $isEnd = [System.Object]::ReferenceEquals($_, $script:EndObject)
                 if ($isEnd) {
