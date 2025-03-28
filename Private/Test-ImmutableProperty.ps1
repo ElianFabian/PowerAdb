@@ -7,6 +7,10 @@ function Test-ImmutableProperty {
 
     # TODO: Test it on multiple devices
 
+    if ($Name.StartsWith('ro.')) {
+        return $true
+    }
+
     if ($Name.StartsWith('debug.')) {
         return $false
     }
