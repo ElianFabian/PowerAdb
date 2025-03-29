@@ -24,6 +24,7 @@ function Get-AdbPackageInfo {
 
                 $lineEnumerator.MoveNextIgnoringBlank() > $null
 
+                SkipMiscellaneous -LineEnumerator $lineEnumerator
                 if ($lineEnumerator.Current.Contains('Activity Resolver Table:')) {
                     ParseResolverTable -LineEnumerator $lineEnumerator -ResolverTableName 'ActivityResolverTable' -InputObject $output -ComponentType 'Activity'
                 }
@@ -52,8 +53,61 @@ function Get-AdbPackageInfo {
                         $output.PreferredActivities += $userActivity
                     }
                 }
-                while ($lineEnumerator.Current.Contains('Permissions:')) {
+                if ($lineEnumerator.Current.StartsWith('App verification status:')) {
+                    # TODO: parse this
+                    # For now we just ignore it
+
+                    # We can obtain this in 'oplus' package in Realme around at line: 21896
+                    # App verification status:
+
+                    #   Package: com.amazon.mShop.android.shopping
+                    #   Domains: business.amazon.co.jp business.amazon.co.uk amz.onl amzn.eu amzn.to www.amazon.ae www.amazon.ca www.amazon.de www.amazon.eg www.amazon.es www.amazon.fr www.amazon.ie www.amazon.it www.amazon.nl www.amazon.pl www.amazon.sa www.amazon.se www.amazon.sg clinic.amazon.com dl.amazon.co.jp dl.amazon.co.uk dl.amazon.co.za link.mobileauth.amazon.com business.amazon.ca business.amazon.de business.amazon.es business.amazon.fr business.amazon.it a.co dl.amazon.ae dl.amazon.ca dl.amazon.de dl.amazon.eg dl.amazon.es dl.amazon.fr dl.amazon.ie dl.amazon.it dl.amazon.nl dl.amazon.pl dl.amazon.sa dl.amazon.se dl.amazon.sg health.amazon.com www.amazon.co.jp www.amazon.co.uk www.amazon.co.za dl.amazon.com dl.amazon.com.au dl.amazon.com.be dl.amazon.com.br dl.amazon.com.mx dl.amazon.com.tr www.amazon.com getstarted.amazonfiretvapp.com www.amazon.com.au www.amazon.com.be www.amazon.com.br www.amazon.com.mx www.amazon.com.tr pharmacy.amazon.com amzn.asia business.amazon.com
+                    #   Status:  ask
+
+                    #   Package: com.google.android.youtube
+                    #   Domains: youtu.be m.youtube.com youtube.com www.youtube.com
+                    #   Status:  undefined
+
+                    #   Package: es.bancosantander.apps
+                    #   Domains: apiauth.bancosantander.es
+                    #   Status:  always : 200000000
+
+                    #   Package: com.factorialhr.factorialapp
+                    #   Domains: *.factorialhr.com
+                    #   Status:  always : 200000000
+
+                    do {
+                        $lineEnumerator.MoveNextIgnoringBlank() > $null
+                    }
+                    while ($LineEnumerator.Current.StartsWith(' ') -or -not $LineEnumerator.Current.EndsWith(':'))
+                }
+                while ($lineEnumerator.Current -match 'App linkages for user \d+:') {
+                    do {
+                        $lineEnumerator.MoveNextIgnoringBlank() > $null
+                    }
+                    while ($lineEnumerator.Current.StartsWith(' ') -and -not $lineEnumerator.Current.EndsWith(':'))
+                }
+                while ($lineEnumerator.Current.StartsWith('Permissions:')) {
                     ParsePermissions -LineEnumerator $lineEnumerator -InputObject $output
+                }
+                if ($lineEnumerator.Current.StartsWith('AppOp Permissions:')) {
+                    # TODO: Parse this
+                    # For now we just ignore it
+
+                    # Example from Realme 'oplus' package:
+                    # AppOp Permissions:
+                    #     AppOp Permission android.permission.WRITE_SETTINGS:
+                    #     com.coloros.backuprestore
+                    #     com.google.android.networkstack.tethering
+                    #     com.mediatek.ims
+                    #     com.android.providers.telephony
+                    #     org.cosmicide
+                    #     com.coloros.wirelesssettings
+
+                    do {
+                        $lineEnumerator.MoveNextIgnoringBlank() > $null
+                    }
+                    while ($lineEnumerator.Current.StartsWith(' '))
                 }
                 if ($lineEnumerator.Current.Contains('Registered ContentProviders:')) {
                     ParseRegisteredContentProvider -LineEnumerator $lineEnumerator -InputObject $output
@@ -74,7 +128,6 @@ function Get-AdbPackageInfo {
                     # $lineEnumerator.MoveNextIgnoringBlank() > $null
                     # $lineEnumerator.MoveNextIgnoringBlank() > $null
 
-                    # Write-Host "App: $package" -ForegroundColor Green
                     # $signingKeySetsMatches = $lineEnumerator.Current | Select-String -Pattern 'Signing KeySets: (?<keySets>\d+)'
                     # $output | Add-Member -MemberType NoteProperty -Name 'SigningKeySets' -Value ([int] $signingKeySetsMatches.Matches[0].Groups['keySets'].Value)
 
@@ -96,19 +149,30 @@ function Get-AdbPackageInfo {
     }
 }
 
+# oplus
+# com.google.android.apps.photos
+# com.budget.tracker_app
 
 
-$script:ComponentPattern = '(?<componentHash>[a-f0-9]+)\s(?<package>[a-zA-Z0-9\.]+)\/(?<componentClassName>[a-zA-Z0-9\.\/_$]+)(\sfilter\s(?<filterHash>[a-f0-9]+))?'
-$script:ActionPattern = '\s{6}([\w\.\d_]+):'
+
+$PackagePattern = '[a-zA-Z0-9\._]+'
+$HashPattern = '[a-f0-9]+'
+$ComponentClassNamePattern = '[a-zA-Z0-9\.\/_$]+'
+$MimeTypeHeaderPattern = '\s{6}[a-zA-Z*\d+_.\-/]+:'
+
+$script:ComponentPattern = "(?<componentHash>$HashPattern)\s(?<package>$PackagePattern)\/(?<componentClassName>$ComponentClassNamePattern)(\sfilter\s(?<filterHash>$HashPattern))?"
+$script:ActionPattern = '\s{6}([\w\.\d_\s\-]+):'
 $script:AttributePattern = '(?<attributeName>\w+)(:\s|=)(?<attributeValue>[^,^\n\r]+)'
-$script:PermissionPattern = ' Permission \[(?<permission>[a-zA-Z0-9\._]+)\] \((?<permissionHash>[a-f0-9]+)\):'
+$script:PermissionPattern = " Permission \[(?<permission>$PackagePattern)\] \((?<permissionHash>$HashPattern)\):"
 $script:PermissionAttributePattern = '(?<attributeName>\w+)=(?<attributeValue>[a-zA-Z]+{.+}|[^\s]+)'
-$script:ProviderPattern = 'Provider{(?<providerHash>[a-f0-9]+) (?<package>[a-zA-Z0-9\.]+)(\/(?<componentClassName>[a-zA-Z0-9\.\/_]+))?}'
-$script:FullMimeTypeHeaderPattern = '\s{6}[a-zA-Z*\d+_.]+\/[a-zA-Z*\d+_.-]+:'
-$script:BaseMimeTypeHeaderPattern = '\s{6}[a-zA-Z*\d+_.]+:'
-$script:WildMimeTypeHeaderPattern = '\s{6}[a-zA-Z*\d+_.]+:'
+$script:ProviderHeaderPattern = "(?<package>$PackagePattern)\/(?<componentClassName>$ComponentClassNamePattern):"
+$script:ContentProviderAuthoritiesHeaderPattern = '\[(?<providerName>[a-zA-Z0-9\.\-_:]+)\]:'
+$script:ProviderPattern = "Provider{(?<providerHash>[a-f0-9]+) (?<package>$PackagePattern)(\/(?<componentClassName>[a-zA-Z0-9\.\/_$]+))?}"
+$script:FullMimeTypeHeaderPattern = $script:MimeTypeHeaderPattern
+$script:BaseMimeTypeHeaderPattern = $script:MimeTypeHeaderPattern
+$script:WildMimeTypeHeaderPattern = $script:MimeTypeHeaderPattern
 $script:SchemeHeaderPattern = '\s{6}[\w..\-+]*:'
-$script:PackageHeaderPattern = '\s{2}Package \[(?<package>[a-zA-Z0-9\.]+)\] \((?<packageHash>[a-f0-9]+)\):'
+$script:PackageHeaderPattern = "\s{2}Package \[(?<package>$PackagePattern)\] \((?<packageHash>$HashPattern)\):"
 
 function ConvertToLineEnumerator {
 
@@ -137,6 +201,73 @@ function ConvertToLineEnumerator {
         }
 
         return $lineEnumerator
+    }
+}
+
+function SkipMiscellaneous {
+
+    param (
+        [Parameter(Mandatory)]
+        [PSCustomObject] $LineEnumerator
+    )
+
+    # TODO: Parse this correctly
+    # For now we just skip them
+
+    # Database versions:
+    #     Internal:
+    #         sdkVersion=30 databaseVersion=3
+    #         fingerprint=realme/RMX2001EEA/RMX2001L1:11/RP1A.200720.011/1647528410735:user/release-keys
+    #     External:
+    #         sdkVersion=29 databaseVersion=3
+    #         fingerprint=realme/RMX2001EEA/RMX2001L1:10/QP1A.190711.020/1591587271:user/release-keys
+
+    # Verifiers:
+    #   Required: com.android.vending (uid=10147)
+
+    # Intent Filter Verifier:
+    #   Using: com.google.android.gms (uid=10143)
+
+    # Libraries:
+    #   android.test.base ->  (jar) /system/framework/android.test.base.jar
+    #   android.test.mock ->  (jar) /system/framework/android.test.mock.jar
+    #   ...
+
+    # Features:
+    #     oppo.filtrated.app
+    #     oppo.runtime.permission.alert.support
+    #     oppo.face.closeeye.detect
+    #     ...
+
+    if ($LineEnumerator.Current.Contains('Database versions:')) {
+        do {
+            $LineEnumerator.MoveNextIgnoringBlank() > $null
+        }
+        while ($LineEnumerator.Current.StartsWith(' ') -or -not $LineEnumerator.Current.EndsWith(':'))
+    }
+    if ($LineEnumerator.Current.Contains('Verifiers:')) {
+        do {
+            $LineEnumerator.MoveNextIgnoringBlank() > $null
+        }
+        while ($LineEnumerator.Current.StartsWith(' ') -or -not $LineEnumerator.Current.EndsWith(':'))
+    }
+    if ($LineEnumerator.Current.Contains('Intent Filter Verifier:')) {
+        do {
+            $LineEnumerator.MoveNextIgnoringBlank() > $null
+        }
+        while ($LineEnumerator.Current.StartsWith(' ') -or -not $LineEnumerator.Current.EndsWith(':'))
+    }
+    if ($LineEnumerator.Current.Contains('Libraries:')) {
+        do {
+            $LineEnumerator.MoveNextIgnoringBlank() > $null
+        }
+        while ($LineEnumerator.Current.StartsWith(' ') -or -not $LineEnumerator.Current.EndsWith(':'))
+    }
+    if ($LineEnumerator.Current.Contains('Features:')) {
+        do {
+            $LineEnumerator.MoveNextIgnoringBlank() > $null
+        }
+        while ($LineEnumerator.Current.StartsWith(' ') -or -not $LineEnumerator.Current.EndsWith(':'))
     }
 }
 
@@ -316,7 +447,7 @@ function ParseRegisteredContentProvider {
         $InputObject.RegisteredContentProviders += $provider
 
         $LineEnumerator.MoveNextIgnoringBlank() > $null
-        if ($LineEnumerator.Current -notmatch '(?<package>[a-zA-Z0-9\.]+)\/(?<componentClassName>[a-zA-Z0-9\.\/_]+):') {
+        if ($LineEnumerator.Current -notmatch $script:ProviderHeaderPattern) {
             break
         }
         $LineEnumerator.MoveNextIgnoringBlank() > $null
@@ -338,10 +469,9 @@ function ParseContentProviderAuthorities {
         $InputObject | Add-Member -MemberType NoteProperty -Name 'ContentProviderAuthorities' -Value @()
     }
 
-    $pattern = '\[(?<providerName>[a-zA-Z0-9\.\-_]+)\]:'
     $LineEnumerator.MoveNextIgnoringBlank() > $null
-    while ($LineEnumerator.Current -match $pattern) {
-        $providerName = $LineEnumerator.Current | Select-String -Pattern $pattern `
+    while ($LineEnumerator.Current -match $script:ContentProviderAuthoritiesHeaderPattern) {
+        $providerName = $LineEnumerator.Current | Select-String -Pattern $script:ContentProviderAuthoritiesHeaderPattern `
         | Select-Object -ExpandProperty Matches -First 1 `
         | ForEach-Object { $_.Groups['providerName'].Value }
 
@@ -363,7 +493,7 @@ function ParseContentProviderAuthorities {
 
         $LineEnumerator.MoveNextIgnoringBlank() > $null
         $LineEnumerator.MoveNextIgnoringBlank() > $null
-        if ($LineEnumerator.Current -notmatch $pattern) {
+        if ($LineEnumerator.Current -notmatch $script:ContentProviderAuthoritiesHeaderPattern) {
             break
         }
     }
@@ -495,7 +625,7 @@ function ParsePackages {
     $InputObject | Add-Member -MemberType NoteProperty -Name 'Packages' -Value @()
 
     $LineEnumerator.MoveNextIgnoringBlank() > $null
-    while ($LineEnumerator.Current -match $script:PackageHeaderPattern) {
+    :outer while ($LineEnumerator.Current -match $script:PackageHeaderPattern) {
         $packageMatches = $LineEnumerator.Current | Select-String -Pattern $script:PackageHeaderPattern `
         | Select-Object -ExpandProperty Matches -First 1
 
@@ -515,31 +645,38 @@ function ParsePackages {
             if (-not $LineEnumerator.Current.StartsWith(' ')) {
                 break
             }
-            if ($LineEnumerator.Current -match 'User \d+:') {
-                $userId = $LineEnumerator.Current | Select-String -Pattern 'User (?<userId>\d+):' `
-                | Select-Object -ExpandProperty Matches -First 1 `
-                | ForEach-Object { $_.Groups['userId'].Value }
+            while ($LineEnumerator.Current -match 'User \d+:') {
+                # TODO: Parse this correctly
+                # For now we just skip them
 
-                $user = [PSCustomObject]@{
-                    UserId = $userId
-                }
-                if ($properties.PSObject.Properties.Name -notcontains 'Users') {
-                    $properties | Add-Member -MemberType NoteProperty -Name 'Users' -Value @()
-                }
-                $properties.Users += $user
+                # $userId = $LineEnumerator.Current | Select-String -Pattern 'User (?<userId>\d+):' `
+                # | Select-Object -ExpandProperty Matches -First 1 `
+                # | ForEach-Object { $_.Groups['userId'].Value }
+
+                # $user = [PSCustomObject]@{
+                #     UserId = $userId
+                # }
+                # if ($properties.PSObject.Properties.Name -notcontains 'Users') {
+                #     $properties | Add-Member -MemberType NoteProperty -Name 'Users' -Value @()
+                # }
+                # $properties.Users += $user
 
                 # $userProperties = [PSCustomObject]@{}
                 # $user | Add-Member -MemberType NoteProperty -Name 'Properties' -Value $userProperties
 
-                $LineEnumerator.MoveNextIgnoringBlank() > $null
-                while ($LineEnumerator.Current -notmatch 'User \d+:') {
-                    if (-not $LineEnumerator.Current.StartsWith(' ')) {
-                        break
-                    }
+                # $LineEnumerator.MoveNextIgnoringBlank() > $null
+                # while ($LineEnumerator.Current -notmatch 'User \d+:') {
+                #     if (-not $LineEnumerator.Current.StartsWith(' ')) {
+                #         break
+                #     }
+                #     $LineEnumerator.MoveNextIgnoringBlank() > $null
+                # }
+
+                while ($LineEnumerator.Current.StartsWith('      ') -or $LineEnumerator.Current -match 'User \d+:' -or ($LineEnumerator.Current.StartsWith('    ') -and $LineEnumerator.Current.EndsWith(':'))) {
                     $LineEnumerator.MoveNextIgnoringBlank() > $null
                 }
 
-                continue
+                continue outer
             }
 
             if ($LineEnumerator.Current.Contains('versionCode') -or $LineEnumerator.Current.Contains('userId') -or $LineEnumerator.Current.Contains('permissionsFixed')) {
