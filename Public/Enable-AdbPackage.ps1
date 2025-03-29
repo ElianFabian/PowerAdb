@@ -17,6 +17,7 @@ function Enable-AdbPackage {
             $userArg = " --user $UserId"
         }
     }
+
     process {
         foreach ($id in $DeviceId) {
             Invoke-AdbExpression -DeviceId $id -Command "shell pm enable $PackageName$userArg" -Verbose:$VerbosePreference > $null
