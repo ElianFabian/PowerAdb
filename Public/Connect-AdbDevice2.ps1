@@ -3,13 +3,15 @@ function Connect-AdbDevice2 {
     [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory)]
-        [string[]] $DeviceId
+        [string[]] $DeviceId,
+
+        [switch] $Force
     )
 
     process {
         foreach ($id in $DeviceId) {
             $isWirelessDebuggingEnabled = Get-AdbSetting -DeviceId $id -Namespace Global -Key adb_wifi_enabled -Verbose:$false
-            if ($isWirelessDebuggingEnabled -eq 0) {
+            if ($isWirelessDebuggingEnabled -eq 0 -and -not $Force) {
                 Write-Error "Wireless debugging is not enabled on device $id."
                 return
             }
@@ -21,8 +23,10 @@ function Connect-AdbDevice2 {
                 return
             }
 
-            Start-AdbTcpIp -DeviceId $id -Port 5555 -Verbose:$VerbosePreference
+            Set-AdbSetting -DeviceId $id -Namespace Global -Key adb_wifi_enabled -Value 1 -Verbose:$false
+
             $ipAdress = Get-AdbLocalNetworkIp -DeviceId $id -Wait -Verbose:$false
+            Start-AdbTcpIp -DeviceId $id -Port 5555 -Verbose:$VerbosePreference
             Connect-AdbDevice -IpAddress $ipAdress -Port 5555 -Verbose:$VerbosePreference
         }
     }
