@@ -62,13 +62,29 @@ function Get-AdbPackageInfo {
                     ParseContentProviderAuthorities -LineEnumerator $lineEnumerator -InputObject $output
                 }
                 if ($lineEnumerator.Current.Contains('Key Set Manager:')) {
-                    $lineEnumerator.MoveNextIgnoringBlank() > $null
-                    $lineEnumerator.MoveNextIgnoringBlank() > $null
 
-                    $signingKeySetsMatches = $lineEnumerator.Current | Select-String -Pattern 'Signing KeySets: (?<keySets>\d+)'
-                    $output | Add-Member -MemberType NoteProperty -Name 'SigningKeySets' -Value ([int] $signingKeySetsMatches.Matches[0].Groups['keySets'].Value)
+                    # TODO: Parse this more complex case
+                    # Key Set Manager:
+                    #     [com.huawei.health]
+                    #         KeySets Aliases: keysetnewkey=596, keysetoldkey=595
+                    #         Defined KeySets: 596, 595
+                    #         Signing KeySets: 595
+                    #         Upgrade KeySets: 596, 595
 
-                    $lineEnumerator.MoveNextIgnoringBlank() > $null
+                    # $lineEnumerator.MoveNextIgnoringBlank() > $null
+                    # $lineEnumerator.MoveNextIgnoringBlank() > $null
+
+                    # Write-Host "App: $package" -ForegroundColor Green
+                    # $signingKeySetsMatches = $lineEnumerator.Current | Select-String -Pattern 'Signing KeySets: (?<keySets>\d+)'
+                    # $output | Add-Member -MemberType NoteProperty -Name 'SigningKeySets' -Value ([int] $signingKeySetsMatches.Matches[0].Groups['keySets'].Value)
+
+                    # $lineEnumerator.MoveNextIgnoringBlank() > $null
+
+                    # As for now we're going to omit Key Set Manager
+                    do {
+                        $lineEnumerator.MoveNextIgnoringBlank() > $null
+                    }
+                    while (-not $lineEnumerator.Current.EndsWith(':'))
                 }
                 if ($lineEnumerator.Current.Contains('Packages:')) {
                     ParsePackages -LineEnumerator $lineEnumerator -InputObject $output
