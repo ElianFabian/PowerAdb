@@ -1,4 +1,4 @@
-function Clear-AdbPackageData {
+function Clear-AdbPackage {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (

@@ -77,7 +77,7 @@ $packageFunctions = @(
     "Start-AdbPackageProcessDeath"
     "Install-AdbPackage"
     "Uninstall-AdbPackage"
-    "Clear-AdbPackageData"
+    "Clear-AdbPackage"
     "Stop-AdbService"
     "Get-AdbPackagePid"
     "Get-AdbPackageInfo"
