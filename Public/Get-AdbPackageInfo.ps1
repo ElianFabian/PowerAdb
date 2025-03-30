@@ -149,10 +149,6 @@ function Get-AdbPackageInfo {
     }
 }
 
-# oplus
-# com.google.android.apps.photos
-# com.budget.tracker_app
-
 
 
 $PackagePattern = '[a-zA-Z0-9\._]+'
