@@ -58,7 +58,7 @@ function Get-AdbProcess {
                             ResidentSetSize   = $residentSetSize
                             WaitingChannel    = $waitingChannel
                             State             = $state
-                            ProcessName       = $processName
+                            Name              = $processName
                         }
 
                         $properties | Add-Member -MemberType NoteProperty -Name $programCounterOrKernelAddressField -Value $programCounterOrKernelAddress
