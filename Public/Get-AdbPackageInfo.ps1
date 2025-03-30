@@ -40,10 +40,8 @@ function Get-AdbPackageInfo {
                 if ($lineEnumerator.Current -match 'Preferred Activities User \d+:') {
                     $output | Add-Member -MemberType NoteProperty -Name 'PreferredActivities' -Value @()
 
-                    while ($lineEnumerator.Current -match 'Preferred Activities User \d+:') {
-                        $userId = $lineEnumerator.Current | Select-String -Pattern 'Preferred Activities User (?<userId>\d+):' `
-                        | Select-Object -ExpandProperty Matches -First 1 `
-                        | ForEach-Object { $_.Groups['userId'].Value }
+                    while ($lineEnumerator.Current -match 'Preferred Activities User (?<userId>\d+):') {
+                        $userId = $Matches['userId']
 
                         $userActivity = [PSCustomObject]@{
                             UserId = $userId
@@ -79,13 +77,13 @@ function Get-AdbPackageInfo {
                     do {
                         $lineEnumerator.MoveNextIgnoringBlank() > $null
                     }
-                    while ($LineEnumerator.Current.StartsWith(' ') -or -not $LineEnumerator.Current.EndsWith(':'))
+                    while ($LineEnumerator.Current[0] -ceq ' ' -or $LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':')
                 }
                 while ($lineEnumerator.Current -match 'App linkages for user \d+:') {
                     do {
                         $lineEnumerator.MoveNextIgnoringBlank() > $null
                     }
-                    while ($lineEnumerator.Current.StartsWith(' ') -and -not $lineEnumerator.Current.EndsWith(':'))
+                    while ($lineEnumerator.Current[0] -ceq ' ' -and $LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':')
                 }
                 while ($lineEnumerator.Current.StartsWith('Permissions:')) {
                     ParsePermissions -LineEnumerator $lineEnumerator -InputObject $output
@@ -107,7 +105,7 @@ function Get-AdbPackageInfo {
                     do {
                         $lineEnumerator.MoveNextIgnoringBlank() > $null
                     }
-                    while ($lineEnumerator.Current.StartsWith(' '))
+                    while ($lineEnumerator.Current[0] -ceq ' ')
                 }
                 if ($lineEnumerator.Current.Contains('Registered ContentProviders:')) {
                     ParseRegisteredContentProvider -LineEnumerator $lineEnumerator -InputObject $output
@@ -137,7 +135,7 @@ function Get-AdbPackageInfo {
                     do {
                         $lineEnumerator.MoveNextIgnoringBlank() > $null
                     }
-                    while (-not $lineEnumerator.Current.EndsWith(':'))
+                    while ($LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':')
                 }
                 if ($lineEnumerator.Current.Contains('Packages:')) {
                     ParsePackages -LineEnumerator $lineEnumerator -InputObject $output
@@ -156,19 +154,75 @@ $HashPattern = '[a-f0-9]+'
 $ComponentClassNamePattern = '[a-zA-Z0-9\.\/_$]+'
 $MimeTypeHeaderPattern = '\s{6}[a-zA-Z*\d+_.\-/]+:'
 
-$script:ComponentPattern = "(?<componentHash>$HashPattern)\s(?<package>$PackagePattern)\/(?<componentClassName>$ComponentClassNamePattern)(\sfilter\s(?<filterHash>$HashPattern))?"
-$script:ActionPattern = '\s{6}([\w\.\d_\s\-]+):'
-$script:AttributePattern = '(?<attributeName>\w+)(:\s|=)(?<attributeValue>[^,^\n\r]+)'
-$script:PermissionPattern = " Permission \[(?<permission>$PackagePattern)\] \((?<permissionHash>$HashPattern)\):"
-$script:PermissionAttributePattern = '(?<attributeName>\w+)=(?<attributeValue>[a-zA-Z]+{.+}|[^\s]+)'
-$script:ProviderHeaderPattern = "(?<package>$PackagePattern)\/(?<componentClassName>$ComponentClassNamePattern):"
-$script:ContentProviderAuthoritiesHeaderPattern = '\[(?<providerName>[a-zA-Z0-9\.\-_:]+)\]:'
-$script:ProviderPattern = "Provider{(?<providerHash>[a-f0-9]+) (?<package>$PackagePattern)(\/(?<componentClassName>[a-zA-Z0-9\.\/_$]+))?}"
-$script:FullMimeTypeHeaderPattern = $script:MimeTypeHeaderPattern
-$script:BaseMimeTypeHeaderPattern = $script:MimeTypeHeaderPattern
-$script:WildMimeTypeHeaderPattern = $script:MimeTypeHeaderPattern
-$script:SchemeHeaderPattern = '\s{6}[\w..\-+]*:'
-$script:PackageHeaderPattern = "\s{2}Package \[(?<package>$PackagePattern)\] \((?<packageHash>$HashPattern)\):"
+$script:ComponentPattern = (
+    "(?<componentHash>$HashPattern)\s(?<package>$PackagePattern)\/(?<componentClassName>$ComponentClassNamePattern)(\sfilter\s(?<filterHash>$HashPattern))?"
+)
+$script:ComponentRegex = [regex]::new(
+    $script:ComponentPattern
+)
+$script:ActionPattern = (
+    '\s{6}([\w\.\d_\s\-]+):'
+)
+$script:AttributePattern = (
+    '(?<attributeName>\w+)(:\s|=)(?<attributeValue>[^,^\n\r]+)'
+)
+$script:AttributeRegex = [regex]::new(
+    $script:AttributePattern
+)
+$script:GroupAttributePattern = (
+    '(?<attributeName>\w+)(:\s|=)(?<attributeValue>[^,^\s]+)'
+)
+$script:GroupAttributeRegex = [regex]::new(
+    $script:GroupAttributePattern
+)
+$script:PermissionPattern = (
+    " Permission \[(?<permission>$PackagePattern)\] \((?<permissionHash>$HashPattern)\):"
+)
+$script:PermissionRegex = [regex]::new(
+    $script:PermissionPattern
+)
+$script:PermissionAttributePattern = (
+    '(?<attributeName>\w+)=(?<attributeValue>[a-zA-Z]+{.+}|[^\s]+)'
+)
+$script:PermissionAttributeRegex = [regex]::new(
+    $script:PermissionAttributePattern
+)
+$script:ProviderHeaderPattern = (
+    "(?<package>$PackagePattern)\/(?<componentClassName>$ComponentClassNamePattern):"
+)
+$script:ContentProviderAuthoritiesHeaderPattern = (
+    '\[(?<providerName>[a-zA-Z0-9\.\-_:]+)\]:'
+)
+$script:ContentProviderAuthoritiesHeaderRegex = [regex]::new(
+    $script:ContentProviderAuthoritiesHeaderPattern
+)
+$script:ProviderPattern = (
+    "Provider{(?<providerHash>$HashPattern) (?<package>$PackagePattern)(\/(?<componentClassName>$ComponentClassNamePattern))?}"
+)
+$script:ProviderRegex = [regex]::new(
+    $script:ProviderPattern
+)
+$script:FullMimeTypeHeaderPattern = (
+    $script:MimeTypeHeaderPattern
+)
+$script:BaseMimeTypeHeaderPattern = (
+    $script:MimeTypeHeaderPattern
+)
+$script:WildMimeTypeHeaderPattern = (
+    $script:MimeTypeHeaderPattern
+)
+$script:SchemeHeaderPattern = (
+    '\s{6}[\w..\-+]*:'
+)
+$script:PackageHeaderPattern = (
+    "\s{2}Package \[(?<package>$PackagePattern)\] \((?<packageHash>$HashPattern)\):"
+)
+$script:PackageHeaderRegex = [regex]::new(
+    $script:PackageHeaderPattern
+)
+$script:PackageKeyValuePairRegex = [regex]::new(
+    '(?<attributeName>\w+)=(?<attributeValue>(\d+|\w+))'
+)
 
 function ConvertToLineEnumerator {
 
@@ -239,31 +293,31 @@ function SkipMiscellaneous {
         do {
             $LineEnumerator.MoveNextIgnoringBlank() > $null
         }
-        while ($LineEnumerator.Current.StartsWith(' ') -or -not $LineEnumerator.Current.EndsWith(':'))
+        while ($LineEnumerator.Current[0] -ceq ' ' -or $LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':')
     }
     if ($LineEnumerator.Current.Contains('Verifiers:')) {
         do {
             $LineEnumerator.MoveNextIgnoringBlank() > $null
         }
-        while ($LineEnumerator.Current.StartsWith(' ') -or -not $LineEnumerator.Current.EndsWith(':'))
+        while ($LineEnumerator.Current[0] -ceq ' ' -or $LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':')
     }
     if ($LineEnumerator.Current.Contains('Intent Filter Verifier:')) {
         do {
             $LineEnumerator.MoveNextIgnoringBlank() > $null
         }
-        while ($LineEnumerator.Current.StartsWith(' ') -or -not $LineEnumerator.Current.EndsWith(':'))
+        while ($LineEnumerator.Current[0] -ceq ' ' -or $LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':')
     }
     if ($LineEnumerator.Current.Contains('Libraries:')) {
         do {
             $LineEnumerator.MoveNextIgnoringBlank() > $null
         }
-        while ($LineEnumerator.Current.StartsWith(' ') -or -not $LineEnumerator.Current.EndsWith(':'))
+        while ($LineEnumerator.Current[0] -ceq ' ' -or $LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':')
     }
     if ($LineEnumerator.Current.Contains('Features:')) {
         do {
             $LineEnumerator.MoveNextIgnoringBlank() > $null
         }
-        while ($LineEnumerator.Current.StartsWith(' ') -or -not $LineEnumerator.Current.EndsWith(':'))
+        while ($LineEnumerator.Current[0] -ceq ' ' -or $LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':')
     }
 }
 
@@ -371,22 +425,16 @@ function ParsePermissions {
 
     $LineEnumerator.MoveNextIgnoringBlank() > $null
     while ($LineEnumerator.Current -match $script:PermissionPattern) {
-        $permissionMatches = $LineEnumerator.Current | Select-String -Pattern $script:PermissionPattern `
-        | Select-Object -ExpandProperty Matches -First 1
-
-        $permissionMatchGroups = $permissionMatches.Groups
-
         $permission = [PSCustomObject]@{
-            Name = $permissionMatchGroups['permission'].Value
-            Hash = $permissionMatchGroups['permissionHash'].Value
+            Name = $Matches['permission']
+            Hash = $Matches['permissionHash']
         }
 
         $properties = [PSCustomObject]@{}
 
         $LineEnumerator.MoveNextIgnoringBlank() > $null
         while ($LineEnumerator.Current -match $script:PermissionAttributePattern) {
-            $LineEnumerator.Current | Select-String -Pattern $script:PermissionAttributePattern -AllMatches `
-            | Select-Object -ExpandProperty Matches `
+            $script:PermissionAttributeRegex.Matches($LineEnumerator.Current) `
             | ForEach-Object {
                 $attributeName = $_.Groups['attributeName'].Value
                 $attributeValue = $_.Groups['attributeValue'].Value
@@ -429,15 +477,10 @@ function ParseRegisteredContentProvider {
     $LineEnumerator.MoveNextIgnoringBlank() > $null
     $LineEnumerator.MoveNextIgnoringBlank() > $null
     while ($LineEnumerator.Current -match $script:ProviderPattern) {
-        $providerMatches = $LineEnumerator.Current | Select-String -Pattern $script:ProviderPattern `
-        | Select-Object -ExpandProperty Matches -First 1
-
-        $providerMatchGroups = $providerMatches.Groups
-
         $provider = [PSCustomObject]@{
-            Package            = $providerMatchGroups['package'].Value
-            ComponentClassName = $providerMatchGroups['componentClassName'].Value
-            Hash               = $providerMatchGroups['providerHash'].Value
+            Package            = $Matches['package']
+            ComponentClassName = $Matches['componentClassName']
+            Hash               = $Matches['providerHash']
         }
 
         $InputObject.RegisteredContentProviders += $provider
@@ -467,16 +510,11 @@ function ParseContentProviderAuthorities {
 
     $LineEnumerator.MoveNextIgnoringBlank() > $null
     while ($LineEnumerator.Current -match $script:ContentProviderAuthoritiesHeaderPattern) {
-        $providerName = $LineEnumerator.Current | Select-String -Pattern $script:ContentProviderAuthoritiesHeaderPattern `
-        | Select-Object -ExpandProperty Matches -First 1 `
-        | ForEach-Object { $_.Groups['providerName'].Value }
+        $providerName = $Matches['providerName']
 
         $LineEnumerator.MoveNextIgnoringBlank() > $null
 
-        $providerMatches = $LineEnumerator.Current | Select-String -Pattern $script:ProviderPattern `
-        | Select-Object -ExpandProperty Matches -First 1
-
-        $providerMatchGroups = $providerMatches.Groups
+        $providerMatchGroups = $script:ProviderRegex.Match($LineEnumerator.Current).Groups
 
         $provider = [PSCustomObject]@{
             Name               = $providerName
@@ -508,18 +546,11 @@ function ParseComponent {
     )
 
     while ($LineEnumerator.Current -match $script:ComponentPattern) {
-        $rawComponentData = $lineEnumerator.Current
-
-        $componentMatches = $rawComponentData | Select-String -Pattern $script:ComponentPattern `
-        | Select-Object -ExpandProperty Matches -First 1
-
-        $componentMatchGroups = $componentMatches.Groups
-
         $componentInfo = [PSCustomObject] @{
-            ComponentHash      = $componentMatchGroups['componentHash'].Value
-            Package            = $componentMatchGroups['package'].Value
-            ComponentClassName = $componentMatchGroups['componentClassName'].Value
-            FilterHash         = $componentMatchGroups['filterHash'].Value
+            ComponentHash      = $Matches['componentHash']
+            Package            = $Matches['package']
+            ComponentClassName = $Matches['componentClassName']
+            FilterHash         = $Matches['filterHash']
             Type               = $ComponentType
         }
 
@@ -546,13 +577,13 @@ function ParseComponentAttribute {
         [PSCustomObject] $InputObject
     )
 
-    while ($LineEnumerator.Current -match $script:AttributePattern -or ($LineEnumerator.Current.EndsWith(':') -and $LineEnumerator.Current.StartsWith('          '))) {
+    while (($LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -ceq ':' -and $LineEnumerator.Current.StartsWith('          ')) -or $LineEnumerator.Current -match $script:AttributePattern) {
         if ($InputObject.PSObject.Properties.Name -notcontains 'Properties') {
             $properties = [PSCustomObject]@{}
             $InputObject | Add-Member -MemberType NoteProperty -Name 'Properties' -Value $properties
         }
 
-        if ($LineEnumerator.Current.EndsWith(':')) {
+        if ($LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -ceq ':') {
             $attributeName = $LineEnumerator.Current.Trim().Replace(':', '')
             if ($attributeName.Contains(' ')) {
                 $attributeName = ConvertToCamelCase $attributeName
@@ -561,7 +592,7 @@ function ParseComponentAttribute {
 
             $values = @()
 
-            while ($LineEnumerator.Current -notmatch $script:AttributePattern -and -not $LineEnumerator.Current.EndsWith(':')) {
+            while ($LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':' -and $LineEnumerator.Current -notmatch $script:AttributePattern) {
                 $values += $LineEnumerator.Current.Trim()
                 $LineEnumerator.MoveNextIgnoringBlank() > $null
             }
@@ -622,12 +653,9 @@ function ParsePackages {
 
     $LineEnumerator.MoveNextIgnoringBlank() > $null
     :outer while ($LineEnumerator.Current -match $script:PackageHeaderPattern) {
-        $packageMatches = $LineEnumerator.Current | Select-String -Pattern $script:PackageHeaderPattern `
-        | Select-Object -ExpandProperty Matches -First 1
-
         $package = [PSCustomObject]@{
-            Name = $packageMatches.Groups['package'].Value
-            Hash = $packageMatches.Groups['packageHash'].Value
+            Name = $Matches['package']
+            Hash = $Matches['packageHash']
         }
 
         $InputObject.Packages += $package
@@ -637,17 +665,15 @@ function ParsePackages {
 
 
         $LineEnumerator.MoveNextIgnoringBlank() > $null
-        while ($LineEnumerator.Current.EndsWith(':') -or $LineEnumerator.Current.Contains('=')) {
-            if (-not $LineEnumerator.Current.StartsWith(' ')) {
+        while ($LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -ceq ':' -or $LineEnumerator.Current.Contains('=')) {
+            if (-not $LineEnumerator.Current[0] -ceq ' ') {
                 break
             }
-            while ($LineEnumerator.Current -match 'User \d+:') {
+            while ($LineEnumerator.Current -match 'User (?<userId>\d+):') {
                 # TODO: Parse this correctly
                 # For now we just skip them
 
-                # $userId = $LineEnumerator.Current | Select-String -Pattern 'User (?<userId>\d+):' `
-                # | Select-Object -ExpandProperty Matches -First 1 `
-                # | ForEach-Object { $_.Groups['userId'].Value }
+                # $userId = [uint32] $Matches['userId']
 
                 # $user = [PSCustomObject]@{
                 #     UserId = $userId
@@ -668,7 +694,7 @@ function ParsePackages {
                 #     $LineEnumerator.MoveNextIgnoringBlank() > $null
                 # }
 
-                while ($LineEnumerator.Current.StartsWith('      ') -or $LineEnumerator.Current -match 'User \d+:' -or ($LineEnumerator.Current.StartsWith('    ') -and $LineEnumerator.Current.EndsWith(':'))) {
+                while (($LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -ceq ':' -and $LineEnumerator.Current.StartsWith('    ')) -or $LineEnumerator.Current.StartsWith('      ') -or $LineEnumerator.Current -match 'User \d+:') {
                     $LineEnumerator.MoveNextIgnoringBlank() > $null
                 }
 
@@ -676,8 +702,7 @@ function ParsePackages {
             }
 
             if ($LineEnumerator.Current.Contains('versionCode') -or $LineEnumerator.Current.Contains('userId') -or $LineEnumerator.Current.Contains('permissionsFixed')) {
-                $LineEnumerator.Current | Select-String -Pattern '(?<attributeName>\w+)=(?<attributeValue>(\d+|\w+))' -AllMatches `
-                | Select-Object -ExpandProperty Matches `
+                $script:PackageKeyValuePairRegex.Matches($LineEnumerator.Current) `
                 | ForEach-Object {
                     $attributeName = $_.Groups['attributeName'].Value
                     $attributeValue = $_.Groups['attributeValue'].Value
@@ -688,7 +713,7 @@ function ParsePackages {
                 continue
             }
 
-            if ($LineEnumerator.Current.EndsWith(':')) {
+            if ($LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -ceq ':') {
                 $attributeName = $LineEnumerator.Current.Trim().Replace(':', '')
                 if ($attributeName.Contains(' ')) {
                     $attributeName = ConvertToCamelCase $attributeName
@@ -754,13 +779,19 @@ function ConvertToCamelCase {
     $words = $InputObject -split '\s+'
 
     if ($words.Count -gt 0) {
-        $camelCase = $words[0].ToLower()
+        $script:internalSb.Clear() > $null
+        $script:internalSb.Append($words[0].ToLower()) > $null
+        $camelCase = $script:internalSb
 
         foreach ($word in $words[1..($words.Count - 1)]) {
-            $camelCase += $word.Substring(0, 1).ToUpper() + $word.Substring(1).ToLower()
+            $camelCase.Append($word.Substring(0, 1).ToUpper() + $word.Substring(1).ToLower()) > $null
         }
-        return $camelCase
+        return $camelCase.ToString()
     }
 
     return ""
 }
+
+
+
+$script:internalSb = [System.Text.StringBuilder]::new()
