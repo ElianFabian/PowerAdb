@@ -85,6 +85,8 @@ $packageFunctions = @(
     "Disable-AdbPackage"
     "Test-AdbPackage"
     "Get-AdbPackageApkPath"
+    "Suspend-AdbPackage"
+    "Resume-AdbPackage"
 )
 AssertFunctionExists $packageFunctions
 
@@ -457,6 +459,15 @@ $longUserIdParamFunctions = @(
     "Get-AdbContentEntryType"
     "Remove-AdbContentEntry"
     "Set-AdbContentEntry"
+    "Add-AdbContentEntry"
+    "Resolve-AdbActivity"
+    "Find-AdbActivity"
+    "Find-AdbService"
+    "Find-AdbBroadcastReceiver"
+    "Get-AdbPackageInfo"
+    "Suspend-AdbPackage"
+    "Resume-AdbPackage"
+    "Get-AdbPackageApkPath"
 )
 
 Register-ArgumentCompleter -CommandName $longUserIdParamFunctions -ParameterName UserId -ScriptBlock $userIdCompletion
