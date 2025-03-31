@@ -77,41 +77,16 @@ function Get-AdbPackageInfo {
                     }
                 }
                 if ($lineEnumerator.Current.StartsWith('App verification status:')) {
-                    # TODO: parse this
-                    # For now we just ignore it
-
-                    # We can obtain this in 'oplus' package in Realme around at line: 21896
-                    # App verification status:
-
-                    #   Package: com.amazon.mShop.android.shopping
-                    #   Domains: business.amazon.co.jp business.amazon.co.uk amz.onl amzn.eu amzn.to www.amazon.ae www.amazon.ca www.amazon.de www.amazon.eg www.amazon.es www.amazon.fr www.amazon.ie www.amazon.it www.amazon.nl www.amazon.pl www.amazon.sa www.amazon.se www.amazon.sg clinic.amazon.com dl.amazon.co.jp dl.amazon.co.uk dl.amazon.co.za link.mobileauth.amazon.com business.amazon.ca business.amazon.de business.amazon.es business.amazon.fr business.amazon.it a.co dl.amazon.ae dl.amazon.ca dl.amazon.de dl.amazon.eg dl.amazon.es dl.amazon.fr dl.amazon.ie dl.amazon.it dl.amazon.nl dl.amazon.pl dl.amazon.sa dl.amazon.se dl.amazon.sg health.amazon.com www.amazon.co.jp www.amazon.co.uk www.amazon.co.za dl.amazon.com dl.amazon.com.au dl.amazon.com.be dl.amazon.com.br dl.amazon.com.mx dl.amazon.com.tr www.amazon.com getstarted.amazonfiretvapp.com www.amazon.com.au www.amazon.com.be www.amazon.com.br www.amazon.com.mx www.amazon.com.tr pharmacy.amazon.com amzn.asia business.amazon.com
-                    #   Status:  ask
-
-                    #   Package: com.google.android.youtube
-                    #   Domains: youtu.be m.youtube.com youtube.com www.youtube.com
-                    #   Status:  undefined
-
-                    #   Package: es.bancosantander.apps
-                    #   Domains: apiauth.bancosantander.es
-                    #   Status:  always : 200000000
-
-                    #   Package: com.factorialhr.factorialapp
-                    #   Domains: *.factorialhr.com
-                    #   Status:  always : 200000000
-
                     $output | Add-Member -MemberType NoteProperty -Name 'AppVerificationStatus' -Value @()
 
                     $lineEnumerator.MoveNextIgnoringBlank() > $null
 
                     while ($lineEnumerator.Current[0] -ceq ' ' -and $LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':') {
-                        #  Package: com.google.android.calendar
                         $package = $lineEnumerator.Current.Trim().SubString('Package: '.Length)
 
-                        #  Domains: www.google.com calendar.google.com client-side-encryption.google.com krahsc.google.com
                         $lineEnumerator.MoveNextIgnoringBlank() > $null
                         $domains = $lineEnumerator.Current.Trim().SubString('Domains: '.Length) -split ' '
 
-                        #  Status:  always : 200000005
                         $lineEnumerator.MoveNextIgnoringBlank() > $null
                         $status = $lineEnumerator.Current.Trim().SubString('Status: '.Length)
 
