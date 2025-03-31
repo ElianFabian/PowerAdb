@@ -88,6 +88,8 @@ $packageFunctions = @(
     "Suspend-AdbPackage"
     "Resume-AdbPackage"
     "Test-AdbPackageSuspended"
+    "Enable-AdbPackageLogVisibility"
+    "Disable-AdbPackageLogVisibility"
 )
 AssertFunctionExists $packageFunctions
 
