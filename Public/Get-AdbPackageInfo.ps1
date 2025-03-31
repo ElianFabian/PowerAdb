@@ -99,16 +99,68 @@ function Get-AdbPackageInfo {
                     #   Domains: *.factorialhr.com
                     #   Status:  always : 200000000
 
-                    do {
+                    $output | Add-Member -MemberType NoteProperty -Name 'AppVerificationStatus' -Value @()
+
+                    $lineEnumerator.MoveNextIgnoringBlank() > $null
+
+                    while ($lineEnumerator.Current[0] -ceq ' ' -and $LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':') {
+                        #  Package: com.google.android.calendar
+                        $package = $lineEnumerator.Current.Trim().SubString('Package: '.Length)
+
+                        #  Domains: www.google.com calendar.google.com client-side-encryption.google.com krahsc.google.com
+                        $lineEnumerator.MoveNextIgnoringBlank() > $null
+                        $domains = $lineEnumerator.Current.Trim().SubString('Domains: '.Length) -split ' '
+
+                        #  Status:  always : 200000005
+                        $lineEnumerator.MoveNextIgnoringBlank() > $null
+                        $status = $lineEnumerator.Current.Trim().SubString('Status: '.Length)
+
+                        $linkage = [PSCustomObject]@{
+                            Package = $package
+                            Domains = $domains
+                            Status  = $status
+                        }
+
+                        $output.AppVerificationStatus += $linkage
+
                         $lineEnumerator.MoveNextIgnoringBlank() > $null
                     }
-                    while ($LineEnumerator.Current[0] -ceq ' ' -or $LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':')
                 }
-                while ($lineEnumerator.Current -match 'App linkages for user \d+:') {
-                    do {
+                while ($lineEnumerator.Current -match 'App linkages for user (?<userId>\d+):') {
+                    if ($output.PSObject.Properties.Name -notcontains 'AppLinkagesForUser') {
+                        $output | Add-Member -MemberType NoteProperty -Name 'AppLinkagesForUser' -Value @()
+                    }
+
+                    $user = [PSCUstomObject]@{
+                        UserId      = [uint32] $Matches['userId']
+                        AppLinkages = @()
+                    }
+
+                    $output.AppLinkagesForUser += $user
+
+                    $lineEnumerator.MoveNextIgnoringBlank() > $null
+                    while ($lineEnumerator.Current[0] -ceq ' ' -and $LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':') {
+                        #  Package: com.google.android.calendar
+                        $package = $lineEnumerator.Current.Trim().SubString('Package: '.Length)
+
+                        #  Domains: www.google.com calendar.google.com client-side-encryption.google.com krahsc.google.com
+                        $lineEnumerator.MoveNextIgnoringBlank() > $null
+                        $domains = $lineEnumerator.Current.Trim().SubString('Domains: '.Length) -split ' '
+
+                        #  Status:  always : 200000005
+                        $lineEnumerator.MoveNextIgnoringBlank() > $null
+                        $status = $lineEnumerator.Current.Trim().SubString('Status: '.Length)
+
+                        $linkage = [PSCustomObject]@{
+                            Package = $package
+                            Domains = $domains
+                            Status  = $status
+                        }
+
+                        $user.AppLinkages += $linkage
+
                         $lineEnumerator.MoveNextIgnoringBlank() > $null
                     }
-                    while ($lineEnumerator.Current[0] -ceq ' ' -and $LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':')
                 }
                 while ($lineEnumerator.Current.StartsWith('Permissions:')) {
                     ParsePermissions -LineEnumerator $lineEnumerator -InputObject $output
