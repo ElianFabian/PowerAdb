@@ -195,28 +195,56 @@ function Get-AdbPackageInfo {
                     ParseContentProviderAuthorities -LineEnumerator $lineEnumerator -InputObject $output
                 }
                 if ($lineEnumerator.Current.Contains('Key Set Manager:')) {
+                    $output | Add-Member -MemberType NoteProperty -Name 'KeySetManager' -Value @()
 
-                    # TODO: Parse this more complex case
-                    # Key Set Manager:
-                    #     [com.huawei.health]
-                    #         KeySets Aliases: keysetnewkey=596, keysetoldkey=595
-                    #         Defined KeySets: 596, 595
-                    #         Signing KeySets: 595
-                    #         Upgrade KeySets: 596, 595
+                    $lineEnumerator.MoveNextIgnoringBlank() > $null
+                    while ($lineEnumerator.Current[$lineEnumerator.Current.Length - 1] -ceq ']') {
 
-                    # $lineEnumerator.MoveNextIgnoringBlank() > $null
-                    # $lineEnumerator.MoveNextIgnoringBlank() > $null
+                        $package = $lineEnumerator.Current.Trim(' ', '[', ']')
 
-                    # $signingKeySetsMatches = $lineEnumerator.Current | Select-String -Pattern 'Signing KeySets: (?<keySets>\d+)'
-                    # $output | Add-Member -MemberType NoteProperty -Name 'SigningKeySets' -Value ([int] $signingKeySetsMatches.Matches[0].Groups['keySets'].Value)
+                        $packageObject = [PSCustomObject]@{
+                            PackageName = $package
+                            KeySets     = [PSCustomObject]@{}
+                        }
 
-                    # $lineEnumerator.MoveNextIgnoringBlank() > $null
-
-                    # As for now we're going to omit Key Set Manager
-                    do {
                         $lineEnumerator.MoveNextIgnoringBlank() > $null
+                        while ($lineEnumerator.Current -match '(?<name>\w+ \w+): (?<value>.+)') {
+                            $rawName = $Matches['name']
+                            $rawValue = $Matches['value']
+
+                            $name = ConvertToCamelCase $rawName
+
+                            if ($rawValue.Contains('=')) {
+                                $keyValuePairs = $rawValue -split ',' | ForEach-Object { $_.Trim() }
+
+                                $object = [PSCustomObject]@{}
+
+                                $keyValuePairs | ForEach-Object {
+                                    $keyValuePair = $_ -split '='
+                                    $keyName = $keyValuePair[0].Trim()
+                                    $keyValue = [int] $keyValuePair[1].Trim()
+
+                                    $object | Add-Member -MemberType NoteProperty -Name $keyName -Value $keyValue
+                                }
+
+                                $packageObject.KeySets | Add-Member -MemberType NoteProperty -Name $name -Value $object
+                            }
+                            else {
+                                if ($rawValue.Contains(',')) {
+                                    $value = $rawValue -split ',' | ForEach-Object { [int] $_.Trim() }
+
+                                    $packageObject.KeySets | Add-Member -MemberType NoteProperty -Name $name -Value $value
+                                }
+                                else {
+                                    $packageObject.KeySets | Add-Member -MemberType NoteProperty -Name $name -Value ([int] $rawValue)
+                                }
+                            }
+
+                            $lineEnumerator.MoveNextIgnoringBlank() > $null
+                        }
+
+                        $output.KeySetManager += $packageObject
                     }
-                    while ($LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':')
                 }
                 if ($lineEnumerator.Current.Contains('Packages:')) {
                     ParsePackages -LineEnumerator $lineEnumerator -InputObject $output
