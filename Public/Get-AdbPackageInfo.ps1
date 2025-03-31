@@ -251,7 +251,8 @@ function Get-AdbPackageInfo {
 $script:PackagePattern = '[a-zA-Z0-9\._]+'
 $HashPattern = '[a-f0-9]+'
 $ComponentClassNamePattern = '[a-zA-Z0-9\.\/_$]+'
-$MimeTypeHeaderPattern = '\s{6}[a-zA-Z*\d+_.\-/]+:'
+# It seems this is possible: 'text/directory; profile=vcard:'
+$MimeTypeHeaderPattern = '\s{6}[a-zA-Z*\d+_.\-/\s;=]+:'
 
 $script:ComponentPattern = (
     "(?<componentHash>$HashPattern)\s(?<package>$PackagePattern)\/(?<componentClassName>$ComponentClassNamePattern)(\sfilter\s(?<filterHash>$HashPattern))?"
@@ -311,7 +312,7 @@ $script:WildMimeTypeHeaderPattern = (
     $script:MimeTypeHeaderPattern
 )
 $script:SchemeHeaderPattern = (
-    '\s{6}[\w..\-+]*:'
+    '\s{6}[\w..\-+?]*:'
 )
 $script:PackageHeaderPattern = (
     "\s{2}Package \[(?<package>$PackagePattern)\] \((?<packageHash>$HashPattern)\):"
