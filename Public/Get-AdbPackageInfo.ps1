@@ -26,6 +26,22 @@ function Get-AdbPackageInfo {
 
                 SkipMiscellaneous -LineEnumerator $lineEnumerator
 
+                if ($LineEnumerator.Current.Contains('Libraries:')) {
+                    $output | Add-Member -MemberType NoteProperty -Name 'Libraries' -Value @()
+                    do {
+                        $LineEnumerator.MoveNextIgnoringBlank() > $null
+                        $libraryMatch = $script:LibraryRegex.Match($LineEnumerator.Current)
+                        if ($libraryMatch.Success) {
+                            $library = [PSCustomObject]@{
+                                PackageName = $libraryMatch.Groups['libraryName'].Value
+                                Type        = $libraryMatch.Groups['libraryType'].Value
+                                Path        = $libraryMatch.Groups['libraryPath'].Value
+                            }
+                            $output.Libraries += $library
+                        }
+                    }
+                    while ($LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':')
+                }
                 if ($LineEnumerator.Current.Contains('Features:')) {
                     $output | Add-Member -MemberType NoteProperty -Name 'Features' -Value @()
                     do {
@@ -232,6 +248,9 @@ $script:PackageHeaderRegex = [regex]::new(
 $script:PackageKeyValuePairRegex = [regex]::new(
     '(?<attributeName>\w+)=(?<attributeValue>(\d+|\w+))'
 )
+$script:LibraryRegex = [regex]::new(
+    '\s+(?<libraryName>[\w\.]+)\s+->\s+\((?<libraryType>[\w\d_]+)\)\s(?<libraryPath>.+)'
+)
 
 function ConvertToLineEnumerator {
 
@@ -287,11 +306,6 @@ function SkipMiscellaneous {
     # Intent Filter Verifier:
     #   Using: com.google.android.gms (uid=10143)
 
-    # Libraries:
-    #   android.test.base ->  (jar) /system/framework/android.test.base.jar
-    #   android.test.mock ->  (jar) /system/framework/android.test.mock.jar
-    #   ...
-
     if ($LineEnumerator.Current.Contains('Database versions:')) {
         do {
             $LineEnumerator.MoveNextIgnoringBlank() > $null
@@ -305,12 +319,6 @@ function SkipMiscellaneous {
         while ($LineEnumerator.Current[0] -ceq ' ' -or $LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':')
     }
     if ($LineEnumerator.Current.Contains('Intent Filter Verifier:')) {
-        do {
-            $LineEnumerator.MoveNextIgnoringBlank() > $null
-        }
-        while ($LineEnumerator.Current[0] -ceq ' ' -or $LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':')
-    }
-    if ($LineEnumerator.Current.Contains('Libraries:')) {
         do {
             $LineEnumerator.MoveNextIgnoringBlank() > $null
         }
