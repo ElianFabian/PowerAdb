@@ -187,7 +187,7 @@ function Get-AdbPackageInfo {
                             $rawName = $Matches['name']
                             $rawValue = $Matches['value']
 
-                            $name = ConvertToCamelCase $rawName
+                            $name = ConvertToPascalCase $rawName
 
                             if ($rawValue.Contains('=')) {
                                 $keyValuePairs = $rawValue -split ',' | ForEach-Object { $_.Trim() }
@@ -843,12 +843,10 @@ function ConvertToCamelCase {
     $words = $InputObject -split '\s+'
 
     if ($words.Count -gt 0) {
-        $script:internalSb.Clear() > $null
-        $script:internalSb.Append($words[0].ToLower()) > $null
-        $camelCase = $script:internalSb
+        $camelCase = [System.Text.StringBuilder]::new($words[0].ToLowerInvariant())
 
         foreach ($word in $words[1..($words.Count - 1)]) {
-            $camelCase.Append($word.Substring(0, 1).ToUpper() + $word.Substring(1).ToLower()) > $null
+            $camelCase.Append($word.Substring(0, 1).ToUpperInvariant() + $word.Substring(1).ToLowerInvariant()) > $null
         }
         return $camelCase.ToString()
     }
@@ -856,6 +854,19 @@ function ConvertToCamelCase {
     return ""
 }
 
+function ConvertToPascalCase {
 
+    param (
+        [string] $InputObject
+    )
 
-$script:internalSb = [System.Text.StringBuilder]::new()
+    if ($InputObject -match ' ') {
+        $words = $InputObject -split ' '
+        $pascalCase = [System.Text.StringBuilder]::new()
+        foreach ($word in $words) {
+            $pascalCase.Append($word.Substring(0, 1).ToUpperInvariant()) > $null
+            $pascalCase.Append($word.Substring(1).ToLowerInvariant()) > $null
+        }
+        return $pascalCase.ToString()
+    }
+}
