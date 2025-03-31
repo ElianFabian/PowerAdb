@@ -166,23 +166,27 @@ function Get-AdbPackageInfo {
                     ParsePermissions -LineEnumerator $lineEnumerator -InputObject $output
                 }
                 if ($lineEnumerator.Current.StartsWith('AppOp Permissions:')) {
-                    # TODO: Parse this
-                    # For now we just ignore it
+                    $output | Add-Member -MemberType NoteProperty -Name 'AppOpPermissions' -Value @()
 
-                    # Example from Realme 'oplus' package:
-                    # AppOp Permissions:
-                    #     AppOp Permission android.permission.WRITE_SETTINGS:
-                    #     com.coloros.backuprestore
-                    #     com.google.android.networkstack.tethering
-                    #     com.mediatek.ims
-                    #     com.android.providers.telephony
-                    #     org.cosmicide
-                    #     com.coloros.wirelesssettings
+                    $lineEnumerator.MoveNextIgnoringBlank() > $null
 
-                    do {
+                    while ($lineEnumerator.Current -match "AppOp Permission (?<permissionName>$script:PackagePattern):") {
+                        $permissionName = $Matches['permissionName']
+
                         $lineEnumerator.MoveNextIgnoringBlank() > $null
+                        $permission = [PSCustomObject]@{
+                            PermissionName = $permissionName
+                            Packages       = @()
+                        }
+                        while ($lineEnumerator.Current[0] -ceq ' ' -and $lineEnumerator.Current[$lineEnumerator.Current.Length - 1] -cne ':') {
+                            $packageName = $lineEnumerator.Current.Trim()
+                            $permission.Packages += $packageName
+
+                            $lineEnumerator.MoveNextIgnoringBlank() > $null
+                        }
+
+                        $output.AppOpPermissions += $permission
                     }
-                    while ($lineEnumerator.Current[0] -ceq ' ')
                 }
                 if ($lineEnumerator.Current.Contains('Registered ContentProviders:')) {
                     ParseRegisteredContentProvider -LineEnumerator $lineEnumerator -InputObject $output
@@ -226,7 +230,7 @@ function Get-AdbPackageInfo {
 
 
 
-$PackagePattern = '[a-zA-Z0-9\._]+'
+$script:PackagePattern = '[a-zA-Z0-9\._]+'
 $HashPattern = '[a-f0-9]+'
 $ComponentClassNamePattern = '[a-zA-Z0-9\.\/_$]+'
 $MimeTypeHeaderPattern = '\s{6}[a-zA-Z*\d+_.\-/]+:'
