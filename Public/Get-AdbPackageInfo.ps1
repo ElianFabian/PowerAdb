@@ -25,6 +25,15 @@ function Get-AdbPackageInfo {
                 $lineEnumerator.MoveNextIgnoringBlank() > $null
 
                 SkipMiscellaneous -LineEnumerator $lineEnumerator
+
+                if ($LineEnumerator.Current.Contains('Features:')) {
+                    $output | Add-Member -MemberType NoteProperty -Name 'Features' -Value @()
+                    do {
+                        $LineEnumerator.MoveNextIgnoringBlank() > $null
+                        $output.Features += $LineEnumerator.Current.Trim()
+                    }
+                    while ($LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':')
+                }
                 if ($lineEnumerator.Current.Contains('Activity Resolver Table:')) {
                     ParseResolverTable -LineEnumerator $lineEnumerator -ResolverTableName 'ActivityResolverTable' -InputObject $output -ComponentType 'Activity'
                 }
@@ -283,12 +292,6 @@ function SkipMiscellaneous {
     #   android.test.mock ->  (jar) /system/framework/android.test.mock.jar
     #   ...
 
-    # Features:
-    #     oppo.filtrated.app
-    #     oppo.runtime.permission.alert.support
-    #     oppo.face.closeeye.detect
-    #     ...
-
     if ($LineEnumerator.Current.Contains('Database versions:')) {
         do {
             $LineEnumerator.MoveNextIgnoringBlank() > $null
@@ -308,12 +311,6 @@ function SkipMiscellaneous {
         while ($LineEnumerator.Current[0] -ceq ' ' -or $LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':')
     }
     if ($LineEnumerator.Current.Contains('Libraries:')) {
-        do {
-            $LineEnumerator.MoveNextIgnoringBlank() > $null
-        }
-        while ($LineEnumerator.Current[0] -ceq ' ' -or $LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':')
-    }
-    if ($LineEnumerator.Current.Contains('Features:')) {
         do {
             $LineEnumerator.MoveNextIgnoringBlank() > $null
         }
