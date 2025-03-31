@@ -6,18 +6,33 @@ function Get-AdbPackageInfo {
         [Parameter(Mandatory, ValueFromPipeline)]
         [string[]] $DeviceId,
 
-        [Parameter(Mandatory)]
         [string[]] $PackageName
     )
+
+    begin {
+        if (-not $PackageName) {
+            $noPackage = $true
+            $PackageName = @('*') # Arbitrary value to ensure we enter the loop exactly once
+        }
+    }
 
     process {
         foreach ($id in $DeviceId) {
             foreach ($package in $PackageName) {
-                $rawData = Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys package '$package'" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false
+                $packageArg = if ($noPackage) {
+                    ''
+                }
+                else {
+                    " '$package'"
+                }
+                $rawData = Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys package$packageArg" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false
 
                 $output = [PSCustomObject] @{
                     DeviceId    = $id
-                    PackageName = $package
+                }
+
+                if (-not $noPackage) {
+                    $output | Add-Member -MemberType NoteProperty -Name 'PackageName' -Value $package
                 }
 
                 $lineEnumerator = ConvertToLineEnumerator ($rawData.GetEnumerator())
