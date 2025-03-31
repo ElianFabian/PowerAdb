@@ -1,4 +1,4 @@
-function Test-AdbPackage {
+function Test-AdbPackageEnabled {
 
     param (
         [Parameter(Mandatory, ValueFromPipeline)]

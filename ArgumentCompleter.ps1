@@ -83,7 +83,7 @@ $packageFunctions = @(
     "Get-AdbPackageInfo"
     "Enable-AdbPackage"
     "Disable-AdbPackage"
-    "Test-AdbPackage"
+    "Test-AdbPackageEnabled"
     "Get-AdbPackageApkPath"
     "Suspend-AdbPackage"
     "Resume-AdbPackage"
