@@ -15,9 +15,9 @@ function Get-AdbRealScreenSize {
             $height = [int] $_.Groups["height"].Value
 
             [PSCustomObject]@{
-                DeviceId       = $id
-                Width  = [int] $width
-                Height = [int] $height
+                DeviceId = $id
+                Width    = [int] $width
+                Height   = [int] $height
             }
         }
     }
