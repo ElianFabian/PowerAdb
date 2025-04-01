@@ -130,7 +130,9 @@ Register-ArgumentCompleter -CommandName $propertyFunctions -ParameterName Name -
 
     $startMatches = $deviceProperties | Where-Object { $_ -like "$wordToComplete*" }
     $containMatches = $deviceProperties | Where-Object { $_ -like "*$wordToComplete*" -and $_ -notlike "$wordToComplete*" }
-    $startMatches + $containMatches
+
+    Write-Output $startMatches
+    Write-Output $containMatches
 }
 
 
