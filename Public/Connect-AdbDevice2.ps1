@@ -12,7 +12,7 @@ function Connect-AdbDevice2 {
         foreach ($id in $DeviceId) {
             $isWirelessDebuggingEnabled = Get-AdbSetting -DeviceId $id -Namespace Global -Key adb_wifi_enabled -Verbose:$false
             if ($isWirelessDebuggingEnabled -eq 0 -and -not $Force) {
-                Write-Error "Wireless debugging is not enabled on device $id."
+                Write-Error "Wireless debugging is not enabled on device $id. Use -Force to enable it."
                 return
             }
 
