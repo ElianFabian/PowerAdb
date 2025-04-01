@@ -64,6 +64,17 @@ function Get-AdbDiskInfo {
 }
 
 
+# TODO: Make this function work with this:
+# From real Pixel 8 Pro device with API level 34:
+#
+# Latency: 0ms [512B Data Write]
+# Recent Disk Write Speed data unavailable
+# Data-Free: 109270404K / 114982996K total = 95% free
+# Cache-Free: 109270404K / 114982996K total = 95% free
+# System-Free: 0K / 776884K total = 0% free
+# Metadata-Free: 28496K / 63488K total = 44% free
+# File-based Encryption: true
+
 
 $diskInfoPattern = @"
 Data-Free: (?<dataFreeInKb>\d+)K / (?<dataTotalInKb>\d+)K.+(\r?\n)+
