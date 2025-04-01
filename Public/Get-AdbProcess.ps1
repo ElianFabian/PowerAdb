@@ -33,7 +33,6 @@ function Get-AdbProcess {
             if ($processes) {
                 $processes | ForEach-Object {
                     $output = [PSCustomObject]@{
-                        DeviceId   = $device
                         RawContent = $_
                     }
 
