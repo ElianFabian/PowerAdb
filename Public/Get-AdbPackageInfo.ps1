@@ -28,7 +28,7 @@ function Get-AdbPackageInfo {
                 $rawData = Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys package$packageArg" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false
 
                 $output = [PSCustomObject] @{
-                    DeviceId    = $id
+                    DeviceId = $id
                 }
 
                 if (-not $noPackage) {
@@ -151,6 +151,22 @@ function Get-AdbPackageInfo {
 
                         $lineEnumerator.MoveNextIgnoringBlank() > $null
                     }
+                }
+
+                # TODO: Parse this (maybe)
+                # At the moment we know that 'Domain verification status' is between 'Service Resolver Table' and "Permissions" section
+                # Domain verification status:
+                #   User all:
+                #       Verification link handling allowed: true
+                #       Selection state:
+                #       Disabled:
+                #           g.co
+                if ($LineEnumerator.Current.StartsWith('Domain verification status:')) {
+                    # For now we just skip it
+                    do {
+                        $LineEnumerator.MoveNextIgnoringBlank() > $null
+                    }
+                    while ($LineEnumerator.Current[0] -ceq ' ')
                 }
                 while ($lineEnumerator.Current.StartsWith('Permissions:')) {
                     ParsePermissions -LineEnumerator $lineEnumerator -InputObject $output
