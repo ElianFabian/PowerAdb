@@ -32,13 +32,17 @@ function Show-AdbDevice {
         $namesEnumerator.MoveNext() > $null
         $deviceName = $namesEnumerator.Current
         if (-not $deviceName) {
-            Write-Error "Couldn't get device name from device id '$id'"
-            return
+            $deviceName = "Unknown"
         }
 
         Write-Host $id.PadRight($longestIdLength + $spaceSize, " ") -NoNewline -ForegroundColor Cyan
         Write-Host $deviceName.PadRight($longestDeviceName + $spaceSize, " ") -NoNewline -ForegroundColor DarkCyan
-        Write-Host $((Get-AdbApiLevel -DeviceId $id).ToString()).PadRight($longestDeviceName + $spaceSize, " ") -NoNewline -ForegroundColor White
+        $apiLevel = Get-AdbApiLevel -DeviceId $id -Verbose:$false
+        if (-not $apiLevel) {
+            Write-Host "Unknown".PadRight($longestDeviceName + $spaceSize, " ") -NoNewline -ForegroundColor DarkCyan
+        } else {
+            Write-Host $apiLevel.ToString().PadRight($longestDeviceName + $spaceSize, " ") -NoNewline -ForegroundColor DarkCyan
+        }
         Write-Host (Get-AdbState -DeviceId $id).PadRight($longestDeviceName + $spaceSize, " ") -ForegroundColor White
     }
 
