@@ -264,7 +264,7 @@ function Get-AdbPackageInfo {
 
 
 
-$script:PackagePattern = '[a-zA-Z0-9\._]+'
+$script:PackagePattern = '[a-zA-Z0-9\._\-]+'
 $HashPattern = '[a-f0-9]+'
 $ComponentClassNamePattern = '[a-zA-Z0-9\.\/_$]+'
 # It seems this is possible: 'text/directory; profile=vcard:'
