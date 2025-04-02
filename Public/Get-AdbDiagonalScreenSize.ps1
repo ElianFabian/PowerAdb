@@ -15,9 +15,9 @@ function Get-AdbDiagonalScreenSize {
             }
 
             $realScreenDensity = Get-AdbRealPhysicalDensity -DeviceId $id
-            $screenSize = Get-AdbScreenSize -DeviceId $id
+            $screenSize = Get-AdbRealScreenSize -DeviceId $id
 
-            [math]::Sqrt(($screenSize.PhysicalWidth / $realScreenDensity) * ($screenSize.PhysicalWidth / $realScreenDensity) + ($screenSize.PhysicalHeight / $realScreenDensity) * ($screenSize.PhysicalHeight / $realScreenDensity))
+            [math]::Sqrt(($screenSize.Width / $realScreenDensity) * ($screenSize.Width / $realScreenDensity) + ($screenSize.Height / $realScreenDensity) * ($screenSize.Height / $realScreenDensity))
         }
     }
 }
