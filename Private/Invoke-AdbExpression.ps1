@@ -11,15 +11,25 @@ function Invoke-AdbExpression {
     )
 
     begin {
-        $availableDevicesCount = (Get-AdbDevice -Verbose:$false).Count
-        if ($availableDevicesCount -eq 0 -and $DeviceId) {
+        $availableDevices = Get-AdbDevice -Verbose:$false
+        if ($availableDevices.Count -eq 0 -and $DeviceId) {
             $stopExecution = $true
+            $errorMessage = 'No device connected'
+        }
+        $separator = ""
+        foreach ($id in $DeviceId) {
+            if ($id -notin $availableDevices) {
+                $stopExecution = $true
+                $errorMessage += "$($separator)There's no device with id '$id' connected"
+                $separator = "`n"
+            }
         }
     }
 
     process {
         if ($stopExecution) {
-            Write-Error "No devices connected" -Category NotEnabled -ErrorAction Stop
+            Write-Error $errorMessage -ErrorAction Stop
+            return
         }
 
         if (-not $PSBoundParameters.ContainsKey('DeviceId')) {
