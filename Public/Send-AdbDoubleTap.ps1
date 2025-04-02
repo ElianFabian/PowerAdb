@@ -15,12 +15,14 @@ function Send-AdbDoubleTap {
         [Parameter(Mandatory, ParameterSetName = 'Node')]
         [System.Xml.XmlElement] $Node,
 
-        [switch] $DisableCoordinateCheck
+        [switch] $DisableCoordinateCheck,
+
+        [switch] $ForceSimpleTap
     )
 
     process {
         foreach ($id in $DeviceId) {
-            if (Test-AdbEmulator -DeviceId $id) {
+            if (Test-AdbEmulator -DeviceId $id -or $ForceSimpleTap) {
                 $boundParametersCopy = [hashtable] $PSBoundParameters
                 $boundParametersCopy['DeviceId'] = $id
 
