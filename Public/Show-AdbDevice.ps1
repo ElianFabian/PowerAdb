@@ -21,8 +21,8 @@ function Show-AdbDevice {
 
     $spaceSize = 5
 
-    $header = "$("DeviceId".PadRight($longestIdLength + $spaceSize, " "))$("Name".PadRight($longestDeviceName + $spaceSize, " "))API level"
-    $header += "`n$("--------".PadRight($longestIdLength + $spaceSize, " "))$("----".PadRight($longestDeviceName + $spaceSize, " "))---------"
+    $header = "$("DeviceId".PadRight($longestIdLength + $spaceSize, " "))$("Name".PadRight($longestDeviceName + $spaceSize, " "))$("API Level".PadRight($longestDeviceName + $spaceSize, " "))State"
+    $header += "`n$("--------".PadRight($longestIdLength + $spaceSize, " "))$("----".PadRight($longestDeviceName + $spaceSize, " "))$("---------".PadRight($longestDeviceName + $spaceSize, " "))-----"
 
     Write-Host $header -ForegroundColor Green
 
@@ -38,7 +38,8 @@ function Show-AdbDevice {
 
         Write-Host $id.PadRight($longestIdLength + $spaceSize, " ") -NoNewline -ForegroundColor Cyan
         Write-Host $deviceName.PadRight($longestDeviceName + $spaceSize, " ") -NoNewline -ForegroundColor DarkCyan
-        Write-Host $(Get-AdbApiLevel -DeviceId $id)
+        Write-Host $((Get-AdbApiLevel -DeviceId $id).ToString()).PadRight($longestDeviceName + $spaceSize, " ") -NoNewline -ForegroundColor White
+        Write-Host (Get-AdbState -DeviceId $id).PadRight($longestDeviceName + $spaceSize, " ") -ForegroundColor White
     }
 
     Write-Host
