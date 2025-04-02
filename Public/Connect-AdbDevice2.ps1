@@ -2,14 +2,24 @@ function Connect-AdbDevice2 {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(Mandatory)]
+        # When empty, it will connect all devices that are offline
+        [Parameter(ValueFromPipeline)]
         [string[]] $DeviceId,
 
         [switch] $Force
     )
 
     process {
-        foreach ($id in $DeviceId) {
+        $devices = $DeviceId
+        if ($DeviceId.Count -eq 0) {
+            $devices = Get-AdbDevice `
+            | Where-Object {
+                $state = Get-AdbState -DeviceId $_ -Verbose:$false
+                $state -eq 'offline'
+            }
+        }
+
+        foreach ($id in $devices) {
             $isWirelessDebuggingEnabled = Get-AdbSetting -DeviceId $id -Namespace Global -Key adb_wifi_enabled -Verbose:$false
             if ($isWirelessDebuggingEnabled -eq 0 -and -not $Force) {
                 Write-Error "Wireless debugging is not enabled on device $id. Use -Force to enable it."
