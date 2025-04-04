@@ -41,7 +41,7 @@ function Show-AdbDevice {
         if (-not $apiLevel) {
             Write-Host "Unknown".PadRight($longestDeviceName + $spaceSize, " ") -NoNewline -ForegroundColor DarkCyan
         } else {
-            Write-Host $apiLevel.ToString().PadRight($longestDeviceName + $spaceSize, " ") -NoNewline -ForegroundColor DarkCyan
+            Write-Host $apiLevel.ToString().PadRight($longestDeviceName + $spaceSize, " ") -NoNewline -ForegroundColor White
         }
         Write-Host (Get-AdbState -DeviceId $id).PadRight($longestDeviceName + $spaceSize, " ") -ForegroundColor White
     }
