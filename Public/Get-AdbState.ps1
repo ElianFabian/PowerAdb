@@ -8,6 +8,14 @@ function Get-AdbState {
     )
 
     process {
-        $DeviceId | Invoke-AdbExpression -Command "get-state" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false
+        foreach ($id in $DeviceId ){
+            $state = Invoke-AdbExpression -DeviceId $id -Command "get-state" -Verbose:$VerbosePreference -ErrorAction SilentlyContinue 2>&1
+            if ($state -isnot [System.Management.Automation.ErrorRecord]) {
+                $state
+            }
+            else {
+                "offline"
+            }
+        }
     }
 }
