@@ -13,7 +13,7 @@ function Remove-CacheValue {
     )
 
     if ($All) {
-        $targetKeys = $PowerAdbCache.Keys | Where-Object { $_.StartsWith("$DeviceId.") }
+        $targetKeys = $PowerAdbCache.Keys | Where-Object { $_.StartsWith("$DeviceId`:") }
 
         foreach ($keyName in $targetKeys) {
             $PowerAdbCache.Remove($keyName)
