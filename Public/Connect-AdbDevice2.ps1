@@ -23,7 +23,12 @@ function Connect-AdbDevice2 {
             $isWirelessDebuggingEnabled = Get-AdbSetting -DeviceId $id -Namespace Global -Key adb_wifi_enabled -Verbose:$false
             if ($isWirelessDebuggingEnabled -eq 0 -and -not $Force) {
                 Write-Error "Wireless debugging is not enabled on device $id. Use -Force to enable it."
-                return
+                continue
+            }
+
+            if (-not (Test-AdbInternetConnection -DeviceId $id -Verbose:$false)) {
+                Write-Error "Device '$id' is not connected to the internet. Please check your connection."
+                continue
             }
 
             # WORKAROUND: We check if the computer's Wi-Fi name contains the device's Wi-Fi name
@@ -32,7 +37,7 @@ function Connect-AdbDevice2 {
             $deviceWifiName = Get-AdbNetConnectionProfileName -DeviceId $id -Verbose:$false
             if (-not $currentPcWifiName.Contains($deviceWifiName)) {
                 Write-Error "Device '$id' is connected to a different Wi-Fi network. PC: '$currentPcWifiName', Device: '$deviceWifiName'"
-                return
+                continue
             }
 
             Set-AdbSetting -DeviceId $id -Namespace Global -Key adb_wifi_enabled -Value 1 -Verbose:$false
