@@ -26,9 +26,11 @@ function Connect-AdbDevice2 {
                 return
             }
 
+            # WORKAROUND: We check if the computer's Wi-Fi name contains the device's Wi-Fi name
+            # since the name returned by Get-NetConnectionProfile may contain a number at the end.
             $currentPcWifiName = Get-NetConnectionProfile | Select-Object -ExpandProperty Name
             $deviceWifiName = Get-AdbNetConnectionProfileName -DeviceId $id -Verbose:$false
-            if ($deviceWifiName -cne $currentPcWifiName) {
+            if (-not $currentPcWifiName.Contains($deviceWifiName)) {
                 Write-Error "Device '$id' is connected to a different Wi-Fi network. PC: '$currentPcWifiName', Device: '$deviceWifiName'"
                 return
             }
