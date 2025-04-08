@@ -14,15 +14,16 @@ function Get-AdbScreenViewContent {
                 Write-ApiLevelError -DeviceId $id -ApiLevelLessThan 23
                 continue
             }
-        }
-        $DeviceId | Invoke-AdbExpression -Command "exec-out uiautomator dump /dev/tty" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
-        | Out-String `
-        | ForEach-Object { $_.Replace("UI hierchary dumped to: /dev/tty", "") } `
-        | ForEach-Object {
-            # Suppress any possible exception stacktrance like "java.io.FileNotFoundException [...]
-            # Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory) [...]"
-            $xmlHeaderIndex = $_.IndexOf("<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>")
-            $_.Substring($xmlHeaderIndex)
+
+            $ouput = Invoke-AdbExpression -DeviceId $id -Command "exec-out uiautomator dump /dev/tty" -Verbose:$VerbosePreference
+
+            if (-not $ouput) {
+                continue
+            }
+
+            ($ouput.GetEnumerator() `
+            | Select-Object -Skip "<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>".Length `
+            | Select-Object -SkipLast "UI hierchary dumped to: /dev/tty".Length) -join ''
         }
     }
 }
