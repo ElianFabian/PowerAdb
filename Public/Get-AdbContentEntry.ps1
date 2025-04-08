@@ -72,7 +72,7 @@ function Get-AdbContentEntry {
             } `
             | Where-Object {
                 $_ -cne 'No result found.'
-            }
+            } `
             | Select-Object -SkipLast 1 `
             | ForEach-Object {
                 $output = [PSCustomObject] @{
