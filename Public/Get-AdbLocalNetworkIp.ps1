@@ -13,7 +13,7 @@ function Get-AdbLocalNetworkIp {
         foreach ($id in $DeviceId) {
             do {
                 if ($Wait) {
-                    Wait-AdbState -DeviceId $id -State "Device" -Verbose:$VerbosePreference
+                    Wait-AdbDeviceState -DeviceId $id -State "Device" -Verbose:$VerbosePreference
                 }
                 $ipAddress = Invoke-AdbExpression -DeviceId $id -Command "shell ip -f inet addr show wlan0" `
                     -Verbose:$VerbosePreference `

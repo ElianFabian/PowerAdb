@@ -14,7 +14,7 @@ function Connect-AdbDevice2 {
         if ($DeviceId.Count -eq 0) {
             $devices = Get-AdbDevice `
             | Where-Object {
-                $state = Get-AdbState -DeviceId $_ -Verbose:$false
+                $state = Get-AdbDeviceState -DeviceId $_ -Verbose:$false
                 $state -eq 'offline'
             }
         }
