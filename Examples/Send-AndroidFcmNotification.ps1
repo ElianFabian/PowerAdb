@@ -49,7 +49,6 @@ function Send-AndroidFcmNotification {
         #New-AdbBundlePair -Key 'collapse_key' -String $PackageName
 
         # Necessary to be able to navigate to the correct screen when the app is in the background or closed
-        $Data.click_action = $ClickAction
         New-AdbBundlePair -Key 'custom' -String $Data
     }
 
