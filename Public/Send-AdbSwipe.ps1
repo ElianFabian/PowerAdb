@@ -23,7 +23,7 @@ function Send-AdbSwipe {
         [Parameter(Mandatory, ParameterSetName = 'Node')]
         [System.Xml.XmlElement] $Node2,
 
-        [long] $DelayInMilliseconds = 0,
+        [long] $DurationInMilliseconds = 0,
 
         [switch] $DisableCoordinateCheck
     )
@@ -77,7 +77,7 @@ function Send-AdbSwipe {
                 return
             }
 
-            Invoke-AdbExpression -DeviceId $id -Command "shell input touchscreen swipe $positionX1 $positionY1 $positionX2 $positionY2 $DelayInMilliseconds" -Verbose:$VerbosePreference | Out-Null
+            Invoke-AdbExpression -DeviceId $id -Command "shell input touchscreen swipe $positionX1 $positionY1 $positionX2 $positionY2 $DurationInMilliseconds" -Verbose:$VerbosePreference | Out-Null
         }
     }
 }

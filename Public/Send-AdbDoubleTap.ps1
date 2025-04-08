@@ -31,8 +31,8 @@ function Send-AdbDoubleTap {
                 continue
             }
 
-            # For real devices the implementation  is not straightforward
-            # since there's 1 second delay between taps.
+            # For some real devices the implementation  is not straightforward
+            # since there's 1 second delay between taps (e.g. Realme 6, but on Pixel 8 Pro this is not the case).
             # Probably the implemention could be improved, but at least
             # it seems to work reliably on real devices.
             # But it's pretty slow.
