@@ -17,12 +17,12 @@ function Send-AdbDoubleTap {
 
         [switch] $DisableCoordinateCheck,
 
-        [switch] $ForceSimpleTap
+        [switch] $ForceDoubleTapForSlowDevices
     )
 
     process {
         foreach ($id in $DeviceId) {
-            if (Test-AdbEmulator -DeviceId $id -or $ForceSimpleTap) {
+            if (-not $ForceDoubleTapInSlowDevices) {
                 $boundParametersCopy = [hashtable] $PSBoundParameters
                 $boundParametersCopy['DeviceId'] = $id
 
@@ -31,11 +31,10 @@ function Send-AdbDoubleTap {
                 continue
             }
 
-            # For some real devices the implementation  is not straightforward
+            # For some real devices the implementation is not straightforward
             # since there's 1 second delay between taps (e.g. Realme 6, but on Pixel 8 Pro this is not the case).
             # Probably the implemention could be improved, but at least
-            # it seems to work reliably on real devices.
-            # But it's pretty slow.
+            # it seems to work reliably, but it's pretty slow.
 
             $timestamps = [System.Collections.Generic.List[PSCustomObject]]::new()
             $break = [System.Collections.Generic.List[int]]::new()
