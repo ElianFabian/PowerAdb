@@ -55,7 +55,7 @@ function New-AdbIntent {
             $adbArguments += " -a '$($this.Action)'"
         }
         if ($this.Data) {
-            $adbArguments += " -d '$($this.Data)'"
+            $adbArguments += " -d $(ConvertTo-ValidAdbStringArgument $this.Data)"
         }
         if ($this.MimeType) {
             $adbArguments += " -t '$($this.MimeType)'"

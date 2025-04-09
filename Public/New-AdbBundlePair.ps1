@@ -63,79 +63,115 @@ function New-AdbBundlePair {
         'String' {
             $pair | Add-Member -MemberType NoteProperty -Name Value -Value $String
             $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value {
+                $sanitizedKey = ConvertTo-ValidAdbStringArgument $this.Key
                 $sanitizedValue = ConvertTo-ValidAdbStringArgument $this.Value
-                "--es '$($this.Key)' $sanitizedValue"
+
+                "--es $sanitizedKey $sanitizedValue"
             }
         }
         'Boolean' {
             $booleanStr = if ($Boolean) { 'true' } else { 'false' }
             $pair | Add-Member -MemberType NoteProperty -Name Value -Value $booleanStr
-            $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value { "--ez '$($this.Key)' $($this.Value)" }
+            $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value {
+                $sanitizedKey = ConvertTo-ValidAdbStringArgument $this.Key
+                "--ez $sanitizedKey $($this.Value)"
+            }
         }
         'Int' {
             $pair | Add-Member -MemberType NoteProperty -Name Value -Value $Int
-            $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value { "--ei '$($this.Key)' $($this.Value)" }
+            $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value {
+                $sanitizedKey = ConvertTo-ValidAdbStringArgument $this.Key
+                "--ei $sanitizedKey $($this.Value)"
+            }
         }
         'Long' {
             $pair | Add-Member -MemberType NoteProperty -Name Value -Value $Long
-            $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value { "--el '$($this.Key)' $($this.Value)" }
+            $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value {
+                $sanitizedKey = ConvertTo-ValidAdbStringArgument $this.Key
+                "--el $sanitizedKey $($this.Value)"
+            }
         }
         'Float' {
             $pair | Add-Member -MemberType NoteProperty -Name Value -Value $Float
             $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value {
-                "--ef '$($this.Key)' $($this.Value.ToString([System.Globalization.CultureInfo]::InvariantCulture))"
+                $sanitizedKey = ConvertTo-ValidAdbStringArgument $this.Key
+                "--ef $sanitizedKey $($this.Value.ToString([System.Globalization.CultureInfo]::InvariantCulture))"
             }
         }
         'Uri' {
             $pair | Add-Member -MemberType NoteProperty -Name Value -Value $Uri
-            $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value { "--eu '$($this.Key)' '$($this.Value)'" }
+            $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value {
+                $sanitizedKey = ConvertTo-ValidAdbStringArgument $this.Key
+                "--eu $sanitizedKey $(ConvertTo-ValidAdbStringArgument $this.Value)"
+            }
         }
         'ComponentName' {
             $pair | Add-Member -MemberType NoteProperty -Name Value -Value "$PackageName/$ClassName"
-            $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value { "--ecn '$($this.Key)' '$($this.Value)'" }
+            $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value {
+                $sanitizedKey = ConvertTo-ValidAdbStringArgument $this.Key
+                "--ecn $sanitizedKey '$($this.Value)'"
+            }
         }
         'IntArray' {
             $pair | Add-Member -MemberType NoteProperty -Name Value -Value $IntArray
-            $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value { "--eia '$($this.Key)' $($this.Value -join ',')" }
+            $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value {
+                $sanitizedKey = ConvertTo-ValidAdbStringArgument $this.Key
+                "--eia $sanitizedKey $($this.Value -join ',')"
+            }
         }
         'IntArrayList' {
             $pair | Add-Member -MemberType NoteProperty -Name Value -Value $IntArrayList
-            $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value { "--eial '$($this.Key)' $($this.Value -join ',')" }
+            $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value {
+                $sanitizedKey = ConvertTo-ValidAdbStringArgument $this.Key
+                "--eial $sanitizedKey $($this.Value -join ',')"
+            }
         }
         'LongArray' {
             $pair | Add-Member -MemberType NoteProperty -Name Value -Value $LongArray
-            $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value { "--ela '$($this.Key)' $($this.Value -join ',')" }
+            $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value {
+                $sanitizedKey = ConvertTo-ValidAdbStringArgument $this.Key
+                "--ela $sanitizedKey $($this.Value -join ',')"
+            }
         }
         'LongArrayList' {
             $pair | Add-Member -MemberType NoteProperty -Name Value -Value $LongArrayList
-            $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value { "--elal '$($this.Key)' $($this.Value -join ',')" }
+            $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value {
+                $sanitizedKey = ConvertTo-ValidAdbStringArgument $this.Key
+                "--elal $sanitizedKey $($this.Value -join ',')"
+            }
         }
         'FloatArray' {
             $pair | Add-Member -MemberType NoteProperty -Name Value -Value $FloatArray
             $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value {
-                "--efa '$($this.Key)' $(($this.Value | ForEach-Object { $_.ToString([System.Globalization.CultureInfo]::InvariantCulture) }) -join ',')"
+                $sanitizedKey = ConvertTo-ValidAdbStringArgument $this.Key
+                "--efa $sanitizedKey $(($this.Value | ForEach-Object { $_.ToString([System.Globalization.CultureInfo]::InvariantCulture) }) -join ',')"
             }
         }
         'FloatArrayList' {
             $pair | Add-Member -MemberType NoteProperty -Name Value -Value $FloatArrayList
             $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value {
-                "--efal '$($this.Key)' $(($this.Value | ForEach-Object { $_.ToString([System.Globalization.CultureInfo]::InvariantCulture) }) -join ',')"
+                $sanitizedKey = ConvertTo-ValidAdbStringArgument $this.Key
+                "--efal $sanitizedKey $(($this.Value | ForEach-Object { $_.ToString([System.Globalization.CultureInfo]::InvariantCulture) }) -join ',')"
             }
         }
         'StringArray' {
             $pair | Add-Member -MemberType NoteProperty -Name Value -Value $StringArray
             $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value {
+                $sanitizedKey = ConvertTo-ValidAdbStringArgument $this.Key
                 $sanitizedValues = $this.Value | ForEach-Object { ConvertTo-ValidAdbStringArgument $_ }
                 $sanitizedValuesStr = ($sanitizedValues | ForEach-Object { $_ }) -join ','
-                "--esa '$($this.Key)' $sanitizedValuesStr"
+
+                "--esa $sanitizedKey $sanitizedValuesStr"
             }
         }
         'StringArrayList' {
             $pair | Add-Member -MemberType NoteProperty -Name Value -Value $StringArrayList
             $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value {
+                $sanitizedKey = ConvertTo-ValidAdbStringArgument $this.Key
                 $sanitizedValues = $this.Value | ForEach-Object { ConvertTo-ValidAdbStringArgument $_ }
                 $sanitizedValuesStr = ($sanitizedValues | ForEach-Object { $_ }) -join ','
-                "--esal '$($this.Key)' $sanitizedValuesStr"
+
+                "--esal $sanitizedKey $sanitizedValuesStr"
             }
         }
     }
