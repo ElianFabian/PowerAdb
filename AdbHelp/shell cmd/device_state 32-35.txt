@@ -1,0 +1,11 @@
+Device state manager (device_state) commands:
+  help
+    Print this help text.
+  state [reset|OVERRIDE_DEVICE_STATE]
+    Return or override device state.
+  print-state
+    Return the current device state.
+  print-states
+    Return list of currently supported device states.
+  print-states-simple
+    Return the currently supported device states in comma separated format.

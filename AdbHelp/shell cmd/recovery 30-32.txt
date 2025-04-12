@@ -1,0 +1,4 @@
+Recovery system commands:
+  request-lskf <token>
+  clear-lskf
+  reboot-and-apply <token> <reason>

@@ -1,0 +1,45 @@
+AutoFill Service (autofill) commands:
+  help
+    Prints this help text.
+
+  get log_level
+    Gets the Autofill log level (off | debug | verbose).
+
+  get max_partitions
+    Gets the maximum number of partitions per session.
+
+  get max_visible_datasets
+    Gets the maximum number of visible datasets in the UI.
+
+  get full_screen_mode
+    Gets the Fill UI full screen mode
+
+  get fc_score [--algorithm ALGORITHM] value1 value2
+    Gets the field classification score for 2 fields.
+
+  get bind-instant-service-allowed
+    Gets whether binding to services provided by instant apps is allowed
+
+  set log_level [off | debug | verbose]
+    Sets the Autofill log level.
+
+  set max_partitions number
+    Sets the maximum number of partitions per session.
+
+  set max_visible_datasets number
+    Sets the maximum number of visible datasets in the UI.
+
+  set full_screen_mode [true | false | default]
+    Sets the Fill UI full screen mode
+
+  set bind-instant-service-allowed [true | false]
+    Sets whether binding to services provided by instant apps is allowed
+
+  list sessions [--user USER_ID]
+    Lists all pending sessions.
+
+  destroy sessions [--user USER_ID]
+    Destroys all pending sessions.
+
+  reset
+    Resets all pending sessions and cached service connections.

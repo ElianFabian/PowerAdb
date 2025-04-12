@@ -2,21 +2,12 @@ function Enable-AdbAirPlaneMode {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId
+        [string] $DeviceId
     )
 
-    process {
-        foreach ($id in $DeviceId) {
-            $apiLevel = Get-AdbApiLevel -DeviceId $id -Verbose:$false
-            if ($apiLevel -lt 28) {
-                Write-ApiLevelError -DeviceId $id -ApiLevelLessThan 28
-                continue
-            }
+    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 28
 
-            Invoke-AdbExpression -DeviceId $id -Command "shell cmd connectivity airplane-mode enable" -Verbose:$VerbosePreference
-        }
-    }
+    Invoke-AdbExpression -DeviceId $DeviceId -Command 'shell cmd connectivity airplane-mode enable' -Verbose:$VerbosePreference
 }
 
 # TODO: Check out:

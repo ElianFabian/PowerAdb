@@ -1,0 +1,29 @@
+Game manager (game) commands:
+  help
+      Print this help text.
+  downscale
+      Deprecated. Please use `custom` command.
+  list-configs <PACKAGE_NAME>
+      Lists the current intervention configs of an app.
+  list-modes <PACKAGE_NAME>
+      Lists the current selected and available game modes of an app.
+  mode [--user <USER_ID>] [1|2|3|4|standard|performance|battery|custom] <PACKAGE_NAME>
+      Set app to run in the specified game mode, if supported.
+      --user <USER_ID>: apply for the given user,
+                        the current user is used when unspecified.
+  set [intervention configs] <PACKAGE_NAME>
+      Set app to run at custom mode using provided intervention configs
+      Intervention configs consists of:
+      --downscale [0.3|0.35|0.4|0.45|0.5|0.55|0.6|0.65
+                  |0.7|0.75|0.8|0.85|0.9|disable]: Set app to run at the
+                                                   specified scaling ratio.
+      --fps: Integer value to set app to run at the specified fps,
+             if supported. 0 to disable.
+  reset [--mode [2|3|performance|battery] --user <USER_ID>] <PACKAGE_NAME>
+      Resets the game mode of the app to device configuration.
+      This should only be used to reset any override to non custom game mode
+      applied using the deprecated `set` command
+      --mode [2|3|performance|battery]: apply for the given mode,
+                                        resets all modes when unspecified.
+      --user <USER_ID>: apply for the given user,
+                        the current user is used when unspecified.

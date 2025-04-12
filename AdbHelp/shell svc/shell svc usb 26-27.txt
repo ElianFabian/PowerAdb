@@ -1,0 +1,7 @@
+Control Usb state
+
+usage: svc usb setFunction [function] [usbDataUnlocked=false]
+         Set the current usb function and optionally the data lock state.
+
+       svc usb getFunction
+          Gets the list of currently enabled functions

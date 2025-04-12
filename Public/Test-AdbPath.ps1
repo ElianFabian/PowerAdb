@@ -3,28 +3,32 @@ function Test-AdbPath {
     [OutputType([bool[]])]
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
 
         [Parameter(Mandatory)]
-        [string] $LiteralRemotePath,
+        [string[]] $LiteralRemotePath,
+
+        [ValidateSet('Any', 'Container', 'Leaf')]
+        [string] $PathType = 'Any',
 
         [switch] $RunAs
     )
 
-    begin {
-        if ($RunAs) {
-            $runAsCommand = " run-as '$RunAs'"
-        }
+    if ($RunAs) {
+        $runAsCommand = " run-as '$RunAs'"
+    }
+    $pathTypeArg = switch ($PathType) {
+        'Any' { '-e' }
+        'Container' { '-d' }
+        'Leaf' { '-f' }
     }
 
-    process {
-        foreach ($id in $DeviceId) {
-            $result = Invoke-AdbExpression -DeviceId $id -Command "shell$runAsCommand [ -e '$LiteralRemotePath' ] && echo '1' || echo '0'" -Verbose:$VerbosePreference 2> $null
-            switch ($result) {
-                '1' { $true }
-                '0' { $false }
-            }
+    foreach ($path in $LiteralRemotePath) {
+        $sanitizedLiteralRemotePath = ConvertTo-ValidAdbStringArgument $path
+        $result = Invoke-AdbExpression -DeviceId $DeviceId -Command "shell$runAsCommand [ $pathTypeArg $sanitizedLiteralRemotePath ] && echo 1 || echo 0" -Verbose:$VerbosePreference
+        switch ($result) {
+            '1' { $true }
+            '0' { $false }
         }
     }
 }

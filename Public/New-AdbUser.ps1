@@ -1,26 +1,21 @@
 function New-AdbUser {
 
-    [OutputType([int[]])]
-    [CmdletBinding()]
+    [OutputType([int])]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
 
         [Parameter(Mandatory)]
         [string] $UserName
     )
 
-    begin {
-        $userSucessText = 'Success: created user id '
-    }
+    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17
 
-    process {
-        foreach ($id in $DeviceId) {
-            $rawResult = Invoke-AdbExpression -DeviceId $id -Command "shell pm create-user '$UserName'" -Verbose:$VerbosePreference
+    $sanitizedUserName = ConvertTo-ValidAdbStringArgument $UserName
+    $rawResult = Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pm create-user $sanitizedUserName" -Verbose:$VerbosePreference
 
-            if ( $result -and $rawResult.StartsWith($userSucessText)) {
-                [int] $rawResult.Substring($userSucessText.Length)
-            }
-        }
+    $userSucessText = 'Success: created user id '
+    if ($rawResult -and $rawResult.StartsWith($userSucessText)) {
+        [int] $rawResult.Substring($userSucessText.Length)
     }
 }

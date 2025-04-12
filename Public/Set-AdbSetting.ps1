@@ -2,54 +2,46 @@ function Set-AdbSetting {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
 
         [Parameter(Mandatory)]
-        [ValidateSet('Global', 'System', 'Secure')]
+        [ValidateSet('global', 'system', 'secure')]
         [string] $Namespace,
 
         [Parameter(Mandatory)]
-        [string] $Key,
+        [string[]] $Key,
 
+        # New line characters are ignored
         [AllowEmptyString()]
         [Parameter(Mandatory)]
         [string] $Value
     )
 
-    begin {
-        if ($Key.Contains(' ')) {
-            Write-Error "Key '$Key' can't contain space characters"
-            return
-        }
-        if ($Key.Contains('=')) {
-            # This is not a real restriction, we rely on this to proper parse key-value pairs in 'Get-AdbSetting -List'
-            # this is the format: key=value
-            Write-Error "Key '$Key' can't contain the character '='"
-            return
-        }
+    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17
 
-        $namespaceLowercase = switch ($Namespace) {
-            "Global" { "global" }
-            "System" { "system" }
-            "Secure" { "secure" }
-        }
-
-        $sanitizedValue = ConvertTo-ValidAdbStringArgument $Value
+    if ($Key.Contains(' ')) {
+        Write-Error "Key '$Key' can't contain space characters"
+        return
+    }
+    if ($Key.Contains('=')) {
+        # This is not a real restriction, we rely on this to proper parse key-value pairs in 'Get-AdbSetting -List'
+        # this is the format: key=value
+        Write-Error "Key '$Key' can't contain the character '='"
+        return
     }
 
-    process {
-        foreach ($id in $DeviceId) {
-            $apiLevel = Get-AdbApiLevel -DeviceId $id -Verbose:$false
-            if ($apiLevel -lt 17) {
-                Write-ApiLevelError -DeviceId $id -ApiLevelLessThan 17
-                continue
-            }
+    $sanitizedValue = ConvertTo-ValidAdbStringArgument $Value
 
-            Invoke-AdbExpression -DeviceId $id -Command "shell settings put $namespaceLowercase '$Key' '$sanitizedValue'" -Verbose:$VerbosePreference
+    foreach ($k in $Key) {
+        try {
+            Invoke-AdbExpression -DeviceId $DeviceId -Command "shell settings put $Namespace '$k' $sanitizedValue" -Verbose:$VerbosePreference
+        }
+        catch { [AdbCommandException]
+            if ($_.Exception.Message.Contains('java.lang.SecurityException: com.android.shell was not granted  this permission: android.permission.WRITE_SETTINGS')) {
+                Write-Error "Couldn't set setting, you probably need to go to developer settings and turn on 'Disable permission monitoring'. For more info check this link: https://stackoverflow.com/a/72949330/18418162"
+            }
+            throw $_
         }
     }
 }
 
-# In order to make this work for System and Secure namespaces, enable
-# "Disable permission monitoring" in Developer options. https://stackoverflow.com/a/72949330/18418162

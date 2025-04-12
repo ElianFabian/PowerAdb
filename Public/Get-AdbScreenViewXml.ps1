@@ -1,14 +1,10 @@
 function Get-AdbScreenViewXml {
 
     [CmdletBinding()]
-    [OutputType([xml[]])]
+    [OutputType([xml])]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId
+        [string] $DeviceId
     )
 
-    return $DeviceId | Get-AdbScreenViewContent -Verbose:$VerbosePreference `
-    | ForEach-Object {
-        [xml] $_
-    }
+    [xml] (Get-AdbScreenViewContent -DeviceId $DeviceId -Verbose:$VerbosePreference)
 }

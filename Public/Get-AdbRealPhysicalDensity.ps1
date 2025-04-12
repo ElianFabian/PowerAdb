@@ -1,32 +1,25 @@
 function Get-AdbRealPhysicalDensity {
 
+    [OutputType([string])]
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId
+        [string] $DeviceId
     )
 
-    process {
-        foreach ($id in $DeviceId) {
-            $apiLevel = Get-AdbApiLevel -DeviceId $id
-            if ($apiLevel -lt 17) {
-                Write-ApiLevelError -DeviceId $id -ApiLevelLessThan 17
-                continue
-            }
-            if ($apiLevel -lt 30) {
-                Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys display"`
-                | Select-String -Pattern "(-?\d+(\.\d+)?) dpi" `
-                | ForEach-Object { $_.Matches } `
-                | Select-Object -First 1 `
-                | ForEach-Object { [int] $_.Groups[1].Value }
-                continue
-            }
+    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17
 
-            Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys display"`
-            | Select-String -Pattern "xDpi=(-?\d+(\.\d+)?)" `
-            | ForEach-Object { $_.Matches } `
-            | Select-Object -First 1 `
-            | ForEach-Object { [float] $_.Groups[1].Value }
-        }
+    $apiLevel = Get-AdbApiLevel -DeviceId $DeviceId -Verbose:$false
+
+    $pattern = if ($apiLevel -ge 30) {
+        'xDpi=(-?\d+(\.\d+)?)'
     }
+    else {
+        '(-?\d+(\.\d+)?) dpi'
+    }
+
+    return Get-AdbServiceDump -DeviceId $DeviceId -Name 'display' -Verbose:$VerbosePreference `
+    | Select-String -Pattern $pattern `
+    | ForEach-Object { $_.Matches } `
+    | Select-Object -First 1 `
+    | ForEach-Object { [int] $_.Groups[1].Value }
 }

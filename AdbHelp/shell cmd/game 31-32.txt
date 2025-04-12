@@ -1,0 +1,8 @@
+Game manager (game) commands:
+  help
+      Print this help text.
+  downscale [0.3|0.35|0.4|0.45|0.5|0.55|0.6|0.65|0.7|0.75|0.8|0.85|0.9|disable] <PACKAGE_NAME>
+      Force app to run at the specified scaling ratio.
+  mode [--user <USER_ID>] [1|2|3|standard|performance|battery] <PACKAGE_NAME>
+      Force app to run in the specified game mode, if supported.
+      --user <USER_ID>: apply for the given user, the current user is used when unspecified.

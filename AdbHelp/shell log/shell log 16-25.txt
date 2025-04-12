@@ -1,0 +1,3 @@
+USAGE: log [-p priorityChar] [-t tag] message
+        priorityChar should be one of:
+          v,d,i,w,e

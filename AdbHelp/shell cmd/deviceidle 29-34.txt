@@ -1,0 +1,44 @@
+Device idle controller (deviceidle) commands:
+  help
+    Print this help text.
+  step [light|deep]
+    Immediately step to next state, without waiting for alarm.
+  force-idle [light|deep]
+    Force directly into idle mode, regardless of other device state.
+  force-inactive
+    Force to be inactive, ready to freely step idle states.
+  unforce
+    Resume normal functioning after force-idle or force-inactive.
+  get [light|deep|force|screen|charging|network]
+    Retrieve the current given state.
+  disable [light|deep|all]
+    Completely disable device idle mode.
+  enable [light|deep|all]
+    Re-enable device idle mode after it had previously been disabled.
+  enabled [light|deep|all]
+    Print 1 if device idle mode is currently enabled, else 0.
+  whitelist
+    Print currently whitelisted apps.
+  whitelist [package ...]
+    Add (prefix with +) or remove (prefix with -) packages.
+  sys-whitelist [package ...|reset]
+    Prefix the package with '-' to remove it from the system whitelist or '+' to put it back in the system whitelist.
+    Note that only packages that were earlier removed from the system whitelist can be added back.
+    reset will reset the whitelist to the original state
+    Prints the system whitelist if no arguments are specified
+  except-idle-whitelist [package ...|reset]
+    Prefix the package with '+' to add it to whitelist or '=' to check if it is already whitelisted
+    [reset] will reset the whitelist to it's original state
+    Note that unlike <whitelist> cmd, changes made using this won't be persisted across boots
+  tempwhitelist
+    Print packages that are temporarily whitelisted.
+  tempwhitelist [-u USER] [-d DURATION] [-r] [package]
+    Temporarily place package in whitelist for DURATION milliseconds.
+    If no DURATION is specified, 10 seconds is used
+    If [-r] option is used, then the package is removed from temp whitelist and any [-d] is ignored
+  motion
+    Simulate a motion event to bring the device out of deep doze
+  pre-idle-factor [0|1|2]
+    Set a new factor to idle time before step to idle(inactive_to and idle_after_inactive_to)
+  reset-pre-idle-factor
+    Reset factor to idle time to default

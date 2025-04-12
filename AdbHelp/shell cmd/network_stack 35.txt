@@ -1,0 +1,25 @@
+NetworkStack service commands:
+  help
+    Print this help text.
+  is-uid-networking-blocked <uid> <metered>
+    Get whether the networking is blocked for given uid and metered.
+    <uid>: The target uid.
+    <metered>: [true|false], Whether the target network is metered.
+  apf <iface> <cmd>
+    APF utility commands for integration tests.
+    <iface>: the network interface the provided command operates on.
+    <cmd>: [status]
+      status
+        returns whether the APF filter is "running" or "paused".
+      pause
+        pause APF filter generation.
+      resume
+        resume APF filter generation.
+      install <program-hex-string>
+        install the APF program contained in <program-hex-string>.
+        The filter must be paused before installing a new program.
+      capabilities
+        return the reported APF capabilities.
+        Format: <apfVersion>,<maxProgramSize>,<packetFormat>
+      read
+        reads and returns the current state of APF memory.

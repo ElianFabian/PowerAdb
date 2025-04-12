@@ -1,0 +1,14 @@
+WearableSensingCommands commands:
+  help
+    Print this help text.
+
+  create-data-stream: Creates a data stream to be provided.
+  destroy-data-stream: Destroys a data stream if one was previously created.
+  provide-data-stream USER_ID: Provides data stream to WearableSensingService.
+  write-to-data-stream STRING: writes string to data stream.
+  provide-data USER_ID KEY INTEGER: provide integer as data with key.
+  get-last-status-code: Prints the latest request status code.
+  get-bound-package USER_ID:     Print the bound package that implements the service.
+  set-temporary-service USER_ID [PACKAGE_NAME] [COMPONENT_NAME DURATION]
+    Temporarily (for DURATION ms) changes the service implementation.
+    To reset, call with just the USER_ID argument.

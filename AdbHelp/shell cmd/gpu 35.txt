@@ -1,0 +1,3 @@
+GPU Service commands:
+  vkjson      dump Vulkan properties as JSON
+  vkprofiles  print support for select Vulkan profiles

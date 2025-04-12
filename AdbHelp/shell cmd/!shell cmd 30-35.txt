@@ -1,0 +1,1 @@
+use -l to list all running services. Use -w to start and wait for a service.

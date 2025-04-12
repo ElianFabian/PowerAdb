@@ -2,7 +2,7 @@ function Get-ScreenNodeBounds {
 
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
+        [Parameter(Mandatory)]
         [System.Xml.XmlNode] $Node
     )
 
@@ -24,8 +24,8 @@ function Get-ScreenNodeBounds {
         Y2 = $y2
     }
 
-    $output | Add-Member -MemberType NoteProperty -Name "CenterX" -Value ([math]::Round(($x1 + $x2) / 2))
-    $output | Add-Member -MemberType NoteProperty -Name "CenterY" -Value ([math]::Round(($y1 + $y2) / 2))
+    $output | Add-Member -MemberType NoteProperty -Name 'CenterX' -Value ([math]::Round(($x1 + $x2) / 2))
+    $output | Add-Member -MemberType NoteProperty -Name 'CenterY' -Value ([math]::Round(($y1 + $y2) / 2))
 
     return $output
 }

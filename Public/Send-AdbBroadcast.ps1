@@ -1,92 +1,78 @@
 function Send-AdbBroadcast {
 
-    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'UserId')]
+    [OutputType([PSCustomObject])]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
+
+        [AllowNull()]
+        [object] $UserId,
 
         [Parameter(Mandatory)]
         [PSCustomObject] $Intent,
 
-        [Parameter(ParameterSetName = 'UserId')]
-        [AllowNull()]
-        [Nullable[uint32]] $UserId,
-
-        [Parameter(ParameterSetName = 'AllUsers')]
-        [switch] $AllUsers,
-
-        [Parameter(ParameterSetName = 'CurrentUser')]
-        [switch] $CurrentUser
+        [string] $PermissionName
     )
 
-    begin {
-        $intentArgs = $Intent.ToAdbArguments()
+    Assert-ValidIntent -DeviceId $DeviceId -Intent $Intent
 
-        if ($null -ne $UserId) {
-            $userArg = " --user $UserId"
+    $apiLevel = Get-AdbApiLevel -DeviceId $DeviceId -Verbose:$false
+
+    $intentArgs = $Intent.ToAdbArguments($DeviceId)
+
+    $user = Resolve-AdbUser -DeviceId $DeviceId -UserId $UserId
+    if ($null -ne $user) {
+        $userArg = " --user $user"
+    }
+    if ($PermissionName -and $apiLevel -ge 18) {
+        $permissionArg = " --receiver-permission $PermissionName"
+    }
+
+    $rawResult = Invoke-AdbExpression -DeviceId $DeviceId -Command "shell am broadcast$userArg$permissionArg$intentArgs" -Verbose:$VerbosePreference `
+    | Out-String
+
+    $broadcastingIntentLine = $rawResult -split '\r?\n' | Select-Object -First 1
+    $actualHexFlags = $broadcastingIntentLine | Select-String -Pattern "Broadcasting: Intent \{ act=.* flg=(0x.+) cmp=.* \}" -AllMatches `
+    | Select-Object -ExpandProperty Matches -First 1 `
+    | ForEach-Object { $_.Groups[1].Value }
+    $broacastCompletedMatch = $rawResult `
+    | Select-String -Pattern "Broadcast completed: result=(?<result>\d+)(?:, data=""(?<data>[\s\S\n\r.]*?)"")?" -AllMatches `
+    | Select-Object -ExpandProperty Matches -First 1
+
+    $groups = $broacastCompletedMatch.Groups
+    $broadCastResult = [int] $groups['result'].Value
+    $broadcastData = $groups['data'].Value
+
+    $broadcastOuput = [PSCustomObject]@{
+        Result = $broadCastResult
+        Data   = $broadcastData
+    }
+
+    if ($actualHexFlags) {
+        $actualIntFlags = [int] $actualHexFlags
+        $broadcastOuput | Add-Member -MemberType NoteProperty -Name ActualFlags -Value $actualIntFlags
+        $broadcastOuput | Add-Member -MemberType ScriptProperty -Name ActualHexFlags -Value {
+            "0x$($this.ActualFlags.ToString('x8'))"
         }
-        elseif ($AllUsers) {
-            $userArg = " --user all"
+        $broadcastOuput | Add-Member -MemberType ScriptProperty -Name ActualFlagsArray -Value {
+            $flags = $this.ActualFlags
+            0..31 | ForEach-Object {
+                $bit = 1 -shl $_
+                if ($flags -band $bit) {
+                    $bit
+                }
+            }
         }
-        elseif ($CurrentUser) {
-            $userArg = " --user current"
+        $broadcastOuput | Add-Member -MemberType ScriptProperty -Name ActualHexFlagsArray -Value {
+            $flags = $this.ActualFlags
+            0..31 | ForEach-Object {
+                $bit = 1 -shl $_
+                if ($flags -band $bit) {
+                    "0x$($bit.ToString('x8'))"
+                }
+            }
         }
     }
 
-    process {
-        foreach ($id in $DeviceId) {
-            $rawResult = Invoke-AdbExpression -DeviceId $id -Command "shell am broadcast$userArg $intentArgs" -Verbose:$VerbosePreference `
-            | Out-String
-
-            $broadcastingIntentLine = $rawResult -split '\r?\n' | Select-Object -First 1
-            $actualHexFlags = $broadcastingIntentLine | Select-String -Pattern "Broadcasting: Intent \{ act=.* flg=(0x.+) cmp=.* \}" -AllMatches `
-            | Select-Object -ExpandProperty Matches -First 1 `
-            | ForEach-Object { $_.Groups[1].Value }
-            $broacastCompletedMatch = $rawResult `
-            | Select-String -Pattern "Broadcast completed: result=(?<result>\d+)(?:, data=""(?<data>[\s\S\n\r.]*?)"")?" -AllMatches `
-            | Select-Object -ExpandProperty Matches -First 1
-
-            $groups = $broacastCompletedMatch.Groups
-            $broadCastResult = [int] $groups['result'].Value
-            $broadcastData = $groups['data'].Value
-
-            $broadcastOuput = [PSCustomObject]@{
-                DeviceId = $id
-                Result   = $broadCastResult
-                Data     = $broadcastData
-            }
-
-            if ($actualHexFlags) {
-                $actualIntFlags = [int] $actualHexFlags
-                $broadcastOuput | Add-Member -MemberType NoteProperty -Name ActualFlags -Value $actualIntFlags
-                $broadcastOuput | Add-Member -MemberType ScriptProperty -Name ActualHexFlags -Value {
-                    "0x$($this.ActualFlags.ToString('x8'))"
-                }
-                $broadcastOuput | Add-Member -MemberType ScriptProperty -Name ActualFlagsArray -Value {
-                    $flags = $this.ActualFlags
-                    0..31 | ForEach-Object {
-                        $bit = 1 -shl $_
-                        if ($flags -band $bit) {
-                            $bit
-                        }
-                    }
-                }
-                $broadcastOuput | Add-Member -MemberType ScriptProperty -Name ActualHexFlagsArray -Value {
-                    $flags = $this.ActualFlags
-                    0..31 | ForEach-Object {
-                        $bit = 1 -shl $_
-                        if ($flags -band $bit) {
-                            "0x$($bit.ToString('x8'))"
-                        }
-                    }
-                }
-            }
-
-            $broadcastOuput
-        }
-    }
+    return $broadcastOuput
 }
-
-# TODO: add support for the following parameters:
-# --receiver-permission
-# --allow-background-activity-starts

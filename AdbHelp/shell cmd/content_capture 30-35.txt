@@ -1,0 +1,25 @@
+ContentCapture Service (content_capture) commands:
+  help
+    Prints this help text.
+
+  get bind-instant-service-allowed
+    Gets whether binding to services provided by instant apps is allowed
+
+  set bind-instant-service-allowed [true | false]
+    Sets whether binding to services provided by instant apps is allowed
+
+  set temporary-service USER_ID [COMPONENT_NAME DURATION]
+    Temporarily (for DURATION ms) changes the service implemtation.
+    To reset, call with just the USER_ID argument.
+
+  set default-service-enabled USER_ID [true|false]
+    Enable / disable the default service for the user.
+
+  get default-service-enabled USER_ID
+    Checks whether the default service is enabled for the user.
+
+  list sessions [--user USER_ID]
+    Lists all pending sessions.
+
+  destroy sessions [--user USER_ID]
+    Destroys all pending sessions.

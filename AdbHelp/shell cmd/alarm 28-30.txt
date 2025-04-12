@@ -1,0 +1,8 @@
+Alarm manager service (alarm) commands:
+  help
+    Print this help text.
+  set-time TIME
+    Set the system clock time to TIME where TIME is milliseconds
+    since the Epoch.
+  set-timezone TZ
+    Set the system timezone to TZ where TZ is an Olson id.

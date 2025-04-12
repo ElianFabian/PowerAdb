@@ -1,0 +1,6 @@
+usage:  settings [--user NUM] get namespace key
+        settings [--user NUM] put namespace key value
+        settings [--user NUM] delete namespace key
+
+'namespace' is one of {system, secure, global}, case-insensitive
+If '--user NUM' is not given, the operations are performed on the owner user.

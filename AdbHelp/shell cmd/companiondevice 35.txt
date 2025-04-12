@@ -1,0 +1,51 @@
+Companion Device Manager (companiondevice) commands:
+  help
+      Print this help text.
+  list USER_ID
+      List all Associations for a user.
+  associate USER_ID PACKAGE MAC_ADDRESS [DEVICE_PROFILE]
+      Create a new Association.
+  disassociate USER_ID PACKAGE MAC_ADDRESS
+      Remove an existing Association.
+  disassociate-all USER_ID
+      Remove all Associations for a user.
+  refresh-cache
+      Clear the in-memory association cache and reload all association
+      information from disk. USE FOR DEBUGGING AND/OR TESTING PURPOSES ONLY.
+  simulate-device-appeared ASSOCIATION_ID
+      Make CDM act as if the given companion device has appeared.
+      I.e. bind the associated companion application's
+      CompanionDeviceService(s) and trigger onDeviceAppeared() callback.
+      The CDM will consider the devices as present for 60 seconds and then
+      will act as if device disappeared, unless 'simulate-device-disappeared'
+      or 'simulate-device-appeared' is called again before 60 seconds run out.
+      USE FOR DEBUGGING AND/OR TESTING PURPOSES ONLY.
+  simulate-device-disappeared ASSOCIATION_ID
+      Make CDM act as if the given companion device has disappeared.
+      I.e. unbind the associated companion application's
+      CompanionDeviceService(s) and trigger onDeviceDisappeared() callback.
+      NOTE: This will only have effect if 'simulate-device-appeared' was
+      invoked for the same device (same ASSOCIATION_ID) no longer than
+      60 seconds ago.
+  get-backup-payload USER_ID
+      Generate backup payload for the given user and print its content
+      encoded to a Base64 string.
+      USE FOR DEBUGGING AND/OR TESTING PURPOSES ONLY.
+  apply-restored-payload USER_ID PAYLOAD
+      Apply restored backup payload for the given user.
+      USE FOR DEBUGGING AND/OR TESTING PURPOSES ONLY.
+  remove-inactive-associations
+      Remove self-managed associations that have not been active
+      for a long time (90 days or as configured via
+      "debug.cdm.cdmservice.removal_time_window" system property).
+      USE FOR DEBUGGING AND/OR TESTING PURPOSES ONLY.
+  create-emulated-transport <ASSOCIATION_ID>
+      Create an EmulatedTransport for testing purposes only
+  enable-perm-sync <ASSOCIATION_ID>
+      Enable perm sync for the association.
+  disable-perm-sync <ASSOCIATION_ID>
+      Disable perm sync for the association.
+  get-perm-sync-state <ASSOCIATION_ID>
+      Get perm sync state for the association.
+  remove-perm-sync-state <ASSOCIATION_ID>
+      Remove perm sync state for the association.

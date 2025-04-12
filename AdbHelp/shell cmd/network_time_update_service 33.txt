@@ -1,0 +1,12 @@
+etwork Time Update Service (network_time_update_service) commands:
+  help
+    Print this help text.
+  clear_time
+    Clears the latest time.
+  force_refresh
+    Refreshes the latest time. Prints whether it was successful.
+  set_server_config
+    Sets the NTP server config for tests. The config is not persisted.
+      Options: [--hostname <hostname>] [--port <port>] [--timeout_millis <millis>]
+      Each key/value is optional and must be specified to override the
+      normal value, not specifying a key causes it to reset to the original.

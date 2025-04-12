@@ -1,0 +1,11 @@
+usage: screencap [-ahp] [-d display-id] [FILENAME]
+   -h: this message
+   -a: captures all the active displays. This appends an integer postfix to the FILENAME.
+       e.g., FILENAME_0.png, FILENAME_1.png. If both -a and -d are given, it ignores -d.
+   -d: specify the display ID to capture (If the id is not given, it defaults to 4619827259835644672)
+       see "dumpsys SurfaceFlinger --display-id" for valid display IDs.
+   -p: outputs in png format.
+   --hint-for-seamless If set will use the hintForSeamless path in SF
+
+If FILENAME ends with .png it will be saved as a png.
+If FILENAME is not given, the results will be printed to stdout.

@@ -1,0 +1,5 @@
+Resources manager commands:
+  help
+    Print this help text.
+  dump <PROCESS>
+    Dump the Resources objects in use as well as the history of Resources

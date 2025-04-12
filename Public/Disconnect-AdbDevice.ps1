@@ -3,17 +3,13 @@ function Disconnect-AdbDevice {
     [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory)]
-        [string[]] $IpAddress,
+        [string] $IpAddress,
 
         [Parameter(Mandatory)]
         [int] $Port
     )
 
-    process {
-        foreach ($ip in $IpAddress) {
-            if ($PSCmdlet.ShouldProcess("adb disconnect $ip`:$Port", "", "Disconnect-AdbDevice")) {
-                adb disconnect "$ip`:$Port"
-            }
-        }
+    if ($PSCmdlet.ShouldProcess("adb disconnect $IpAddress`:$Port", "", 'Disconnect-AdbDevice')) {
+        adb disconnect "$IpAddress`:$Port"
     }
 }

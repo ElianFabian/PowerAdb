@@ -1,0 +1,6 @@
+Content service commands:
+  help
+    Print this help text.
+
+  reset-today-stats
+    Reset 1-day sync stats.

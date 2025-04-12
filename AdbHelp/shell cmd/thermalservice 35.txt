@@ -1,0 +1,14 @@
+Thermal service (thermalservice) commands:
+  help
+    Print this help text.
+
+  inject-temperature TYPE STATUS NAME [VALUE]
+    injects a new temperature sample for the specified device.
+    type and status strings follow the names in android.os.Temperature.
+  override-status STATUS
+    sets and locks the thermal status of the device to STATUS.
+    status code is defined in android.os.Temperature.
+  reset
+    unlocks the thermal status of the device.
+  headroom FORECAST_SECONDS
+    gets the thermal headroom forecast in specified seconds, from [0,60].

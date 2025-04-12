@@ -1,0 +1,279 @@
+Telephony Commands:
+  help
+    Print this help text.
+  ims
+    IMS Commands.
+  uce
+    RCS User Capability Exchange Commands.
+  emergency-number-test-mode
+    Emergency Number Test Mode Commands.
+  end-block-suppression
+    End Block Suppression command.
+  data
+    Data Test Mode Commands.
+  cc
+    Carrier Config Commands.
+  gba
+    GBA Commands.
+  src
+    RCS VoLTE Single Registration Config Commands.
+  restart-modem
+    Restart modem command.
+  unattended-reboot
+    Prepare for unattended reboot.
+  has-carrier-privileges [package]
+    Query carrier privilege status for a package. Prints true or false.
+  get-allowed-network-types-for-users
+    Get the Allowed Network Types.
+  set-allowed-network-types-for-users
+    Set the Allowed Network Types.
+  radio
+    Radio Commands.
+IMS Commands:
+  ims set-ims-service [-s SLOT_ID] (-c | -d | -f) PACKAGE_NAME
+    Sets the ImsService defined in PACKAGE_NAME to to be the bound
+    ImsService. Options are:
+      -s: the slot ID that the ImsService should be bound for. If no option
+          is specified, it will choose the default voice SIM slot.
+      -c: Override the ImsService defined in the carrier configuration.
+      -d: Override the ImsService defined in the device overlay.
+      -f: Set the feature that this override if for, if no option is
+          specified, the new package name will be used for all features.
+  ims get-ims-service [-s SLOT_ID] [-c | -d]
+    Gets the package name of the currently defined ImsService.
+    Options are:
+      -s: The SIM slot ID for the registered ImsService. If no option
+          is specified, it will choose the default voice SIM slot.
+      -c: The ImsService defined as the carrier configured ImsService.
+      -d: The ImsService defined as the device default ImsService.
+      -f: The feature type that the query will be requested for. If none is
+          specified, the returned package name will correspond to MMTEL.
+  ims clear-ims-service-override [-s SLOT_ID]
+    Clear all carrier ImsService overrides. This does not work for device
+    configuration overrides. Options are:
+      -s: The SIM slot ID for the registered ImsService. If no option
+          is specified, it will choose the default voice SIM slot.
+  ims enable [-s SLOT_ID]
+    enables IMS for the SIM slot specified, or for the default voice SIM slot
+    if none is specified.
+  ims disable [-s SLOT_ID]
+    disables IMS for the SIM slot specified, or for the default voice SIM
+    slot if none is specified.
+  ims conference-event-package [enable/disable]
+    enables or disables handling or network conference event package data.
+User Capability Exchange Commands:
+  uce get-eab-contact [PHONE_NUMBER]
+    Get the EAB contacts from the EAB database.
+    Options are:
+      PHONE_NUMBER: The phone numbers to be removed from the EAB databases
+    Expected output format :
+      [PHONE_NUMBER],[RAW_CONTACT_ID],[CONTACT_ID],[DATA_ID]
+  uce remove-eab-contact [-s SLOT_ID] [PHONE_NUMBER]
+    Remove the EAB contacts from the EAB database.
+    Options are:
+      -s: The SIM slot ID to read carrier config value for. If no option
+          is specified, it will choose the default voice SIM slot.
+      PHONE_NUMBER: The phone numbers to be removed from the EAB databases
+  uce get-device-enabled
+    Get the config to check whether the device supports RCS UCE or not.
+  uce set-device-enabled true|false
+    Set the device config for RCS User Capability Exchange to the value.
+    The value could be true, false.
+  uce override-published-caps [-s SLOT_ID] add|remove|clear [CAPABILITIES]
+    Override the existing SIP PUBLISH with different capabilities.
+    Options are:
+      -s: The SIM slot ID to read carrier config value for. If no option
+          is specified, it will choose the default voice SIM slot.
+      add [CAPABILITY]: add a new capability
+      remove [CAPABILITY]: remove a capability
+      clear: clear all capability overrides
+      CAPABILITY: ":" separated list of capabilities.
+          Valid options are: [mmtel(_vt), chat_v1, chat_v2, ft, ft_sms,
+          geo_push, geo_push_sms, call_comp, call_post, map, sketch, chatbot,
+          chatbot_sa, chatbot_role] as well as full length
+          featureTag="featureValue" feature tags that are not defined here.
+  uce get-last-publish-pidf [-s SLOT_ID]
+    Get the PIDF XML included in the last SIP PUBLISH, or "none" if no
+    PUBLISH is active
+  uce remove-request-disallowed-status [-s SLOT_ID]
+    Remove the UCE is disallowed to execute UCE requests status
+  uce set-capabilities-request-timeout [-s SLOT_ID] [REQUEST_TIMEOUT_MS]
+    Set the timeout for contact capabilities request.
+Emergency Number Test Mode Commands:
+  emergency-number-test-mode
+    Add(-a), Clear(-c), Print (-p) or Remove(-r) the emergency number list in the test mode
+      -a <emergency number address>: add an emergency number address for the test mode, only allows '0'-'9', '*', '#' or '+'.
+      -c: clear the emergency number list in the test mode.
+      -r <emergency number address>: remove an existing emergency number address added by the test mode, only allows '0'-'9', '*', '#' or '+'.
+      -p: get the full emergency number list in the test mode.
+End Block Suppression command:
+  end-block-suppression: disable suppressing blocking by contact
+                         with emergency services.
+Mobile Data Test Mode Commands:
+  data enable: enable mobile data connectivity
+  data disable: disable mobile data connectivity
+Carrier Config Commands:
+  cc get-value [-s SLOT_ID] [KEY]
+    Print carrier config values.
+    Options are:
+      -s: The SIM slot ID to read carrier config value for. If no option
+          is specified, it will choose the default voice SIM slot.
+    KEY: The key to the carrier config value to print. All values are printed
+         if KEY is not specified.
+  cc set-value [-s SLOT_ID] [-p] KEY [NEW_VALUE]
+    Set carrier config KEY to NEW_VALUE.
+    Options are:
+      -s: The SIM slot ID to set carrier config value for. If no option
+          is specified, it will choose the default voice SIM slot.
+      -p: Value will be stored persistent
+    NEW_VALUE specifies the new value for carrier config KEY. Null will be
+      used if NEW_VALUE is not set. Strings should be encapsulated with
+      quotation marks. Spaces needs to be escaped. Example: "Hello\ World"
+      Separate items in arrays with space . Example: "item1" "item2"
+  cc set-values-from-xml [-s SLOT_ID] [-p] < XML_FILE_PATH
+    Set carrier config based on the contents of the XML_FILE. File must be
+    provided through standard input and follow CarrierConfig XML format.
+    Example: packages/apps/CarrierConfig/assets/*.xml
+    Options are:
+      -s: The SIM slot ID to set carrier config value for. If no option
+          is specified, it will choose the default voice SIM slot.
+      -p: Value will be stored persistent
+  cc clear-values [-s SLOT_ID]
+    Clear all carrier override values that has previously been set
+    with set-value or set-values-from-xml
+    Options are:
+      -s: The SIM slot ID to clear carrier config values for. If no option
+          is specified, it will choose the default voice SIM slot.
+Gba Commands:
+  gba set-service [-s SLOT_ID] PACKAGE_NAME
+    Sets the GbaService defined in PACKAGE_NAME to to be the bound.
+    Options are:
+      -s: The SIM slot ID to read carrier config value for. If no option
+          is specified, it will choose the default voice SIM slot.
+  gba get-service [-s SLOT_ID]
+    Gets the package name of the currently defined GbaService.
+    Options are:
+      -s: The SIM slot ID to read carrier config value for. If no option
+          is specified, it will choose the default voice SIM slot.
+  gba set-release [-s SLOT_ID] n
+    Sets the time to release/unbind GbaService in n milli-second.
+    Do not release/unbind if n is -1.
+    Options are:
+      -s: The SIM slot ID to read carrier config value for. If no option
+          is specified, it will choose the default voice SIM slot.
+  gba get-release [-s SLOT_ID]
+    Gets the time to release/unbind GbaService in n milli-sencond.
+    Options are:
+      -s: The SIM slot ID to read carrier config value for. If no option
+          is specified, it will choose the default voice SIM slot.
+RCS VoLTE Single Registration Config Commands:
+  src set-test-enabled true|false
+    Sets the test mode enabled for RCS VoLTE single registration.
+    The value could be true, false, or null(undefined).
+  src get-test-enabled
+    Gets the test mode for RCS VoLTE single registration.
+  src set-device-enabled true|false|null
+    Sets the device config for RCS VoLTE single registration to the value.
+    The value could be true, false, or null(undefined).
+  src get-device-enabled
+    Gets the device config for RCS VoLTE single registration.
+  src set-carrier-enabled [-s SLOT_ID] true|false|null
+    Sets the carrier config for RCS VoLTE single registration to the value.
+    The value could be true, false, or null(undefined).
+    Options are:
+      -s: The SIM slot ID to set the config value for. If no option
+          is specified, it will choose the default voice SIM slot.
+  src get-carrier-enabled [-s SLOT_ID]
+    Gets the carrier config for RCS VoLTE single registration.
+    Options are:
+      -s: The SIM slot ID to read the config value for. If no option
+          is specified, it will choose the default voice SIM slot.
+  src set-feature-validation [-s SLOT_ID] true|false|null
+    Sets ims feature validation result.
+    The value could be true, false, or null(undefined).
+    Options are:
+      -s: The SIM slot ID to set the config value for. If no option
+          is specified, it will choose the default voice SIM slot.
+  src get-feature-validation [-s SLOT_ID]
+    Gets ims feature validation override value.
+    Options are:
+      -s: The SIM slot ID to read the config value for. If no option
+          is specified, it will choose the default voice SIM slot.
+D2D Comms Commands:
+  d2d send TYPE VALUE
+    Sends a D2D message of specified type and value.
+    Type: 1 - MESSAGE_CALL_RADIO_ACCESS_TYPE
+    Type: 2 - MESSAGE_CALL_AUDIO_CODEC
+    Type: 3 - MESSAGE_DEVICE_BATTERY_STATE
+    Type: 4 - MESSAGE_DEVICE_NETWORK_COVERAGE
+  d2d transport TYPE
+    Forces the specified D2D transport TYPE to be active.  Use the
+    short class name of the transport; i.e. DtmfTransport or RtpTransport.
+  d2d set-device-support true/default
+    true - forces device support to be enabled for D2D.
+    default - clear any previously set force-enable of D2D, reverting to
+    the current device's configuration.
+Disable or enable a physical subscription
+  disable-physical-subscription SUB_ID
+    Disable the physical subscription with the provided subId, if allowed.
+  enable-physical-subscription SUB_ID
+    Enable the physical subscription with the provided subId, if allowed.
+Allowed Network Types Commands:
+  get-allowed-network-types-for-users [-s SLOT_ID]
+    Print allowed network types value.
+    Options are:
+      -s: The SIM slot ID to read allowed network types value for. If no
+          option is specified, it will choose the default voice SIM slot.
+  set-allowed-network-types-for-users [-s SLOT_ID] [NETWORK_TYPES_BITMASK]
+    Sets allowed network types to NETWORK_TYPES_BITMASK.
+    Options are:
+      -s: The SIM slot ID to set allowed network types value for. If no
+          option is specified, it will choose the default voice SIM slot.
+    NETWORK_TYPES_BITMASK specifies the new network types value and this type
+      is bitmask in binary format. Reference the NetworkTypeBitMask
+      at TelephonyManager.java
+      For example:
+        NR only                    : 10000000000000000000
+        NR|LTE                     : 11000001000000000000
+        NR|LTE|CDMA|EVDO|GSM|WCDMA : 11001111101111111111
+        LTE|CDMA|EVDO|GSM|WCDMA    : 01001111101111111111
+        LTE only                   : 01000001000000000000
+Radio Commands:
+  radio set-modem-service [-s SERVICE_NAME]
+    Sets the class name of modem service defined in SERVICE_NAME
+    to be the bound. Options are:
+      -s: the service name that the modem service should be bound for.
+          If no option is specified, it will bind to the default.
+  radio get-modem-service
+    Gets the service name of the currently defined modem service.
+    If it is binding to default, 'default' returns.
+    If it doesn't bind to any modem service for some reasons,
+    the result would be 'unknown'.
+IMEI Commands:
+  get-imei [-s SLOT_ID]
+    Gets the device IMEI. Options are:
+      -s: the slot ID to get the IMEI. If no option
+          is specified, it will choose the default voice SIM slot.
+Satellite Commands:
+  set-satellite-service-package-name [-s SERVICE_PACKAGE_NAME]
+    Sets the package name of satellite service defined in
+    SERVICE_PACKAGE_NAME to be bound. Options are:
+      -s: the satellite service package name that Telephony will bind to.
+          If no option is specified, it will bind to the default.
+  set-satellite-gateway-service-package-name [-s SERVICE_PACKAGE_NAME]
+    Sets the package name of satellite gateway service defined in
+    SERVICE_PACKAGE_NAME to be bound. Options are:
+      -s: the satellite gateway service package name that Telephony will bind
+           to. If no option is specified, it will bind to the default.
+  set-satellite-listening-timeout-duration [-t TIMEOUT_MILLIS]
+    Sets the timeout duration in millis that satellite will stay at listening
+    mode. Options are:
+      -t: the timeout duration in milliseconds.
+          If no option is specified, it will use the default values.
+  set-satellite-pointing-ui-class-name [-p PACKAGE_NAME -c CLASS_NAME]
+    Sets the package and class name of satellite pointing UI app defined in
+    PACKAGE_NAME and CLASS_NAME to be launched. Options are:
+      -p: the satellite pointing UI app package name that Telephony will
+           launch. If no option is specified, it will launch the default.
+      -c: the satellite pointing UI app class name that Telephony will
+           launch.

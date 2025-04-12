@@ -1,0 +1,7 @@
+Print service commands:
+  help
+    Print this help text.
+  set-bind-instant-service-allowed [--user <USER_ID>] true|false
+    Set whether binding to print services provided by instant apps is allowed.
+  get-bind-instant-service-allowed [--user <USER_ID>]
+    Get whether binding to print services provided by instant apps is allowed.

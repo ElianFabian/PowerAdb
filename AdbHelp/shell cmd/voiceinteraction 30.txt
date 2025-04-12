@@ -1,0 +1,11 @@
+VoiceInteraction Service (voiceinteraction) commands:
+  help
+    Prints this help text.
+
+  show
+    Shows a session for the active service
+
+  hide
+    Hides the current session
+  disable [true|false]
+    Temporarily disable (when true) service

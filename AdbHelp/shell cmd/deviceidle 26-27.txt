@@ -1,0 +1,32 @@
+Device idle controller (deviceidle) commands:
+  help
+    Print this help text.
+  step [light|deep]
+    Immediately step to next state, without waiting for alarm.
+  force-idle [light|deep]
+    Force directly into idle mode, regardless of other device state.
+  force-inactive
+    Force to be inactive, ready to freely step idle states.
+  unforce
+    Resume normal functioning after force-idle or force-inactive.
+  get [light|deep|force|screen|charging|network]
+    Retrieve the current given state.
+  disable [light|deep|all]
+    Completely disable device idle mode.
+  enable [light|deep|all]
+    Re-enable device idle mode after it had previously been disabled.
+  enabled [light|deep|all]
+    Print 1 if device idle mode is currently enabled, else 0.
+  whitelist
+    Print currently whitelisted apps.
+  whitelist [package ...]
+    Add (prefix with +) or remove (prefix with -) packages.
+  except-idle-whitelist [package ...|reset]
+    Prefix the package with '+' to add it to whitelist or '=' to check if it is already whitelisted
+    [reset] will reset the whitelist to it's original state
+    Note that unlike <whitelist> cmd, changes made using this won't be persisted across boots
+  tempwhitelist
+    Print packages that are temporarily whitelisted.
+  tempwhitelist [-u USER] [-d DURATION] [package ..]
+    Temporarily place packages in whitelist for DURATION milliseconds.
+    If no DURATION is specified, 10 seconds is used

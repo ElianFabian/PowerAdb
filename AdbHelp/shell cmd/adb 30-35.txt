@@ -1,0 +1,7 @@
+Adb service commands:
+  help or -h
+    Print this help text.
+  is-wifi-supported
+    Returns "true" if adb over wifi is supported.
+  is-wifi-qr-supported
+    Returns "true" if adb over wifi + QR pairing is supported.

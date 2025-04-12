@@ -1,0 +1,8 @@
+Toybox 0.8.11-android multicall binary (see toybox --help)
+
+usage: sleep DURATION...
+
+Wait before exiting.
+
+DURATION can be a decimal fraction. An optional suffix can be "m"
+(minutes), "h" (hours), "d" (days), or "s" (seconds, the default).

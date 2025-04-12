@@ -1,0 +1,33 @@
+lockSettings service commands:
+
+NOTE: when lock screen is set, all commands require the --old <CREDENTIAL> argument.
+
+  help
+    Prints this help text.
+
+  get-disabled [--old <CREDENTIAL>] [--user USER_ID]
+    Checks whether lock screen is disabled.
+
+  set-disabled [--old <CREDENTIAL>] [--user USER_ID] <true|false>
+    When true, disables lock screen.
+
+  set-pattern [--old <CREDENTIAL>] [--user USER_ID] <PATTERN>
+    Sets the lock screen as pattern, using the given PATTERN to unlock.
+
+  set-pin [--old <CREDENTIAL>] [--user USER_ID] <PIN>
+    Sets the lock screen as PIN, using the given PIN to unlock.
+
+  set-pin [--old <CREDENTIAL>] [--user USER_ID] <PASSWORD>
+    Sets the lock screen as password, using the given PASSOWRD to unlock.
+
+  sp [--old <CREDENTIAL>] [--user USER_ID]
+    Gets whether synthetic password is enabled.
+
+  sp [--old <CREDENTIAL>] [--user USER_ID] <1|0>
+    Enables / disables synthetic password.
+
+  clear [--old <CREDENTIAL>] [--user USER_ID]
+    Clears the lock credentials.
+
+  verify [--old <CREDENTIAL>] [--user USER_ID]
+    Verifies the lock credentials.

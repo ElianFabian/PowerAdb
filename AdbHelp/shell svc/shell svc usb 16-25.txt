@@ -1,0 +1,5 @@
+usage: svc usb setFunction [function]
+         Set the current usb function.
+
+       svc usb getFunction
+          Gets the list of currently enabled functions

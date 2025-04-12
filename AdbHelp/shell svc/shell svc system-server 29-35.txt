@@ -1,0 +1,4 @@
+System server process related command
+
+usage: system-server wait-for-crash
+         Wait until the system server process crashes.

@@ -1,0 +1,29 @@
+Vibrator commands:
+  help
+    Prints this help text.
+
+  vibrate duration [description]
+    Vibrates for duration milliseconds; ignored when device is on
+    DND (Do Not Disturb) mode; touch feedback strength user setting
+    will be used to scale amplitude.
+  waveform [-d description] [-r index] [-a] duration [amplitude] ...
+    Vibrates for durations and amplitudes in list; ignored when
+    device is on DND (Do Not Disturb) mode; touch feedback strength
+    user setting will be used to scale amplitude.
+    If -r is provided, the waveform loops back to the specified
+    index (e.g. 0 loops from the beginning)
+    If -a is provided, the command accepts duration-amplitude pairs;
+    otherwise, it accepts durations only and alternates off/on
+    Duration is in milliseconds; amplitude is a scale of 1-255.
+  prebaked [-b] effect-id [description]
+    Vibrates with prebaked effect; ignored when device is on DND
+    (Do Not Disturb) mode; touch feedback strength user setting
+    will be used to scale amplitude.
+    If -b is provided, the prebaked fallback effect will be played if
+    the device doesn't support the given effect-id.
+  capabilities
+    Prints capabilities of this device.
+  cancel
+    Cancels any active vibration
+Common Options:
+  -f - Force. Ignore Do Not Disturb setting.

@@ -1,0 +1,19 @@
+SDK sandbox (sdk_sandbox) commands:
+    help:
+        Prints this help text.
+
+    start [--user <USER_ID> | current] <PACKAGE>
+        Start the SDK sandbox for the app <PACKAGE>. Options are:
+        --user <USER_ID> | current: Specify user for app; uses current user
+            if not specified
+
+    stop [--user <USER_ID> | current] <PACKAGE>
+        Stop the SDK sandbox for the app <PACKAGE>. Options are:
+        --user <USER_ID> | current: Specify user for app; uses current user
+            if not specified
+
+    set-state [--enabled | --reset]
+        Sets the SDK sandbox state for testing purposes. Options are:
+        --enabled: Sets the state to enabled
+        --reset: Resets the state. It will be calculated the next time an
+                 SDK is loaded

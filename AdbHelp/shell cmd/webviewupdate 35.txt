@@ -1,0 +1,6 @@
+WebView updater commands:
+  help
+    Print this help text.
+
+  set-webview-implementation PACKAGE
+    Set the WebView implementation to the specified package.

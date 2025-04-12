@@ -1,0 +1,11 @@
+Network Time Update Service (network_time_update_service) commands:
+  help
+    Print this help text.
+  force_refresh
+    Refreshes the latest time. Prints whether it was successful.
+  set_server_config_for_tests
+    Sets the NTP server config for tests. The config is not persisted.
+      Options: --server <uri> [--server <additional uris>]+ --timeout_millis <millis>
+      NTP server URIs must be in the form "ntp://hostname" or "ntp://hostname:port"
+  reset_server_config_for_tests
+    Resets/clears the NTP server config set via set_server_config_for_tests.

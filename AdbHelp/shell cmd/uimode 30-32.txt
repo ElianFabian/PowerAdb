@@ -1,0 +1,7 @@
+UiModeManager service (uimode) commands:
+  help
+    Print this help text.
+  night [yes|no|auto|custom]
+    Set or read night mode.
+  time [start|end] <ISO time>
+    Set custom start/end schedule time (night mode must be set to custom to apply).

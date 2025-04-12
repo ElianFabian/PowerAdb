@@ -1,0 +1,41 @@
+Job scheduler (jobscheduler) commands:
+  help
+    Print this help text.
+  run [-f | --force] [-u | --user USER_ID] PACKAGE JOB_ID
+    Trigger immediate execution of a specific scheduled job.
+    Options:
+      -f or --force: run the job even if technical constraints such as
+         connectivity are not currently met
+      -u or --user: specify which user's job is to be run; the default is
+         the primary or system user
+  timeout [-u | --user USER_ID] [PACKAGE] [JOB_ID]
+    Trigger immediate timeout of currently executing jobs, as if their.
+    execution timeout had expired.
+    Options:
+      -u or --user: specify which user's job is to be run; the default is
+         all users
+  monitor-battery [on|off]
+    Control monitoring of all battery changes.  Off by default.  Turning
+    on makes get-battery-seq useful.
+  get-battery-seq
+    Return the last battery update sequence number that was received.
+  get-battery-charging
+    Return whether the battery is currently considered to be charging.
+  get-battery-not-low
+    Return whether the battery is currently considered to not be low.
+  get-storage-seq
+    Return the last storage update sequence number that was received.
+  get-storage-not-low
+    Return whether storage is currently considered to not be low.
+  get-job-state [-u | --user USER_ID] PACKAGE JOB_ID
+    Return the current state of a job, may be any combination of:
+      pending: currently on the pending list, waiting to be active
+      active: job is actively running
+      user-stopped: job can't run because its user is stopped
+      backing-up: job can't run because app is currently backing up its data
+      no-component: job can't run because its component is not available
+      ready: job is ready to run (all constraints satisfied or bypassed)
+      waiting: if nothing else above is printed, job not ready to run
+    Options:
+      -u or --user: specify which user's job is to be run; the default is
+         the primary or system user

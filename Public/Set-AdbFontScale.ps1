@@ -2,17 +2,12 @@ function Set-AdbFontScale {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
 
         [Parameter(Mandatory)]
         [ValidateRange(0.25, 5)]
         [float] $FontScale
     )
 
-    process {
-        foreach ($id in $DeviceId) {
-            $id | Invoke-AdbExpression -Command "shell settings put system font_scale $FontScale" -Verbose:$VerbosePreference | Out-Null
-        }
-    }
+    Set-AdbSetting -DeviceId $DeviceId -Namespace system -Key 'font_scale' -Value $FontScale -Verbose:$VerbosePreference
 }

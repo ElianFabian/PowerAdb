@@ -1,0 +1,4 @@
+Control the power manager
+
+usage: svc power stayon [true|false|usb|ac|wireless]
+         Set the 'keep awake while plugged in' setting.

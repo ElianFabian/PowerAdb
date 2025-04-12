@@ -1,0 +1,183 @@
+Wi-Fi (wifi) commands:
+  help or -h
+    Print this help text.
+  get-country-code
+    Gets country code as a two-letter string
+  set-wifi-enabled enabled|disabled
+    Enables/disables Wifi on this device.
+  set-scan-always-available enabled|disabled
+    Sets whether scanning should be available even when wifi is off.
+  connect-network <ssid> open|owe|wpa2|wpa3|wep [<passphrase>] [-x] [-m] [-d] [-b <bssid>] [-r auto|none|persistent|non_persistent]
+    Connect to a network with provided params and add to saved networks list
+    <ssid> - SSID of the network
+    open|owe|wpa2|wpa3|wep - Security type of the network.
+        - Use 'open' or 'owe' for networks with no passphrase
+           - 'open' - Open networks (Most prevalent)
+           - 'owe' - Enhanced open networks
+        - Use 'wpa2' or 'wpa3' or 'wep' for networks with passphrase
+           - 'wpa2' - WPA-2 PSK networks (Most prevalent)
+           - 'wpa3' - WPA-3 PSK networks
+           - 'wep'  - WEP network. Passphrase should be bytes in hex or encoded into String using UTF-8
+    -x - Specifies the SSID as hex digits instead of plain text
+    -m - Mark the network metered.
+    -d - Mark the network autojoin disabled.
+    -h - Mark the network hidden.
+    -p - Mark the network private (not shared).
+    -b <bssid> - Set specific BSSID.
+    -r auto|none|persistent|non_persistent - MAC randomization scheme for the network
+  add-network <ssid> open|owe|wpa2|wpa3|wep [<passphrase>] [-x] [-m] [-d] [-b <bssid>] [-r auto|none|persistent|non_persistent]
+    Add/update saved network with provided params
+    <ssid> - SSID of the network
+    open|owe|wpa2|wpa3|wep - Security type of the network.
+        - Use 'open' or 'owe' for networks with no passphrase
+           - 'open' - Open networks (Most prevalent)
+           - 'owe' - Enhanced open networks
+        - Use 'wpa2' or 'wpa3' for networks with passphrase
+           - 'wpa2' - WPA-2 PSK networks (Most prevalent)
+           - 'wpa3' - WPA-3 PSK networks
+           - 'wep'  - WEP network. Passphrase should be bytes in hex or encoded into String using UTF-8
+    -x - Specifies the SSID as hex digits instead of plain text
+    -m - Mark the network metered.
+    -d - Mark the network autojoin disabled.
+    -h - Mark the network hidden.
+    -p - Mark the network private (not shared).
+    -b <bssid> - Set specific BSSID.
+    -r auto|none|persistent|non_persistent - MAC randomization scheme for the network
+  list-scan-results
+    Lists the latest scan results
+  start-scan
+    Start a new scan
+  list-networks
+    Lists the saved networks
+  forget-network <networkId>
+    Remove the network mentioned by <networkId>
+        - Use list-networks to retrieve <networkId> for the network
+  status
+    Current wifi status
+  set-verbose-logging enabled|disabled [-l <verbose log level>]
+    Set the verbose logging enabled or disabled with log level
+      -l - verbose logging level
+           0 - verbose logging disabled
+           1 - verbose logging enabled
+           2 - verbose logging Show key mode
+           3 - verbose logging only for Wi-Fi Aware feature
+  is-verbose-logging
+    Check whether verbose logging enabled or disabled
+  start-restricting-auto-join-to-subscription-id subId
+    temporarily disable all wifi networks except merged carrier networks with the given subId
+  stop-restricting-auto-join-to-subscription-id
+    Undo the effects of start-restricting-auto-join-to-subscription-id
+  add-suggestion <ssid> open|owe|wpa2|wpa3 [<passphrase>] [-u] [-o] [-p] [-m]  [-s] [-d] [-b <bssid>] [-e] [-i] [-a <carrierId>] [-c <subscriptionId>]
+    Add a network suggestion with provided params
+    Use 'network-suggestions-set-user-approved com.android.shell yes' to approve suggestions added via shell (Needs root access)
+    <ssid> - SSID of the network
+    open|owe|wpa2|wpa3 - Security type of the network.
+        - Use 'open' or 'owe' for networks with no passphrase
+           - 'open' - Open networks (Most prevalent)
+           - 'owe' - Enhanced open networks
+        - Use 'wpa2' or 'wpa3' for networks with passphrase
+           - 'wpa2' - WPA-2 PSK networks (Most prevalent)
+           - 'wpa3' - WPA-3 PSK networks
+    -u - Mark the suggestion untrusted.
+    -o - Mark the suggestion oem paid.
+    -p - Mark the suggestion oem private.
+    -m - Mark the suggestion metered.
+    -h - Mark the network hidden.
+    -s - Share the suggestion with user.
+    -d - Mark the suggestion autojoin disabled.
+    -b <bssid> - Set specific BSSID.
+    -r - Enable non_persistent randomization (disabled by default)
+    -a - Mark the suggestion carrier merged
+    -c <carrierId> - set carrier Id
+    -i <subscriptionId> - set subscription Id, if -a is used, this must be set
+  remove-suggestion <ssid> [-l]
+    Remove a network suggestion with provided SSID of the network
+    -l - Remove suggestion with lingering, if not set will disconnect immediately
+  remove-all-suggestions
+    Removes all suggestions added via shell
+  list-suggestions
+    Lists the suggested networks added via shell
+  set-coex-cell-channels [lte|nr <bandNumber 1-261> <downlinkFreqKhz or UNKNOWN: -1> <downlinkBandwidthKhz or UNKNOWN: 0> <uplinkFreqKhz or UNKNOWN: -1> <uplinkBandwidthKhz or UNKNOWN: 0>] ...
+    Sets a list of zero or more cell channels to use for coex calculations. Actual device reported cell channels will be ignored until reset-coex-cell-channels is called.
+  reset-coex-cell-channels
+    Removes all cell channels set in set-coex-cell-channels and returns to listening on actual device reported cell channels
+  get-coex-cell-channels
+    Prints the cell channels being used for coex.
+  set-connected-score <score>
+    Set connected wifi network score (to choose between LTE & Wifi for default route).
+    This turns off the active connected scorer (default or external).
+    Only works while connected to a wifi network. This score will stay in effect until you call reset-connected-score or the device disconnects from the current network.
+    <score> - Integer score should be in the range of 0 - 60
+  reset-connected-score
+    Turns on the default connected scorer.
+    Note: Will clear any external scorer set.
+  pmksa-flush <networkId>
+        - Flush the local PMKSA cache associated with the network id. Use list-networks to retrieve <networkId> for the network
+  reload-resources
+    Reset the WiFi resources cache which will cause them to be reloaded next time they are accessed. Necessary if overlays are manually modified.
+  launch-dialog-simple [-t <title>] [-m <message>] [-l <url> <url_start> <url_end>] [-y <positive_button_text>] [-n <negative_button_text>] [-x <neutral_button_text>] [-c <timeout_millis>]
+    Launches a simple dialog and waits up to 15 seconds to print the response.
+    -t - Title
+    -m - Message
+    -l - URL of the message, with the start and end index inside the message
+    -y - Positive Button Text
+    -n - Negative Button Text
+    -x - Neutral Button Text
+    -c - Optional timeout in milliseconds
+    -s - Use the legacy dialog implementation on the system process
+  launch-dialog-p2p-invitation-sent <device_name> <pin> [-i <display_id>]
+    Launches a P2P Invitation Sent dialog.
+    <device_name> - Name of the device the invitation was sent to
+    <pin> - PIN for the invited device to input
+  launch-dialog-p2p-invitation-received <device_name> [-p] [-d <pin>] [-i <display_id>] [-c <timeout_millis>]
+    Launches a P2P Invitation Received dialog and waits up to 15 seconds to print the response.
+    <device_name> - Name of the device sending the invitation
+    -p - Show PIN input
+    -d - Display PIN <pin>
+    -i - Display ID
+    -c - Optional timeout in milliseconds
+  query-interface <uid> <package_name> STA|AP|AWARE|DIRECT [-new]
+    Query whether the specified could be created for the specified UID and package name, and if so - what other interfaces would be destroyed
+    -new - query for a new interfaces (otherwise an existing interface is ok
+  interface-priority-interactive-mode enable|disable|default
+    Enable or disable asking the user when there's an interface priority conflict, |default| implies using the device default behavior.
+  set-one-shot-screen-on-delay-ms <delayMs>
+    set the delay for the next screen-on connectivity scan in milliseconds.
+  set-network-selection-config <enabled|disabled> <enabled|disabled> -a <associated_network_selection_override>
+    set whether sufficiency check is enabled for screen off case (first arg), and screen on case (second arg)
+    -a - set as one of the int WifiNetworkSelectionConfig.ASSOCIATED_NETWORK_SELECTION_OVERRIDE_ values:
+      0 - no override
+      1 - override to enabled
+      2 - override to disabled
+  set-ipreach-disconnect enabled|disabled
+    Sets whether CMD_IP_REACHABILITY_LOST events should trigger disconnects.
+  get-ipreach-disconnect
+    Gets setting of CMD_IP_REACHABILITY_LOST events triggering disconnects.
+  take-bugreport
+    take bugreport through betterBug. If it failed, take bugreport through bugreport manager.
+  get-allowed-channel [-b 1|6|7|8|15|16|31]
+    get allowed channels in each operation mode from wifiManager if available. Otherwise, it returns from wifiScanner.
+    -b - set the band in which channels are allowed
+       '1'  - band 2.4 GHz
+       '6'  - band 5 GHz with DFS channels
+       '7'  - band 2.4 and 5 GHz with DFS channels
+       '8'  - band 6 GHz
+       '15' - band 2.4, 5, and 6 GHz with DFS channels
+       '16' - band 60 GHz
+       '31' - band 2.4, 5, 6 and 60 GHz with DFS channels
+  get-cached-scan-data
+    Gets scan data cached by the firmware
+  force-overlay-config-value bool|integer <overlayName> enabled|disabled<configValue>
+    Force overlay to a specified value.
+    bool|integer   - specified the type of the overlay
+    <overlayName> - name of the overlay whose value is overridden.
+    enabled|disabled: enable the override or disable it and revert to using the built-in value.
+    <configValue> - override value of the overlay.Must match the overlay type
+  get-overlay-config-values
+    Get current overlay value in resource cache.
+  get-softap-supported-features
+    Gets softap supported features. Will print 'wifi_softap_acs_supported'
+    and/or 'wifi_softap_wpa3_sae_supported',
+    and/or 'wifi_softap_bridged_ap_supported',
+    and/or 'wifi_softap_bridged_ap_with_sta_supported',
+    each on a separate line.

@@ -1,0 +1,9 @@
+Toybox 0.8.11-android multicall binary (see toybox --help)
+
+usage: log [-p PRI] [-t TAG] [MESSAGE...]
+
+Logs message (or stdin) to logcat.
+
+-p      Use the given priority instead of INFO:
+        d: DEBUG  e: ERROR  f: FATAL  i: INFO  v: VERBOSE  w: WARN  s: SILENT
+-t      Use the given tag instead of "log"

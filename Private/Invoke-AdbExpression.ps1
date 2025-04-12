@@ -1,61 +1,56 @@
 function Invoke-AdbExpression {
 
-    [OutputType([string[]])]
+    [OutputType([string])]
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
 
         [Parameter(Mandatory)]
         [string] $Command
     )
 
-    begin {
-        $availableDevices = Get-AdbDevice -Verbose:$false
-        if ($availableDevices.Count -eq 0 -and $DeviceId) {
-            $stopExecution = $true
-            $errorMessage = 'No device connected'
-        }
-        $separator = ""
-        foreach ($id in $DeviceId) {
-            if ($id -notin $availableDevices) {
-                $stopExecution = $true
-                $errorMessage += "$($separator)There's no device with id '$id' connected"
-                $separator = "`n"
-            }
-        }
+    Assert-AdbExecution -DeviceId $DeviceId
+
+    if ($DeviceId) {
+        $deviceIdArg = " -s '$DeviceId'"
     }
 
-    process {
-        if ($stopExecution) {
-            Write-Error $errorMessage -ErrorAction Stop
-            return
-        }
+    $adbCommand = "adb$deviceIdArg $Command"
 
-        if (-not $PSBoundParameters.ContainsKey('DeviceId')) {
-            if ($availableDevicesCount -gt 1) {
-                Write-Error "There are multiple devices connected, you have to indicate the device id"
-                return
-            }
-        }
-
+    if ($PSCmdlet.ShouldProcess($adbCommand, '', 'Invoke-AdbExpression')) {
         try {
             $previousEncoding = [System.Console]::OutputEncoding
             [System.Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
-            if (-not $DeviceId) {
-                $adbCommand = "adb $Command"
-                if ($PSCmdlet.ShouldProcess($adbCommand, '', 'Invoke-AdbExpression')) {
-                    Invoke-Expression $adbCommand | Repair-OutputRendering
+            $errors = @()
+            $adbScriptBlock = [scriptblock]::Create("$adbCommand")
+
+            $allowedCommands = [string[]] @(
+                'adb'
+                'echo'
+            )
+            $allowedVariables = [string[]] @()
+            $allowEnvVars = $false
+
+            $adbScriptBlock.CheckRestrictedLanguage($allowedCommands, $allowedVariables, $allowEnvVars)
+
+            Invoke-Expression "$adbCommand 2>&1" `
+            | Repair-OutputRendering `
+            | ForEach-Object {
+                if ($_ -is [System.Management.Automation.ErrorRecord]) {
+                    $errors += $_
+                    return
                 }
+
+                Write-Output $_
             }
-            else {
-                foreach ($id in $DeviceId) {
-                    $adbCommand = "adb -s '$id' $Command"
-                    if ($PSCmdlet.ShouldProcess($adbCommand, '', 'Invoke-AdbExpression')) {
-                        Invoke-Expression $adbCommand | Repair-OutputRendering
-                    }
-                }
+
+            if ($errors.Count -eq 1) {
+                throw [AdbCommandException]::new($errors[0].Exception.Message, $errors[0].Exception, $adbCommand)
+            }
+            elseif ($errors.Count -gt 1) {
+                $errorMessage = $errors.Exception.Message -join "`n"
+                throw [AdbCommandException]::new($errorMessage, $adbCommand)
             }
         }
         finally {

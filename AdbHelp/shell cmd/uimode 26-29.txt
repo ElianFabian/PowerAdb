@@ -1,0 +1,5 @@
+UiModeManager service (uimode) commands:
+  help
+    Print this help text.
+  night [yes|no|auto]
+    Set or read night mode.

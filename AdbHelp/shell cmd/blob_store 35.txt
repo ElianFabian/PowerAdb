@@ -1,0 +1,28 @@
+BlobStore service (blob_store) commands:
+help
+    Print this help text.
+
+clear-all-sessions [-u | --user USER_ID]
+    Remove all sessions.
+    Options:
+      -u or --user: specify which user's sessions to be removed.
+                    If not specified, sessions in all users are removed.
+
+clear-all-blobs [-u | --user USER_ID]
+    Remove all blobs.
+    Options:
+      -u or --user: specify which user's blobs to be removed.
+                    If not specified, blobs in all users are removed.
+delete-blob [-u | --user USER_ID] [--digest DIGEST] [--expiry EXPIRY_TIME] [--label LABEL] [--tag TAG]
+    Delete a blob.
+    Options:
+      -u or --user: specify which user's blobs to be removed;
+                    If not specified, blobs in all users are removed.
+      --digest: Base64 encoded digest of the blob to delete.
+      --expiry: Expiry time of the blob to delete, in milliseconds.
+      --label: Label of the blob to delete.
+      --tag: Tag of the blob to delete.
+idle-maintenance
+    Run idle maintenance which takes care of removing stale data.
+query-blob-existence [-b BLOB_ID] [-u | --user USER_ID]
+    Prints 1 if blob exists, otherwise 0.

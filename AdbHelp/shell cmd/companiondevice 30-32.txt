@@ -1,0 +1,4 @@
+help
+list USER_ID
+associate USER_ID PACKAGE MAC_ADDRESS
+disassociate USER_ID PACKAGE MAC_ADDRESS

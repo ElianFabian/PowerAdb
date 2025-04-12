@@ -1,0 +1,87 @@
+Time Detector (time_detector) commands:
+  help
+    Print this help text.
+  is_auto_detection_enabled
+    Prints true/false according to the automatic time detection setting.
+  set_auto_detection_enabled true|false
+    Sets the automatic time detection setting.
+
+  suggest_manual_time <manual suggestion opts>
+    Suggests a time as if via the "manual" origin.
+  suggest_telephony_time <telephony suggestion opts>
+    Suggests a time as if via the "telephony" origin.
+  suggest_network_time <network suggestion opts>
+    Suggests a time as if via the "network" origin.
+  suggest_gnss_time <gnss suggestion opts>
+    Suggests a time as if via the "gnss" origin.
+  suggest_external_time <external suggestion opts>
+    Suggests a time as if via the "external" origin.
+  get_time_state
+    Returns the current time setting state.
+  set_time_state_for_tests <time state options>
+    Sets the current time state for tests.
+  confirm_time <unix epoch time options>
+    Tries to confirms the time, raising the confidence.
+  get_network_time
+    Prints the network time information held by the detector.
+  clear_network_time
+    Clears the network time information held by the detector.
+  set_system_clock_network_time <network suggestion opts>
+    Sets the network time information used for SystemClock.currentNetworkTimeClock().
+  clear_system_clock_network_time
+    Clears the network time information used for SystemClock.currentNetworkTimeClock().
+
+Manual suggestion options:
+  --elapsed_realtime <elapsed realtime millis> - the elapsed realtime millis when unix epoch time was read
+  --unix_epoch_time <Unix epoch time millis>
+
+See android.app.timedetector.ManualTimeSuggestion for more information
+
+Telephony suggestion options:
+  --slot_index <number>
+  --elapsed_realtime <elapsed realtime millis>
+  --unix_epoch_time <Unix epoch time millis>
+
+See android.app.timedetector.TelephonyTimeSuggestion for more information
+
+Network suggestion options:
+  --elapsed_realtime <elapsed realtime millis> - the elapsed realtime millis when unix epoch time was read
+  --unix_epoch_time <Unix epoch time millis>
+  --uncertainty_millis <Uncertainty millis> - a positive error bound (+/-) estimate for unix epoch time
+
+See com.android.server.timedetector.NetworkTimeSuggestion for more information
+
+GNSS suggestion options:
+  --elapsed_realtime <elapsed realtime millis> - the elapsed realtime millis when unix epoch time was read
+  --unix_epoch_time <Unix epoch time millis>
+
+See com.android.server.timedetector.GnssTimeSuggestion for more information
+
+External suggestion options:
+  --elapsed_realtime <elapsed realtime millis> - the elapsed realtime millis when unix epoch time was read
+  --unix_epoch_time <Unix epoch time millis>
+
+See android.app.time.ExternalTimeSuggestion for more information
+
+TimeState options:
+  --elapsed_realtime <elapsed realtime millis>
+  --unix_epoch_time <Unix epoch time millis>
+  --user_should_confirm_time {true|false}
+
+See android.app.time.TimeState for more information
+
+UnixEpochTime options:
+
+  --elapsed_realtime <elapsed realtime millis>
+  --unix_epoch_time <Unix epoch time millis>
+
+See android.app.time.UnixEpochTime for more information
+
+This service is also affected by the following device_config flags in the system_time namespace:
+  time_detector_lower_bound_millis_override
+    The lower bound used to validate time suggestions when they are received.
+    Specified in milliseconds since the start of the Unix epoch.
+  time_detector_origin_priorities_override
+    A comma separated list of origins. See TimeDetectorStrategy for details.
+
+See "adb shell cmd device_config" for more information on setting flags.

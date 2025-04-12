@@ -10,7 +10,7 @@ function Show-AdbDevice {
         return
     }
 
-    $names = [string[]] ($devices | Get-AdbDeviceName)
+    $names = [string[]] ($devices | ForEach-Object { Get-AdbDeviceName -DeviceId $_ -Verbose:$false -ErrorAction Ignore })
     if (-not $names) {
         Write-Error "Couldn't get device names"
         return
@@ -37,13 +37,14 @@ function Show-AdbDevice {
 
         Write-Host $id.PadRight($longestIdLength + $spaceSize, " ") -NoNewline -ForegroundColor Cyan
         Write-Host $deviceName.PadRight($longestDeviceName + $spaceSize, " ") -NoNewline -ForegroundColor DarkCyan
-        $apiLevel = Get-AdbApiLevel -DeviceId $id -Verbose:$false
+        $apiLevel = Get-AdbApiLevel -DeviceId $id -Verbose:$false -ErrorAction Ignore
         if (-not $apiLevel) {
             Write-Host "Unknown".PadRight($longestDeviceName + $spaceSize, " ") -NoNewline -ForegroundColor DarkCyan
-        } else {
+        }
+        else {
             Write-Host $apiLevel.ToString().PadRight($longestDeviceName + $spaceSize, " ") -NoNewline -ForegroundColor White
         }
-        Write-Host (Get-AdbDeviceState -DeviceId $id).PadRight($longestDeviceName + $spaceSize, " ") -ForegroundColor White
+        Write-Host (Get-AdbDeviceState -DeviceId $id -ErrorAction Ignore).PadRight($longestDeviceName + $spaceSize, " ") -ForegroundColor White
     }
 
     Write-Host

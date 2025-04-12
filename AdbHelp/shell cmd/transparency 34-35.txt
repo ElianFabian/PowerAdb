@@ -1,0 +1,27 @@
+Transparency manager (transparency) commands:
+  help
+    Print this help text.
+
+  get image_info [-a]
+    Print information about loaded image (firmware). Options:
+        -a: lists all other identifiable partitions.
+
+  get apex_info [-o] [-v] [--no-headers]
+    Print information about installed APEXs on device.
+      -o: also uses the old digest scheme (SHA256) to compute APEX hashes. WARNING: This can be a very slow and CPU-intensive computation.
+      -v: lists more verbose information about each APEX.
+      --no-headers: does not print the header if specified.
+
+  get module_info [-o] [-v] [--no-headers]
+    Print information about installed modules on device.
+      -o: also uses the old digest scheme (SHA256) to compute module hashes. WARNING: This can be a very slow and CPU-intensive computation.
+      -v: lists more verbose information about each module.
+      --no-headers: does not print the header if specified.
+
+  get mba_info [-o] [-v] [-l] [--no-headers] [--preloads-only]
+    Print information about installed mobile bundle apps (MBAs on device).
+      -o: also uses the old digest scheme (SHA256) to compute MBA hashes. WARNING: This can be a very slow and CPU-intensive computation.
+      -v: lists more verbose information about each app.
+      -l: lists shared library info. (This option only works when -v option is also specified)
+      --no-headers: does not print the header if specified.
+      --preloads-only: lists only preloaded apps. This options can also be combined with others.

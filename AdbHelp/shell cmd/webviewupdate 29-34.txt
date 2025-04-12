@@ -1,0 +1,10 @@
+WebView updater commands:
+  help
+    Print this help text.
+
+  set-webview-implementation PACKAGE
+    Set the WebView implementation to the specified package.
+  enable-multiprocess
+    Enable multi-process mode for WebView
+  disable-multiprocess
+    Disable multi-process mode for WebView

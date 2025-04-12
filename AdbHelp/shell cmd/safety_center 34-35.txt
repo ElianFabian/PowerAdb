@@ -1,0 +1,18 @@
+Safety Center (safety_center) commands:
+  help or -h
+    Print this help text
+  enabled
+    Check if Safety Center is enabled
+    Prints "true" if enabled, "false" otherwise
+  supported
+    Check if this device supports Safety Center (i.e. Safety Center could be enabled)
+    Prints "true" if supported, "false" otherwise
+  refresh [--reason REASON] [--user USERID]
+    Start a refresh of all sources
+    REASON is one of PAGE_OPEN, BUTTON_CLICK, REBOOT, LOCALE_CHANGE, SAFETY_CENTER_ENABLED, OTHER, PERIODIC; determines whether sources fetch fresh data (default OTHER)
+    USERID is a user ID; refresh sources in this user profile group (default 0)
+  clear-data
+    Clear all data held by Safety Center
+    Includes data held in memory and persistent storage but not the listeners.
+  package-name
+    Prints the name of the package that contains Safety Center

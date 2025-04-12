@@ -1,0 +1,7 @@
+MusicRecognition Service (music_recognition) commands:
+  help
+    Prints this help text.
+
+  set temporary-service USER_ID [COMPONENT_NAME DURATION]
+    Temporarily (for DURATION ms) changes the service implementation.
+    To reset, call with just the USER_ID argument.

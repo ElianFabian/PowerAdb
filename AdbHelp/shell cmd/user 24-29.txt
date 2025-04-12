@@ -1,0 +1,6 @@
+User manager (user) commands:
+  help
+    Print this help text.
+
+  list
+    Prints all users on the system.

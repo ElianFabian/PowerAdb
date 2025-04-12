@@ -3,11 +3,10 @@ function Disable-AdbAutoRotate {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId
+        [string] $DeviceId
     )
 
-    process {
-        $DeviceId | Set-AdbSetting -Namespace System -Key 'accelerometer_rotation' -Value 0 -Verbose:$VerbosePreference
-    }
+    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17
+
+    Set-AdbSetting -DeviceId $DeviceId -Namespace system -Key 'accelerometer_rotation' -Value 0 -Verbose:$VerbosePreference
 }

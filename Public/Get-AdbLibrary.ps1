@@ -3,13 +3,10 @@ function Get-AdbLibrary {
     [CmdletBinding()]
     [OutputType([string[]])]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId
+        [string] $DeviceId
     )
 
-    process {
-        $DeviceId | Invoke-AdbExpression -Command "shell pm list libraries" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
-        | Where-Object { $_ } `
-        | ForEach-Object { $_.Replace("library:", "") }
-    }
+    Invoke-AdbExpression -DeviceId $DeviceId -Command 'shell pm list libraries' -Verbose:$VerbosePreference `
+    | Where-Object { $_ } `
+    | ForEach-Object { $_.Replace('library:', '') }
 }

@@ -1,0 +1,15 @@
+Feature Flags command, allowing listing, setting, getting, and erasing of
+local flag overrides on a device.
+
+Commands:
+  list [namespace]
+    List all flag overrides. Namespace is optional.
+
+  get <namespace> <name>
+    Return the string value of a specific flag, or <unset>
+
+  set <namespace> <name> <value>
+    Set a specific flag
+
+  erase <namespace> <name>
+    Unset a specific flag

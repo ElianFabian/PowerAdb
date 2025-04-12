@@ -1,0 +1,20 @@
+Overlay manager (overlay) commands:
+  help
+    Print this help text.
+  dump [--verbose] [--user USER_ID] [PACKAGE [PACKAGE [...]]]
+    Print debugging information about the overlay manager.
+  list [--user USER_ID] [PACKAGE [PACKAGE [...]]]
+    Print information about target and overlay packages.
+    Overlay packages are printed in priority order. With optional
+    parameters PACKAGEs, limit output to the specified packages
+    but include more information about each package.
+  enable [--user USER_ID] PACKAGE
+    Enable overlay package PACKAGE.
+  disable [--user USER_ID] PACKAGE
+    Disable overlay package PACKAGE.
+  set-priority [--user USER_ID] PACKAGE PARENT|lowest|highest
+    Change the priority of the overlay PACKAGE to be just higher than
+    the priority of PACKAGE_PARENT If PARENT is the special keyword
+    'lowest', change priority of PACKAGE to the lowest priority.
+    If PARENT is the special keyword 'highest', change priority of
+    PACKAGE to the highest priority.

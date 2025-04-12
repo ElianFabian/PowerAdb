@@ -1,0 +1,66 @@
+Location Time Zone Manager (location_time_zone_manager) commands for tests:
+  help
+    Print this help text.
+  start
+    Starts the service, creating location time zone providers.
+  stop
+    Stops the service, destroying location time zone providers.
+  record_provider_states (true|false)
+    Enables / disables provider state recording mode. See also dump_state. The default state is always "false".
+    Note: When enabled, this mode consumes memory and it is only intended for testing.
+    It should be disabled after use, or the device can be rebooted to reset the mode to disabled.
+    Disabling (or enabling repeatedly) clears any existing stored states.
+  dump_state [--proto]
+    Dumps service state for tests as text or binary proto form.
+    See the LocationTimeZoneManagerServiceStateProto definition for details.
+  send_provider_test_command <provider index> <test command>
+    Passes a test command to the named provider.
+
+<provider index> = 0 (primary), 1 (secondary)
+
+send_provider_test_command details:
+
+Provider <test command> encoding:
+
+Test commands are encoded on the command line as: <name> <arg>*
+
+The <name> is a string
+The <arg> encoding is: "key=type:value"
+
+e.g. "myKey=string:myValue" represents an argument with the key "myKey" and a string value of "myValue"
+Values are one or more URI-encoded strings separated by & characters. Only some types support multiple values, e.g. string arrays.
+
+Recognized types are: string, boolean, double, long, string_array.
+
+When passing test commands via adb shell, the & can be escaped by quoting the <arg> and escaping the & with \
+For example:
+  $ adb shell ... my-command "key1=string_array:value1\&value2"
+
+Simulated provider mode can be used to test the system server behavior or to reproduce bugs without the complexity of using real providers.
+
+The test commands for simulated providers are:
+on_bind
+on_unbind
+perm_fail
+uncertain
+success tz=string_array:<time zone id>[&<time zone id>]+
+
+Test commands cannot currently be passed to real provider implementations.
+
+This service is also affected by the following device_config flags in the system_time namespace:
+  primary_location_time_zone_provider_mode_override
+    Overrides the mode of the primary provider. Values=disabled|enabled|simulated
+  secondary_location_time_zone_provider_mode_override
+    Overrides the mode of the secondary provider. Values=disabled|enabled|simulated
+  location_time_zone_detection_uncertainty_delay_millis
+    Sets the amount of time the service waits when uncertain before making an 'uncertain' suggestion to the time zone detector.
+  ltpz_init_timeout_millis
+    Sets the initialization time passed to the providers.
+  ltpz_init_timeout_fuzz_millis
+    Sets the amount of extra time added to the providers' initialization time.
+
+Typically, use 'stop' to stop the service before setting individual flags and 'start' after to restart it.
+
+See "adb shell cmd device_config" for more information on setting flags.
+
+Also see "adb shell cmd time_zone_detector help" for higher-level location time zone commands / settings.

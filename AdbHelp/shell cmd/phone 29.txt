@@ -1,0 +1,45 @@
+  phone
+Telephony Commands:
+  help
+    Print this help text.
+  ims
+    IMS Commands.
+  sms
+    SMS Commands.
+  emergency-number-test-mode
+    Emergency Number Test Mode Commands.
+IMS Commands:
+  ims set-ims-service [-s SLOT_ID] (-c | -d) PACKAGE_NAME
+    Sets the ImsService defined in PACKAGE_NAME to to be the bound
+    ImsService. Options are:
+      -s: the slot ID that the ImsService should be bound for. If no option
+          is specified, it will choose the default voice SIM slot.
+      -c: Override the ImsService defined in the carrier configuration.
+      -d: Override the ImsService defined in the device overlay.
+  ims get-ims-service [-s SLOT_ID] [-c | -d]
+    Gets the package name of the currently defined ImsService.
+    Options are:
+      -s: The SIM slot ID for the registered ImsService. If no option
+          is specified, it will choose the default voice SIM slot.
+      -c: The ImsService defined as the carrier configured ImsService.
+      -c: The ImsService defined as the device default ImsService.
+  ims enable [-s SLOT_ID]
+    enables IMS for the SIM slot specified, or for the default voice SIM slot
+    if none is specified.
+  ims disable [-s SLOT_ID]
+    disables IMS for the SIM slot specified, or for the default voice SIM
+    slot if none is specified.
+SMS Commands:
+  sms get-apps [--user USER_ID]
+    Print all SMS apps on a user.
+  sms get-default-app [--user USER_ID]
+    Get the default SMS app.
+  sms set-default-app [--user USER_ID] PACKAGE_NAME
+    Set PACKAGE_NAME as the default SMS app.
+Emergency Number Test Mode Commands:
+  emergency-number-test-mode
+    Add(-a), Clear(-c), Print (-p) or Remove(-r) the emergency number list in the test mode
+      -a <emergency number address>: add an emergency number address for the test mode, only allows '0'-'9', '*', '#' or '+'.
+      -c: clear the emergency number list in the test mode.
+      -r <emergency number address>: remove an existing emergency number address added by the test mode, only allows '0'-'9', '*', '#' or '+'.
+      -p: get the full emergency number list in the test mode.

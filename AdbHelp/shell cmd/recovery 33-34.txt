@@ -1,0 +1,5 @@
+Recovery system commands:
+  request-lskf <package_name>
+  clear-lskf
+  is-lskf-captured <package_name>
+  reboot-and-apply <package_name> <reason>

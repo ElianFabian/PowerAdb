@@ -1,0 +1,33 @@
+Device Config (device_config) commands:
+  help
+      Print this help text.
+  get NAMESPACE KEY
+      Retrieve the current value of KEY from the given NAMESPACE.
+  put NAMESPACE KEY VALUE [default]
+      Change the contents of KEY to VALUE for the given NAMESPACE.
+      {default} to set as the default value.
+  override NAMESPACE KEY VALUE
+      Set flag NAMESPACE/KEY to the given VALUE, and ignores server-updates for
+      this flag. This can still be called even if there is no underlying value set.
+  delete NAMESPACE KEY
+      Delete the entry for KEY for the given NAMESPACE.
+  clear_override NAMESPACE KEY
+      Clear local sticky flag override for KEY in the given NAMESPACE.
+  list_namespaces [--public]
+      Prints the name of all (or just the public) namespaces.
+  list [NAMESPACE]
+      Print all keys and values defined, optionally for the given NAMESPACE.
+  list_local_overrides
+      Print all flags that have been overridden.
+  reset RESET_MODE [NAMESPACE]
+      Reset all flag values, optionally for a NAMESPACE, according to RESET_MODE.
+      RESET_MODE is one of {untrusted_defaults, untrusted_clear, trusted_defaults}
+      NAMESPACE limits which flags are reset if provided, otherwise all flags are reset
+  set_sync_disabled_for_tests SYNC_DISABLED_MODE
+      Modifies bulk property setting behavior for tests. When in one of the disabled modes
+      this ensures that config isn't overwritten. SYNC_DISABLED_MODE is one of:
+        none: Sync is not disabled. A reboot may be required to restart syncing.
+        persistent: Sync is disabled, this state will survive a reboot.
+        until_reboot: Sync is disabled until the next reboot.
+  get_sync_disabled_for_tests
+      Prints one of the SYNC_DISABLED_MODE values, see set_sync_disabled_for_tests

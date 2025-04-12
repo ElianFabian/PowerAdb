@@ -1,37 +1,25 @@
 function Remove-AdbContentEntry {
 
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
 
         [Parameter(Mandatory)]
         [string] $Uri,
 
         [AllowNull()]
-        [Nullable[uint32]] $UserId,
+        [object] $UserId,
 
         [Parameter(Mandatory)]
         [string] $Where
     )
 
-    begin {
-        if ($null -ne $UserId) {
-            $userArg = " --user $UserId"
-        }
-        $whereArg = " --where $(ConvertTo-ValidAdbStringArgument $Where)"
+    $user = Resolve-AdbUser -DeviceId $DeviceId -UserId $UserId -CurrentUserAsNull
+    if ($null -ne $user) {
+        $userArg = " --user $user"
     }
 
-    process {
-        foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $id -Command "shell content delete --uri '$Uri' $userArg$whereArg" -Verbose:$VerbosePreference
-        }
-    }
+    $whereArg = " --where $(ConvertTo-ValidAdbStringArgument $Where)"
+
+    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell content delete --uri '$Uri' $userArg$whereArg" -Verbose:$VerbosePreference
 }
-
-
-
-# usage: adb shell content delete --uri <URI> [--user <USER_ID>] --bind <BINDING> [--bind <BINDING>...] [--where <WHERE>] [--extra <BINDING>...]
-#   Example:
-#   # Remove "new_setting" secure setting.
-#   adb shell content delete --uri content://settings/secure --where "name='new_setting'"

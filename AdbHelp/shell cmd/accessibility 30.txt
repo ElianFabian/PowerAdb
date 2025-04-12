@@ -1,0 +1,9 @@
+Accessibility service (accessibility) commands:
+  help
+    Print this help text.
+  set-bind-instant-service-allowed [--user <USER_ID>] true|false
+    Set whether binding to services provided by instant apps is allowed.
+  get-bind-instant-service-allowed [--user <USER_ID>]
+    Get whether binding to services provided by instant apps is allowed.
+  call-system-action <ACTION_ID>
+    Calls the system action with the given action id.

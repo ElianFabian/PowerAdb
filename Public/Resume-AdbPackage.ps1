@@ -1,29 +1,24 @@
 function Resume-AdbPackage {
 
-    [OutputType([string[]])]
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
         [string] $DeviceId,
 
         [Parameter(Mandatory)]
         [string[]] $PackageName,
 
         [AllowNull()]
-        [Nullable[uint32]] $UserId
+        [object] $UserId
     )
 
-    begin {
-        if ($null -ne $UserId) {
-            $userArg = " --user $UserId"
-        }
+    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 28
+
+    $user = Resolve-AdbUser -DeviceId $DeviceId -UserId $UserId
+    if ($null -ne $user) {
+        $userArg = " --user $user"
     }
 
-    process {
-        foreach ($id in $DeviceId) {
-            foreach ($package in $PackageName) {
-                Invoke-AdbExpression -DeviceId $id -Command "shell pm unsuspend$userArg '$package'" -Verbose:$VerbosePreference > $null
-            }
-        }
+    foreach ($package in $PackageName) {
+        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pm unsuspend$userArg '$package'" -Verbose:$VerbosePreference > $null
     }
 }

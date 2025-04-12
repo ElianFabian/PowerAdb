@@ -1,0 +1,10 @@
+Bluetooth Manager Commands:
+  help or -h
+    Print this help text.
+  enable
+    Enable Bluetooth on this device.
+  disable
+    Disable Bluetooth on this device.
+  wait-for-state:<STATE>
+    Wait until the adapter state is <STATE>. <STATE> can be one of STATE_OFF | STATE_ON
+    Note: This command can timeout and failed

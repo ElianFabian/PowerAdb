@@ -1,0 +1,5 @@
+Audio policy service commands:
+  get-uid-state <PACKAGE> [--user USER_ID] gets the uid state
+  set-uid-state <PACKAGE> <active|idle> [--user USER_ID] overrides the uid state
+  reset-uid-state <PACKAGE> [--user USER_ID] clears the uid state override
+  help print this message

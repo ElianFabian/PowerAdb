@@ -1,0 +1,8 @@
+usage: cmd color_display SUBCOMMAND [ARGS]
+    help
+      Shows this message.
+    set-saturation LEVEL
+      Sets the device saturation to the given LEVEL, 0-100 inclusive.
+    set-layer-saturation LEVEL CALLER_PACKAGE TARGET_PACKAGE
+      Sets the saturation LEVEL for all layers of the TARGET_PACKAGE, attributed
+      to the CALLER_PACKAGE. The lowest LEVEL from any CALLER_PACKAGE is applied.

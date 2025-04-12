@@ -1,0 +1,41 @@
+lockSettings service commands:
+
+NOTE: when a secure lock screen is set, most commands require the
+--old <CREDENTIAL> option.
+
+  help
+    Prints this help text.
+
+  get-disabled [--user USER_ID]
+    Prints true if the lock screen is completely disabled, i.e. set to None.
+    Otherwise prints false.
+
+  set-disabled [--user USER_ID] <true|false>
+    Sets whether the lock screen is disabled. If the lock screen is secure, this
+    has no immediate effect. I.e. this can only change between Swipe and None.
+
+  set-pattern [--old <CREDENTIAL>] [--user USER_ID] <PATTERN>
+    Sets a secure lock screen that uses the given PATTERN. PATTERN is a series
+    of digits 1-9 that identify the cells of the pattern.
+
+  set-pin [--old <CREDENTIAL>] [--user USER_ID] <PIN>
+    Sets a secure lock screen that uses the given PIN.
+
+  set-password [--old <CREDENTIAL>] [--user USER_ID] <PASSWORD>
+    Sets a secure lock screen that uses the given PASSWORD.
+
+  clear [--old <CREDENTIAL>] [--user USER_ID]
+    Clears the lock credential.
+
+  verify [--old <CREDENTIAL>] [--user USER_ID]
+    Verifies the lock credential.
+
+  remove-cache [--user USER_ID]
+    Removes cached unified challenge for the managed profile.
+
+  set-resume-on-reboot-provider-package <package_name>
+    Sets the package name for server based resume on reboot service provider.
+
+  require-strong-auth [--user USER_ID] <reason>
+    Requires strong authentication. The current supported reasons:
+    STRONG_AUTH_REQUIRED_AFTER_USER_LOCKDOWN.

@@ -1,264 +1,256 @@
 function Get-AdbPackageInfo {
 
-    [OutputType([PSCustomObject[]])]
+    [OutputType([PSCustomObject])]
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
 
-        [string[]] $PackageName
+        [string[]] $PackageName,
+
+        [switch] $Raw
     )
 
-    begin {
-        if (-not $PackageName) {
-            $noPackage = $true
-            $PackageName = @('*') # Arbitrary value to ensure we enter the loop exactly once
-        }
+    if (-not $PackageName) {
+        $noPackage = $true
+        $PackageName = @('*') # Arbitrary value to ensure we enter the loop exactly once
     }
 
-    process {
-        foreach ($id in $DeviceId) {
-            foreach ($package in $PackageName) {
-                $packageArg = if ($noPackage) {
-                    ''
-                }
-                else {
-                    " '$package'"
-                }
-                $rawData = Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys package$packageArg" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false
+    foreach ($package in $PackageName) {
+        $rawData = Get-AdbServiceDump -DeviceId $DeviceId -Name 'package' -ArgumentList $package -Verbose:$VerbosePreference
 
-                $output = [PSCustomObject] @{
-                    DeviceId = $id
-                }
+        if ($Raw) {
+            $rawData
+            continue
+        }
 
-                if (-not $noPackage) {
-                    $output | Add-Member -MemberType NoteProperty -Name 'PackageName' -Value $package
-                }
+        $output = [PSCustomObject] @{}
 
-                $lineEnumerator = ConvertToLineEnumerator ($rawData.GetEnumerator())
+        if (-not $noPackage) {
+            $output | Add-Member -MemberType NoteProperty -Name 'PackageName' -Value $package
+        }
 
-                $lineEnumerator.MoveNextIgnoringBlank() > $null
+        $lineEnumerator = ConvertToLineEnumerator ($rawData.GetEnumerator())
 
-                SkipMiscellaneous -LineEnumerator $lineEnumerator
+        $lineEnumerator.MoveNextIgnoringBlank() > $null
 
-                if ($LineEnumerator.Current.Contains('Libraries:')) {
-                    $output | Add-Member -MemberType NoteProperty -Name 'Libraries' -Value @()
-                    do {
-                        $LineEnumerator.MoveNextIgnoringBlank() > $null
-                        $libraryMatch = $script:LibraryRegex.Match($LineEnumerator.Current)
-                        if ($libraryMatch.Success) {
-                            $library = [PSCustomObject]@{
-                                PackageName = $libraryMatch.Groups['libraryName'].Value
-                                Type        = $libraryMatch.Groups['libraryType'].Value
-                                Path        = $libraryMatch.Groups['libraryPath'].Value
-                            }
-                            $output.Libraries += $library
-                        }
+        SkipMiscellaneous -LineEnumerator $lineEnumerator
+
+        if ($LineEnumerator.Current.Contains('Libraries:')) {
+            $output | Add-Member -MemberType NoteProperty -Name 'Libraries' -Value @()
+            do {
+                $LineEnumerator.MoveNextIgnoringBlank() > $null
+                $libraryMatch = $script:LibraryRegex.Match($LineEnumerator.Current)
+                if ($libraryMatch.Success) {
+                    $library = [PSCustomObject]@{
+                        PackageName = $libraryMatch.Groups['libraryName'].Value
+                        Type        = $libraryMatch.Groups['libraryType'].Value
+                        Path        = $libraryMatch.Groups['libraryPath'].Value
                     }
-                    while ($LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':')
+                    $output.Libraries += $library
                 }
-                if ($LineEnumerator.Current.Contains('Features:')) {
-                    $output | Add-Member -MemberType NoteProperty -Name 'Features' -Value @()
-                    do {
-                        $LineEnumerator.MoveNextIgnoringBlank() > $null
-                        $output.Features += $LineEnumerator.Current.Trim()
-                    }
-                    while ($LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':')
+            }
+            while ($LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':')
+        }
+        if ($LineEnumerator.Current.Contains('Features:')) {
+            $output | Add-Member -MemberType NoteProperty -Name 'Features' -Value @()
+            do {
+                $LineEnumerator.MoveNextIgnoringBlank() > $null
+                $output.Features += $LineEnumerator.Current.Trim()
+            }
+            while ($LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':')
+        }
+        if ($lineEnumerator.Current.Contains('Activity Resolver Table:')) {
+            ParseResolverTable -LineEnumerator $lineEnumerator -ResolverTableName 'ActivityResolverTable' -InputObject $output -ComponentType 'Activity'
+        }
+        if ($lineEnumerator.Current.Contains('Receiver Resolver Table:')) {
+            ParseResolverTable -LineEnumerator $lineEnumerator -ResolverTableName 'ReceiverResolverTable' -InputObject $output -ComponentType 'Receiver'
+        }
+        if ($lineEnumerator.Current.Contains('Service Resolver Table:')) {
+            ParseResolverTable -LineEnumerator $lineEnumerator -ResolverTableName 'ServiceResolverTable' -InputObject $output -ComponentType 'Service'
+        }
+        if ($lineEnumerator.Current.Contains('Provider Resolver Table:')) {
+            ParseResolverTable -LineEnumerator $lineEnumerator -ResolverTableName 'ProviderResolverTable' -InputObject $output -ComponentType 'Provider'
+        }
+        if ($lineEnumerator.Current -match 'Preferred Activities User \d+:') {
+            $output | Add-Member -MemberType NoteProperty -Name 'PreferredActivities' -Value @()
+
+            while ($lineEnumerator.Current -match 'Preferred Activities User (?<userId>\d+):') {
+                $userId = $Matches['userId']
+
+                $userActivity = [PSCustomObject]@{
+                    UserId = $userId
                 }
-                if ($lineEnumerator.Current.Contains('Activity Resolver Table:')) {
-                    ParseResolverTable -LineEnumerator $lineEnumerator -ResolverTableName 'ActivityResolverTable' -InputObject $output -ComponentType 'Activity'
-                }
-                if ($lineEnumerator.Current.Contains('Receiver Resolver Table:')) {
-                    ParseResolverTable -LineEnumerator $lineEnumerator -ResolverTableName 'ReceiverResolverTable' -InputObject $output -ComponentType 'Receiver'
-                }
-                if ($lineEnumerator.Current.Contains('Service Resolver Table:')) {
-                    ParseResolverTable -LineEnumerator $lineEnumerator -ResolverTableName 'ServiceResolverTable' -InputObject $output -ComponentType 'Service'
-                }
-                if ($lineEnumerator.Current.Contains('Provider Resolver Table:')) {
-                    ParseResolverTable -LineEnumerator $lineEnumerator -ResolverTableName 'ProviderResolverTable' -InputObject $output -ComponentType 'Provider'
-                }
-                if ($lineEnumerator.Current -match 'Preferred Activities User \d+:') {
-                    $output | Add-Member -MemberType NoteProperty -Name 'PreferredActivities' -Value @()
+                ParseResolverTable -LineEnumerator $lineEnumerator -ResolverTableName 'Table' -InputObject $userActivity -ComponentType 'Activity'
 
-                    while ($lineEnumerator.Current -match 'Preferred Activities User (?<userId>\d+):') {
-                        $userId = $Matches['userId']
-
-                        $userActivity = [PSCustomObject]@{
-                            UserId = $userId
-                        }
-                        ParseResolverTable -LineEnumerator $lineEnumerator -ResolverTableName 'Table' -InputObject $userActivity -ComponentType 'Activity'
-
-                        $output.PreferredActivities += $userActivity
-                    }
-                }
-                if ($lineEnumerator.Current.StartsWith('App verification status:')) {
-                    $output | Add-Member -MemberType NoteProperty -Name 'AppVerificationStatus' -Value @()
-
-                    $lineEnumerator.MoveNextIgnoringBlank() > $null
-
-                    while ($lineEnumerator.Current[0] -ceq ' ' -and $LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':') {
-                        $package = $lineEnumerator.Current.Trim().SubString('Package: '.Length)
-
-                        $lineEnumerator.MoveNextIgnoringBlank() > $null
-                        $domains = $lineEnumerator.Current.Trim().SubString('Domains: '.Length) -split ' '
-
-                        $lineEnumerator.MoveNextIgnoringBlank() > $null
-                        $status = $lineEnumerator.Current.Trim().SubString('Status: '.Length)
-
-                        $linkage = [PSCustomObject]@{
-                            Package = $package
-                            Domains = $domains
-                            Status  = $status
-                        }
-
-                        $output.AppVerificationStatus += $linkage
-
-                        $lineEnumerator.MoveNextIgnoringBlank() > $null
-                    }
-                }
-                while ($lineEnumerator.Current -match 'App linkages for user (?<userId>\d+):') {
-                    if ($output.PSObject.Properties.Name -notcontains 'AppLinkagesForUser') {
-                        $output | Add-Member -MemberType NoteProperty -Name 'AppLinkagesForUser' -Value @()
-                    }
-
-                    $user = [PSCUstomObject]@{
-                        UserId      = [uint32] $Matches['userId']
-                        AppLinkages = @()
-                    }
-
-                    $output.AppLinkagesForUser += $user
-
-                    $lineEnumerator.MoveNextIgnoringBlank() > $null
-                    while ($lineEnumerator.Current[0] -ceq ' ' -and $LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':') {
-                        #  Package: com.google.android.calendar
-                        $package = $lineEnumerator.Current.Trim().SubString('Package: '.Length)
-
-                        #  Domains: www.google.com calendar.google.com client-side-encryption.google.com krahsc.google.com
-                        $lineEnumerator.MoveNextIgnoringBlank() > $null
-                        $domains = $lineEnumerator.Current.Trim().SubString('Domains: '.Length) -split ' '
-
-                        #  Status:  always : 200000005
-                        $lineEnumerator.MoveNextIgnoringBlank() > $null
-                        $status = $lineEnumerator.Current.Trim().SubString('Status: '.Length)
-
-                        $linkage = [PSCustomObject]@{
-                            Package = $package
-                            Domains = $domains
-                            Status  = $status
-                        }
-
-                        $user.AppLinkages += $linkage
-
-                        $lineEnumerator.MoveNextIgnoringBlank() > $null
-                    }
-                }
-
-                # TODO: Parse this (maybe)
-                # At the moment we know that 'Domain verification status' is between 'Service Resolver Table' and "Permissions" section
-                # Domain verification status:
-                #   User all:
-                #       Verification link handling allowed: true
-                #       Selection state:
-                #       Disabled:
-                #           g.co
-                if ($LineEnumerator.Current.StartsWith('Domain verification status:')) {
-                    # For now we just skip it
-                    do {
-                        $LineEnumerator.MoveNextIgnoringBlank() > $null
-                    }
-                    while ($LineEnumerator.Current[0] -ceq ' ')
-                }
-                while ($lineEnumerator.Current.StartsWith('Permissions:')) {
-                    ParsePermissions -LineEnumerator $lineEnumerator -InputObject $output
-                }
-                if ($lineEnumerator.Current.StartsWith('AppOp Permissions:')) {
-                    $output | Add-Member -MemberType NoteProperty -Name 'AppOpPermissions' -Value @()
-
-                    $lineEnumerator.MoveNextIgnoringBlank() > $null
-
-                    while ($lineEnumerator.Current -match "AppOp Permission (?<permissionName>$script:PackagePattern):") {
-                        $permissionName = $Matches['permissionName']
-
-                        $lineEnumerator.MoveNextIgnoringBlank() > $null
-                        $permission = [PSCustomObject]@{
-                            PermissionName = $permissionName
-                            Packages       = @()
-                        }
-                        while ($lineEnumerator.Current[0] -ceq ' ' -and $lineEnumerator.Current[$lineEnumerator.Current.Length - 1] -cne ':') {
-                            $packageName = $lineEnumerator.Current.Trim()
-                            $permission.Packages += $packageName
-
-                            $lineEnumerator.MoveNextIgnoringBlank() > $null
-                        }
-
-                        $output.AppOpPermissions += $permission
-                    }
-                }
-                if ($lineEnumerator.Current.Contains('Registered ContentProviders:')) {
-                    ParseRegisteredContentProvider -LineEnumerator $lineEnumerator -InputObject $output
-                }
-                if ($lineEnumerator.Current.Contains('ContentProvider Authorities:')) {
-                    ParseContentProviderAuthorities -LineEnumerator $lineEnumerator -InputObject $output
-                }
-                if ($lineEnumerator.Current.Contains('Key Set Manager:')) {
-                    $output | Add-Member -MemberType NoteProperty -Name 'KeySetManager' -Value @()
-
-                    $lineEnumerator.MoveNextIgnoringBlank() > $null
-                    while ($lineEnumerator.Current[$lineEnumerator.Current.Length - 1] -ceq ']') {
-
-                        $package = $lineEnumerator.Current.Trim(' ', '[', ']')
-
-                        $packageObject = [PSCustomObject]@{
-                            PackageName = $package
-                            KeySets     = [PSCustomObject]@{}
-                        }
-
-                        $lineEnumerator.MoveNextIgnoringBlank() > $null
-                        while ($lineEnumerator.Current -match '(?<name>\w+ \w+): (?<value>.+)') {
-                            $rawName = $Matches['name']
-                            $rawValue = $Matches['value']
-
-                            $name = ConvertToPascalCase $rawName
-
-                            if ($rawValue.Contains('=')) {
-                                $keyValuePairs = $rawValue -split ',' | ForEach-Object { $_.Trim() }
-
-                                $object = [PSCustomObject]@{}
-
-                                $keyValuePairs | ForEach-Object {
-                                    $keyValuePair = $_ -split '='
-                                    $keyName = $keyValuePair[0].Trim()
-                                    $keyValue = [int] $keyValuePair[1].Trim()
-
-                                    $object | Add-Member -MemberType NoteProperty -Name $keyName -Value $keyValue
-                                }
-
-                                $packageObject.KeySets | Add-Member -MemberType NoteProperty -Name $name -Value $object
-                            }
-                            else {
-                                if ($rawValue.Contains(',')) {
-                                    $value = $rawValue -split ',' | ForEach-Object { [int] $_.Trim() }
-
-                                    $packageObject.KeySets | Add-Member -MemberType NoteProperty -Name $name -Value $value
-                                }
-                                else {
-                                    $packageObject.KeySets | Add-Member -MemberType NoteProperty -Name $name -Value ([int] $rawValue)
-                                }
-                            }
-
-                            $lineEnumerator.MoveNextIgnoringBlank() > $null
-                        }
-
-                        $output.KeySetManager += $packageObject
-                    }
-                }
-                if ($lineEnumerator.Current.Contains('Packages:')) {
-                    ParsePackages -LineEnumerator $lineEnumerator -InputObject $output
-                }
-
-                $output
+                $output.PreferredActivities += $userActivity
             }
         }
+        if ($lineEnumerator.Current.StartsWith('App verification status:')) {
+            $output | Add-Member -MemberType NoteProperty -Name 'AppVerificationStatus' -Value @()
+
+            $lineEnumerator.MoveNextIgnoringBlank() > $null
+
+            while ($lineEnumerator.Current[0] -ceq ' ' -and $LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':') {
+                $package = $lineEnumerator.Current.Trim().SubString('Package: '.Length)
+
+                $lineEnumerator.MoveNextIgnoringBlank() > $null
+                $domains = $lineEnumerator.Current.Trim().SubString('Domains: '.Length) -split ' '
+
+                $lineEnumerator.MoveNextIgnoringBlank() > $null
+                $status = $lineEnumerator.Current.Trim().SubString('Status: '.Length)
+
+                $linkage = [PSCustomObject]@{
+                    Package = $package
+                    Domains = $domains
+                    Status  = $status
+                }
+
+                $output.AppVerificationStatus += $linkage
+
+                $lineEnumerator.MoveNextIgnoringBlank() > $null
+            }
+        }
+        while ($lineEnumerator.Current -match 'App linkages for user (?<userId>\d+):') {
+            if ($output.PSObject.Properties.Name -notcontains 'AppLinkagesForUser') {
+                $output | Add-Member -MemberType NoteProperty -Name 'AppLinkagesForUser' -Value @()
+            }
+
+            $user = [PSCUstomObject]@{
+                UserId      = [int] $Matches['userId']
+                AppLinkages = @()
+            }
+
+            $output.AppLinkagesForUser += $user
+
+            $lineEnumerator.MoveNextIgnoringBlank() > $null
+            while ($lineEnumerator.Current[0] -ceq ' ' -and $LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':') {
+                #  Package: com.google.android.calendar
+                $package = $lineEnumerator.Current.Trim().SubString('Package: '.Length)
+
+                #  Domains: www.google.com calendar.google.com client-side-encryption.google.com krahsc.google.com
+                $lineEnumerator.MoveNextIgnoringBlank() > $null
+                $domains = $lineEnumerator.Current.Trim().SubString('Domains: '.Length) -split ' '
+
+                #  Status:  always : 200000005
+                $lineEnumerator.MoveNextIgnoringBlank() > $null
+                $status = $lineEnumerator.Current.Trim().SubString('Status: '.Length)
+
+                $linkage = [PSCustomObject]@{
+                    Package = $package
+                    Domains = $domains
+                    Status  = $status
+                }
+
+                $user.AppLinkages += $linkage
+
+                $lineEnumerator.MoveNextIgnoringBlank() > $null
+            }
+        }
+
+        # TODO: Parse this (maybe)
+        # At the moment we know that 'Domain verification status' is between 'Service Resolver Table' and "Permissions" section
+        # Domain verification status:
+        #   User all:
+        #       Verification link handling allowed: true
+        #       Selection state:
+        #       Disabled:
+        #           g.co
+        if ($LineEnumerator.Current.StartsWith('Domain verification status:')) {
+            # For now we just skip it
+            do {
+                $LineEnumerator.MoveNextIgnoringBlank() > $null
+            }
+            while ($LineEnumerator.Current[0] -ceq ' ')
+        }
+        while ($lineEnumerator.Current.StartsWith('Permissions:')) {
+            ParsePermissions -LineEnumerator $lineEnumerator -InputObject $output
+        }
+        if ($lineEnumerator.Current.StartsWith('AppOp Permissions:')) {
+            $output | Add-Member -MemberType NoteProperty -Name 'AppOpPermissions' -Value @()
+
+            $lineEnumerator.MoveNextIgnoringBlank() > $null
+
+            while ($lineEnumerator.Current -match "AppOp Permission (?<permissionName>$script:PackagePattern):") {
+                $permissionName = $Matches['permissionName']
+
+                $lineEnumerator.MoveNextIgnoringBlank() > $null
+                $permission = [PSCustomObject]@{
+                    PermissionName = $permissionName
+                    Packages       = @()
+                }
+                while ($lineEnumerator.Current[0] -ceq ' ' -and $lineEnumerator.Current[$lineEnumerator.Current.Length - 1] -cne ':') {
+                    $packageName = $lineEnumerator.Current.Trim()
+                    $permission.Packages += $packageName
+
+                    $lineEnumerator.MoveNextIgnoringBlank() > $null
+                }
+
+                $output.AppOpPermissions += $permission
+            }
+        }
+        if ($lineEnumerator.Current.Contains('Registered ContentProviders:')) {
+            ParseRegisteredContentProvider -LineEnumerator $lineEnumerator -InputObject $output
+        }
+        if ($lineEnumerator.Current.Contains('ContentProvider Authorities:')) {
+            ParseContentProviderAuthorities -LineEnumerator $lineEnumerator -InputObject $output
+        }
+        if ($lineEnumerator.Current.Contains('Key Set Manager:')) {
+            $output | Add-Member -MemberType NoteProperty -Name 'KeySetManager' -Value @()
+
+            $lineEnumerator.MoveNextIgnoringBlank() > $null
+            while ($lineEnumerator.Current[$lineEnumerator.Current.Length - 1] -ceq ']') {
+
+                $package = $lineEnumerator.Current.Trim(' ', '[', ']')
+
+                $packageObject = [PSCustomObject]@{
+                    PackageName = $package
+                    KeySets     = [PSCustomObject]@{}
+                }
+
+                $lineEnumerator.MoveNextIgnoringBlank() > $null
+                while ($lineEnumerator.Current -match '(?<name>\w+ \w+): (?<value>.+)') {
+                    $rawName = $Matches['name']
+                    $rawValue = $Matches['value']
+
+                    $name = ConvertTo-PascalCase $rawName
+
+                    if ($rawValue.Contains('=')) {
+                        $keyValuePairs = $rawValue -split ',' | ForEach-Object { $_.Trim() }
+
+                        $object = [PSCustomObject]@{}
+
+                        $keyValuePairs | ForEach-Object {
+                            $keyValuePair = $_ -split '='
+                            $keyName = $keyValuePair[0].Trim()
+                            $keyValue = [int] $keyValuePair[1].Trim()
+
+                            $object | Add-Member -MemberType NoteProperty -Name $keyName -Value $keyValue
+                        }
+
+                        $packageObject.KeySets | Add-Member -MemberType NoteProperty -Name $name -Value $object
+                    }
+                    else {
+                        if ($rawValue.Contains(',')) {
+                            $value = $rawValue -split ',' | ForEach-Object { [int] $_.Trim() }
+
+                            $packageObject.KeySets | Add-Member -MemberType NoteProperty -Name $name -Value $value
+                        }
+                        else {
+                            $packageObject.KeySets | Add-Member -MemberType NoteProperty -Name $name -Value ([int] $rawValue)
+                        }
+                    }
+
+                    $lineEnumerator.MoveNextIgnoringBlank() > $null
+                }
+
+                $output.KeySetManager += $packageObject
+            }
+        }
+        if ($lineEnumerator.Current.Contains('Packages:')) {
+            ParsePackages -LineEnumerator $lineEnumerator -InputObject $output
+        }
+
+        $output
     }
 }
 
@@ -682,7 +674,7 @@ function ParseComponentAttribute {
         if ($LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -ceq ':') {
             $attributeName = $LineEnumerator.Current.Trim().Replace(':', '')
             if ($attributeName.Contains(' ')) {
-                $attributeName = ConvertToCamelCase $attributeName
+                $attributeName = ConvertTo-CamelCase $attributeName
             }
             $LineEnumerator.MoveNextIgnoringBlank() > $null
 
@@ -701,7 +693,7 @@ function ParseComponentAttribute {
         | ForEach-Object {
             $attributeName = $_.Groups['attributeName'].Value
             if ($attributeName.Contains(' ')) {
-                $attributeName = ConvertToCamelCase $attributeName
+                $attributeName = ConvertTo-CamelCase $attributeName
             }
             $attributeValue = $_.Groups['attributeValue'].Value.Trim('"')
 
@@ -812,7 +804,7 @@ function ParsePackages {
             if ($LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -ceq ':') {
                 $attributeName = $LineEnumerator.Current.Trim().Replace(':', '')
                 if ($attributeName.Contains(' ')) {
-                    $attributeName = ConvertToCamelCase $attributeName
+                    $attributeName = ConvertTo-CamelCase $attributeName
                 }
                 $LineEnumerator.MoveNextIgnoringBlank() > $null
 
@@ -862,43 +854,5 @@ function ParsePackages {
         }
 
         $LineEnumerator.MoveNextIgnoringBlank() > $null
-    }
-}
-
-
-function ConvertToCamelCase {
-
-    param (
-        [string] $InputObject
-    )
-
-    $words = $InputObject -split '\s+'
-
-    if ($words.Count -gt 0) {
-        $camelCase = [System.Text.StringBuilder]::new($words[0].ToLowerInvariant())
-
-        foreach ($word in $words[1..($words.Count - 1)]) {
-            $camelCase.Append($word.Substring(0, 1).ToUpperInvariant() + $word.Substring(1).ToLowerInvariant()) > $null
-        }
-        return $camelCase.ToString()
-    }
-
-    return ""
-}
-
-function ConvertToPascalCase {
-
-    param (
-        [string] $InputObject
-    )
-
-    if ($InputObject -match ' ') {
-        $words = $InputObject -split ' '
-        $pascalCase = [System.Text.StringBuilder]::new()
-        foreach ($word in $words) {
-            $pascalCase.Append($word.Substring(0, 1).ToUpperInvariant()) > $null
-            $pascalCase.Append($word.Substring(1).ToLowerInvariant()) > $null
-        }
-        return $pascalCase.ToString()
     }
 }

@@ -1,0 +1,7 @@
+Bluetooth Commands:
+  help or -h
+    Print this help text.
+  enable
+    Enable Bluetooth on this device.
+  disable
+    Disable Bluetooth on this device.

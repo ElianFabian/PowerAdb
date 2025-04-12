@@ -1,0 +1,10 @@
+usage: wm [subcommand] [options]
+       wm size [reset|WxH]
+       wm density [reset|DENSITY]
+       wm overscan [reset|LEFT,TOP,RIGHT,BOTTOM]
+
+wm size: return or override display size.
+
+wm density: override display density.
+
+wm overscan: set overscan area for display.

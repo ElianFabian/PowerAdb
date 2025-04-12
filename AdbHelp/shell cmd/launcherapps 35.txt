@@ -1,0 +1,6 @@
+Usage: cmd launcherapps COMMAND [options ...]
+
+cmd launcherapps dump-view-hierarchies
+    Output captured view hierarchies. Files will be generated in
+    `/data/misc/wmtrace/`. After pulling the data to your device,
+     you can upload / visualize it at `go/winscope`.

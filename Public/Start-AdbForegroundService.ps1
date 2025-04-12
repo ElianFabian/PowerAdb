@@ -2,26 +2,29 @@ function Start-AdbForegroundService {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(Mandatory)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
+
+        [AllowNull()]
+        [object] $UserId,
 
         [Parameter(Mandatory)]
         [PSCustomObject] $Intent
     )
 
-    begin {
-        $intentArgs = $Intent.ToAdbArguments()
-    }
+    Assert-ValidIntent -DeviceId $DeviceId -Intent $Intent
 
-    process {
-        foreach ($id in $DeviceId) {
-            $apiLevel = Get-AdbApiLevel -DeviceId $id -Verbose:$false
-            if ($apiLevel -ge 26) {
-                Invoke-AdbExpression -DeviceId $id -Command "shell am start-foreground-service $intentArgs" -Verbose:$VerbosePreference
-            }
-            else {
-                Start-AdbService -DeviceId $id -Intent $Intent
-            }
+    $apiLevel = Get-AdbApiLevel -DeviceId $DeviceId -Verbose:$false
+    if ($apiLevel -ge 26) {
+        $intentArgs = $Intent.ToAdbArguments($DeviceId)
+
+        $user = Resolve-AdbUser -DeviceId $DeviceId -UserId $UserId
+        if ($null -ne $user) {
+            $userArg = " --user $user"
         }
+
+        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell am start-foreground-service$userArg$intentArgs" -Verbose:$VerbosePreference
+    }
+    else {
+        Start-AdbService -DeviceId $DeviceId -Intent $Intent -UserId $UserId -Verbose:$VerbosePreference
     }
 }

@@ -1,0 +1,7 @@
+### This help is not real, is based on testing on emulators.
+
+usage: dumpsys
+         To dump all services.
+or:
+       dumpsys [SERVICE [ARGS]]
+         SERVICE [ARGS]: dumps only service SERVICE, optionally passing ARGS to it

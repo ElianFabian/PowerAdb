@@ -3,20 +3,15 @@ function Test-AdbPackageSuspended {
     [OutputType([bool[]])]
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
 
         [Parameter(Mandatory)]
         [string[]] $PackageName
     )
 
-    process {
-        foreach ($id in $DeviceId) {
-            foreach ($package in $PackageName) {
-                $rawData = Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys package '$package'" -Verbose:$VerbosePreference | Out-String
+    foreach ($package in $PackageName) {
+        $rawData = Get-AdbPackageInfo -DeviceId $DeviceId -PackageName $PackageName -Raw -Verbose:$VerbosePreference | Out-String
 
-                $rawData.Contains('suspended=true')
-            }
-        }
+        $rawData.Contains('suspended=true')
     }
 }

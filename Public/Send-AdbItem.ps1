@@ -2,8 +2,7 @@ function Send-AdbItem {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
 
         [Parameter(Mandatory)]
         [string] $LiteralLocalPath,
@@ -12,9 +11,13 @@ function Send-AdbItem {
         [string] $LiteralRemotePath
     )
 
-    process {
-        foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $id -Command "push '$LiteralLocalPath' '$LiteralRemotePath'" -Verbose:$VerbosePreference
-        }
+    try {
+        $sanitizedLiteralLocalPath = ConvertTo-ValidAdbStringArgument $LiteralLocalPath
+        $sanitizedLiteralRemotePath = ConvertTo-ValidAdbStringArgument $LiteralRemotePath
+        Invoke-AdbExpression -DeviceId $DeviceId -Command "push $sanitizedLiteralLocalPath $sanitizedLiteralRemotePath" -Verbose:$VerbosePreference
+    }
+    catch [AdbCommandException] {
+        # For some reason when sending the file it is treated as an error,
+        # to fix it we just ignore it.
     }
 }

@@ -1,0 +1,26 @@
+Usage: input [<source>] [-d DISPLAY_ID] <command> [<arg>...]
+
+The sources are:
+      dpad
+      keyboard
+      mouse
+      touchpad
+      gamepad
+      touchnavigation
+      joystick
+      touchscreen
+      stylus
+      trackball
+
+-d: specify the display ID.
+      (Default: -1 for key event, 0 for motion event if not specified.)
+The commands and default sources are:
+      text <string> (Default: touchscreen)
+      keyevent [--longpress|--doubletap] <key code number or name> ... (Default: keyboard)
+      tap <x> <y> (Default: touchscreen)
+      swipe <x1> <y1> <x2> <y2> [duration(ms)] (Default: touchscreen)
+      draganddrop <x1> <y1> <x2> <y2> [duration(ms)] (Default: touchscreen)
+      press (Default: trackball)
+      roll <dx> <dy> (Default: trackball)
+      motionevent <DOWN|UP|MOVE|CANCEL> <x> <y> (Default: touchscreen)
+      keycombination <key code 1> <key code 2> ... (Default: keyboard)

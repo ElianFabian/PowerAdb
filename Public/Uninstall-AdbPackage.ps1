@@ -2,8 +2,7 @@ function Uninstall-AdbPackage {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
 
         [Parameter(Mandatory)]
         [string[]] $PackageName,
@@ -11,29 +10,24 @@ function Uninstall-AdbPackage {
         [switch] $KeepDataAndCache,
 
         [AllowNull()]
-        [Nullable[uint32]] $UserId,
+        [object] $UserId,
 
         [AllowNull()]
-        [Nullable[uint32]] $VersionCode
+        [Nullable[int]] $VersionCode
     )
 
-    begin {
-        if ($KeepDataAndCache) {
-            $keepArg = " -k"
-        }
-        if ($null -ne $UserId) {
-            $userArg = " --user $UserId"
-        }
-        if ($null -ne $VersionCode) {
-            $versionCodeArg = " --versionCode $VersionCode"
-        }
+    if ($KeepDataAndCache) {
+        $keepArg = " -k"
+    }
+    $user = Resolve-AdbUser -DeviceId $DeviceId -UserId $UserId
+    if ($null -ne $user) {
+        $userArg = " --user $user"
+    }
+    if ($null -ne $VersionCode) {
+        $versionCodeArg = " --versionCode $VersionCode"
     }
 
-    process {
-        foreach ($id in $DeviceId) {
-            foreach ($package in $PackageName) {
-                Invoke-AdbExpression -DeviceId $id -Command "uninstall '$package'$keepArg$userArg$versionCodeArg" -Verbose:$VerbosePreference
-            }
-        }
+    foreach ($package in $PackageName) {
+        Invoke-AdbExpression -DeviceId $DeviceId -Command "uninstall '$package'$keepArg$userArg$versionCodeArg" -Verbose:$VerbosePreference
     }
 }

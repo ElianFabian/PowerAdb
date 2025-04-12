@@ -1,27 +1,29 @@
 function Get-AdbTopActivity {
 
     [CmdletBinding()]
-    [OutputType([string[]])]
+    [OutputType([string], [PSCustomObject])]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId
+        [string] $DeviceId,
+
+        [switch] $Raw
     )
 
-    process {
-        foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys activity activities" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
-            | Select-String -Pattern "(topResumedActivity=.+|mResumedActivity: ActivityRecord){.+ .+ (.+) .+}" -AllMatches `
-            | Select-Object -ExpandProperty Matches -First 1 `
-            | Select-Object -ExpandProperty Groups -Last 1 `
-            | Select-Object -ExpandProperty Value -Last 1 `
-            | ForEach-Object {
-                $packageName, $activityClassName = $_.Split('/')
+    # Returns null if the user is on the lock screen
+    Get-AdbServiceDump -DeviceId $DeviceId -Name 'activity' -ArgumentList 'activities' -Verbose:$VerbosePreference `
+    | Select-String -Pattern '(topResumedActivity=.+|mResumedActivity: ActivityRecord){.+ .+ (.+) .+}' -AllMatches `
+    | Select-Object -ExpandProperty Matches -First 1 `
+    | Select-Object -ExpandProperty Groups -Last 1 `
+    | Select-Object -ExpandProperty Value -Last 1 `
+    | ForEach-Object {
+        if ($Raw) {
+            $_
+        }
+        else {
+            $packageName, $activityClassName = $_.Split('/')
 
-                [PSCustomObject]@{
-                    DeviceId = $id
-                    PackageName = $packageName
-                    ActivityClassName = $activityClassName
-                }
+            [PSCustomObject]@{
+                PackageName       = $packageName
+                ActivityClassName = $activityClassName
             }
         }
     }

@@ -1,0 +1,12 @@
+Wallpaper manager commands:
+  help
+    Print this help text.
+
+  set-dim-amount DIMMING
+    Sets the current dimming value to DIMMING (a number between 0 and 1).
+
+  dim-with-uid UID DIMMING
+    Sets the wallpaper dim amount to DIMMING as if an app with uid, UID, called it.
+
+  get-dim-amount
+    Get the current wallpaper dim amount.

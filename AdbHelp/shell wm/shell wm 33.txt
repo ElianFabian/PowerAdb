@@ -1,0 +1,127 @@
+Window manager (window) commands:
+  help
+      Print this help text.
+  size [reset|WxH|WdpxHdp] [-d DISPLAY_ID]
+    Return or override display size.
+    width and height in pixels unless suffixed with 'dp'.
+  density [reset|DENSITY] [-d DISPLAY_ID]
+    Return or override display density.
+  folded-area [reset|LEFT,TOP,RIGHT,BOTTOM]
+    Return or override folded area.
+  scaling [off|auto] [-d DISPLAY_ID]
+    Set display scaling mode.
+  dismiss-keyguard
+    Dismiss the keyguard, prompting user for auth if necessary.
+  disable-blur [true|1|false|0]
+  user-rotation [-d DISPLAY_ID] [free|lock] [rotation]
+    Print or set user rotation mode and user rotation.
+  dump-visible-window-views
+    Dumps the encoded view hierarchies of visible windows
+  fixed-to-user-rotation [-d DISPLAY_ID] [enabled|disabled|default]
+    Print or set rotating display for app requested orientation.
+  set-ignore-orientation-request [-d DISPLAY_ID] [true|1|false|0]
+  get-ignore-orientation-request [-d DISPLAY_ID]
+    If app requested orientation should be ignored.
+  set-sandbox-display-apis [true|1|false|0]
+    Sets override of Display APIs getRealSize / getRealMetrics to reflect
+    DisplayArea of the activity, or the window bounds if in letterbox or
+    Size Compat Mode.
+  set-letterbox-style
+    Sets letterbox style using the following options:
+      --aspectRatio aspectRatio
+        Aspect ratio of letterbox for fixed orientation. If aspectRatio <= 1.0
+        both it and R.dimen.config_fixedOrientationLetterboxAspectRatio will
+        be ignored and framework implementation will determine aspect ratio.
+      --minAspectRatioForUnresizable aspectRatio
+        Default min aspect ratio for unresizable apps which is used when an
+        app is eligible for the size compat mode.  If aspectRatio <= 1.0
+        both it and R.dimen.config_fixedOrientationLetterboxAspectRatio will
+        be ignored and framework implementation will determine aspect ratio.
+      --cornerRadius radius
+        Corners radius for activities in the letterbox mode. If radius < 0,
+        both it and R.integer.config_letterboxActivityCornersRadius will be
+        ignored and corners of the activity won't be rounded.
+      --backgroundType [reset|solid_color|app_color_background
+          |app_color_background_floating|wallpaper]
+        Type of background used in the letterbox mode.
+      --backgroundColor color
+        Color of letterbox which is be used when letterbox background type
+        is 'solid-color'. Use (set)get-letterbox-style to check and control
+        letterbox background type. See Color#parseColor for allowed color
+        formats (#RRGGBB and some colors by name, e.g. magenta or olive).
+      --backgroundColorResource resource_name
+        Color resource name of letterbox background which is used when
+        background type is 'solid-color'. Use (set)get-letterbox-style to
+        check and control background type. Parameter is a color resource
+        name, for example, @android:color/system_accent2_50.
+      --wallpaperBlurRadius radius
+        Blur radius for 'wallpaper' letterbox background. If radius <= 0
+        both it and R.dimen.config_letterboxBackgroundWallpaperBlurRadius
+        are ignored and 0 is used.
+      --wallpaperDarkScrimAlpha alpha
+        Alpha of a black translucent scrim shown over 'wallpaper'
+        letterbox background. If alpha < 0 or >= 1 both it and
+        R.dimen.config_letterboxBackgroundWallaperDarkScrimAlpha are ignored
+        and 0.0 (transparent) is used instead.
+      --horizontalPositionMultiplier multiplier
+        Horizontal position of app window center. If multiplier < 0 or > 1,
+        both it and R.dimen.config_letterboxHorizontalPositionMultiplier
+        are ignored and central position (0.5) is used.
+      --verticalPositionMultiplier multiplier
+        Vertical position of app window center. If multiplier < 0 or > 1,
+        both it and R.dimen.config_letterboxVerticalPositionMultiplier
+        are ignored and central position (0.5) is used.
+      --isHorizontalReachabilityEnabled [true|1|false|0]
+        Whether horizontal reachability repositioning is allowed for
+        letterboxed fullscreen apps in landscape device orientation.
+      --isVerticalReachabilityEnabled [true|1|false|0]
+        Whether vertical reachability repositioning is allowed for
+        letterboxed fullscreen apps in portrait device orientation.
+      --defaultPositionForHorizontalReachability [left|center|right]
+        Default position of app window when horizontal reachability is.
+        enabled.
+      --defaultPositionForVerticalReachability [top|center|bottom]
+        Default position of app window when vertical reachability is.
+        enabled.
+      --isEducationEnabled [true|1|false|0]
+        Whether education is allowed for letterboxed fullscreen apps.
+      --isSplitScreenAspectRatioForUnresizableAppsEnabled [true|1|false|0]
+        Whether using split screen aspect ratio as a default aspect ratio for
+        unresizable apps.
+  reset-letterbox-style [aspectRatio|cornerRadius|backgroundType
+      |backgroundColor|wallpaperBlurRadius|wallpaperDarkScrimAlpha
+      |horizontalPositionMultiplier|verticalPositionMultiplier
+      |isHorizontalReachabilityEnabled|isVerticalReachabilityEnabled
+      isEducationEnabled||defaultPositionMultiplierForHorizontalReachability
+      ||defaultPositionMultiplierForVerticalReachability]
+    Resets overrides to default values for specified properties separated
+    by space, e.g. 'reset-letterbox-style aspectRatio cornerRadius'.
+    If no arguments provided, all values will be reset.
+  get-letterbox-style
+    Prints letterbox style configuration.
+  set-multi-window-config
+    Sets options to determine if activity should be shown in multi window:
+      --supportsNonResizable [configValue]
+        Whether the device supports non-resizable activity in multi window.
+        -1: The device doesn't support non-resizable in multi window.
+         0: The device supports non-resizable in multi window only if
+            this is a large screen device.
+         1: The device always supports non-resizable in multi window.
+      --respectsActivityMinWidthHeight [configValue]
+        Whether the device checks the activity min width/height to determine
+        if it can be shown in multi window.
+        -1: The device ignores the activity min width/height when determining
+            if it can be shown in multi window.
+         0: If this is a small screen, the device compares the activity min
+            width/height with the min multi window modes dimensions
+            the device supports to determine if the activity can be shown in
+            multi window.
+         1: The device always compare the activity min width/height with the
+            min multi window dimensions the device supports to determine if
+            the activity can be shown in multi window.
+  get-multi-window-config
+    Prints values of the multi window config options.
+  reset-multi-window-config
+    Resets overrides to default values of the multi window config options.
+  reset [-d DISPLAY_ID]
+    Reset all override settings.

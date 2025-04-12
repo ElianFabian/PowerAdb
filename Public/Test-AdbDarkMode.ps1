@@ -1,34 +1,30 @@
 function Test-AdbDarkMode {
 
-    [OutputType([bool[]])]
+    [OutputType([bool])]
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId
+        [string] $DeviceId
     )
 
-    process {
-        foreach ($id in $DeviceId) {
-            $apiLevel = Get-AdbApiLevel -DeviceId $id
-            if (-not $apiLevel) {
-                continue
-            }
+    $apiLevel = Get-AdbApiLevel -DeviceId $DeviceId -Verbose:$false
 
-            if ($apiLevel -lt 29) {
-                $false
-            }
-            else {
-                Invoke-AdbExpression -DeviceId $id -Command "shell cmd uimode night" -Verbose:$VerbosePreference `
-                | ForEach-Object {
-                    switch ($_) {
-                        'Night mode: no' { $false }
-                        'Night mode: yes' { $true }
-                        default {
-                            Write-Error "Couldn't determine if device with id '$id' is in dark mode"
-                        }
-                    }
-                }
+    if ($apiLevel -ge 30) {
+        Get-AdbServiceDump -DeviceId $DeviceId -Name 'uimode' -Verbose:$VerbosePreference `
+        | Select-String -Pattern 'mComputedNightMode=(false|true)' `
+        | ForEach-Object { [bool]::Parse($_.Matches[0].Groups[1].Value) }
+    }
+    elseif ($apiLevel -ge 29) {
+        $result = Invoke-AdbExpression -DeviceId $DeviceId -Command "shell cmd uimode night" -Verbose:$VerbosePreference
+        switch ($result) {
+            'Night mode: yes' { $true }
+            'Night mode: no' { $false }
+            default {
+                $device = Resolve-AdbDevice -DeviceId $DeviceId
+                Write-Error "Couldn't determine if device with id '$device' is in dark mode or not. Output: $result" -ErrorAction Stop
             }
         }
+    }
+    else {
+        $false
     }
 }

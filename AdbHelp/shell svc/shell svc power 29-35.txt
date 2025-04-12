@@ -1,0 +1,18 @@
+Control the power manager
+
+usage: svc power stayon [true|false|usb|ac|wireless]
+         Set the 'keep awake while plugged in' setting.
+       svc power reboot [reason]
+         Perform a runtime shutdown and reboot device with specified reason.
+       svc power shutdown
+         Perform a runtime shutdown and power off the device.
+       svc power forcesuspend [t]
+         Force the system into suspend, ignoring all wakelocks.
+         t - Number of milliseconds to wait before issuing force-suspend.
+             Helps with devices that can't suspend while plugged in.
+             Defaults to 0.
+             When using a delay, you must use the nohup shell modifier:
+             'adb shell nohup svc power forcesuspend [time]'
+         Use caution; this is dangerous. It puts the device to sleep
+         immediately without giving apps or the system an opportunity to
+         save their state.

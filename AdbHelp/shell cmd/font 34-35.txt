@@ -1,0 +1,29 @@
+Font service (font) commands
+help
+    Print this help text.
+
+dump [family name]
+    Dump all font files in the specified family name.
+    Dump current system font configuration if no family name was specified.
+
+update [font file path] [signature file path]
+    Update installed font files with new font file.
+
+update-family [family definition XML path]
+    Update font families with the new definitions.
+
+install-debug-cert [cert file path]
+    Install debug certificate file. This command can be used only on
+    debuggable device with root user.
+
+clear
+    Remove all installed font files and reset to the initial state.
+
+restart
+    Restart FontManagerService emulating device reboot.
+    WARNING: this is not a safe operation. Other processes may misbehave if
+    they are using fonts updated by FontManagerService.
+    This command exists merely for testing.
+
+status
+    Prints status of current system font configuration.

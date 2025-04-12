@@ -1,0 +1,65 @@
+Vibrator Manager commands:
+  help
+    Prints this help text.
+
+  list
+    Prints the id of device vibrators. This does not include any
+    connected input device.
+  synced [options] <effect>...
+    Vibrates effect on all vibrators in sync.
+  combined [options] (-v <vibrator-id> <effect>...)...
+    Vibrates different effects on each vibrator in sync.
+  sequential [options] (-v <vibrator-id> <effect>...)...
+    Vibrates different effects on each vibrator in sequence.
+  cancel
+    Cancels any active vibration
+
+Effect commands:
+  oneshot [-w delay] [-a] <duration> [<amplitude>]
+    Vibrates for duration milliseconds; ignored when device is on
+    DND (Do Not Disturb) mode; touch feedback strength user setting
+    will be used to scale amplitude.
+    If -w is provided, the effect will be played after the specified
+    wait time in milliseconds.
+    If -a is provided, the command accepts a second argument for
+    amplitude, in a scale of 1-255.
+  waveform [-w delay] [-r index] [-a] [-f] [-c] (<duration> [<amplitude>] [<frequency>])...
+    Vibrates for durations and amplitudes in list; ignored when
+    device is on DND (Do Not Disturb) mode; touch feedback strength
+    user setting will be used to scale amplitude.
+    If -w is provided, the effect will be played after the specified
+    wait time in milliseconds.
+    If -r is provided, the waveform loops back to the specified
+    index (e.g. 0 loops from the beginning)
+    If -a is provided, the command expects amplitude to follow each
+    duration; otherwise, it accepts durations only and alternates
+    off/on
+    If -f is provided, the command expects frequency to follow each
+    amplitude or duration; otherwise, it uses resonant frequency
+    If -c is provided, the waveform is continuous and will ramp
+    between values; otherwise each entry is a fixed step.
+    Duration is in milliseconds; amplitude is a scale of 1-255;
+    frequency is an absolute value in hertz;
+  prebaked [-w delay] [-b] <effect-id>
+    Vibrates with prebaked effect; ignored when device is on DND
+    (Do Not Disturb) mode; touch feedback strength user setting
+    will be used to scale amplitude.
+    If -w is provided, the effect will be played after the specified
+    wait time in milliseconds.
+    If -b is provided, the prebaked fallback effect will be played if
+    the device doesn't support the given effect-id.
+  primitives ([-w delay] <primitive-id>)...
+    Vibrates with a composed effect; ignored when device is on DND
+    (Do Not Disturb) mode; touch feedback strength user setting
+    will be used to scale primitive intensities.
+    If -w is provided, the next primitive will be played after the
+    specified wait time in milliseconds.
+
+Common Options:
+  -f
+    Force. Ignore Do Not Disturb setting.
+  -B
+    Run in the background; without this option the shell cmd will
+    block until the vibration has completed.
+  -d <description>
+    Add description to the vibration.

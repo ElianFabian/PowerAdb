@@ -1,0 +1,21 @@
+Activity manager (activity) commands:
+  help
+    Print this help text.
+  force-stop [--user <USER_ID> | all | current] <PACKAGE>
+    Completely stop the given application package.
+  kill [--user <USER_ID> | all | current] <PACKAGE>
+    Kill all processes associated with the given application.
+  kill-all
+    Kill all processes that are safe to kill (cached, etc).
+  write
+    Write all pending state to storage.
+  track-associations
+    Enable association tracking.
+  untrack-associations
+    Disable and clear association tracking.
+  is-user-stopped <USER_ID>
+    Returns whether <USER_ID> has been stopped or not.
+  lenient-background-check [<true|false>]
+    Optionally controls lenient background check mode, returns current mode.
+  get-uid-state <UID>
+    Gets the process state of an app given its <UID>.

@@ -1,0 +1,5 @@
+usage: input ...
+       input text <string>
+       input keyevent <key code number or name>
+       input tap <x> <y>
+       input swipe <x1> <y1> <x2> <y2>

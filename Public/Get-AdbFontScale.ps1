@@ -1,22 +1,19 @@
 function Get-AdbFontScale {
 
-    [OutputType([float[]])]
+    [OutputType([double])]
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId
+        [string] $DeviceId
     )
 
-    process {
-        foreach ($id in $DeviceId) {
-            $result = ($id | Invoke-AdbExpression -Command "shell settings get system font_scale" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false) -as [float]
-            if ($result) {
-                return $result
-            }
-            else {
-                # When it's null it means it's the default value, 1
-                return 1.0
-            }
-        }
+    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17
+
+    $result = Get-AdbSetting -DeviceId $DeviceId -Namespace system -Key 'font_scale' -Verbose:$VerbosePreference
+    if ($result) {
+        return [double] $result
+    }
+    else {
+        # When it's null it means it's the default value, 1
+        return 1.0
     }
 }

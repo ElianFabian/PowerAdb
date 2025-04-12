@@ -1,0 +1,11 @@
+App hibernation (app_hibernation) commands:
+  help
+    Print this help text.
+
+  set-state [--user USER_ID] [--global] PACKAGE true|false
+    Sets the hibernation state of the package to value specified. Optionally
+    may specify a user id or set global hibernation state.
+
+  get-state [--user USER_ID] [--global] PACKAGE
+    Gets the hibernation state of the package. Optionally may specify a user
+    id or request global hibernation state.

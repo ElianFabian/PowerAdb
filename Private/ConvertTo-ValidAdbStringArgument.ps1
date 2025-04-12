@@ -8,5 +8,9 @@ function ConvertTo-ValidAdbStringArgument {
         [string] $InputObject
     )
 
+    if ([string]::IsNullOrEmpty($InputObject)) {
+
+    }
+
     return "'" + '"' + $InputObject.Replace("\", "\\").Replace('"', '\"').Replace("'", "''").Replace('`', '\`') + '"' + "'"
 }

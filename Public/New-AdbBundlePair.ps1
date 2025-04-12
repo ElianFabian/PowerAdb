@@ -20,6 +20,9 @@ function New-AdbBundlePair {
         [Parameter(Mandatory, ParameterSetName = 'Float')]
         [float] $Float,
 
+        [Parameter(Mandatory, ParameterSetName = 'Double')]
+        [double] $Double,
+
         [Parameter(Mandatory, ParameterSetName = 'Uri')]
         [uri] $Uri,
 
@@ -46,6 +49,12 @@ function New-AdbBundlePair {
 
         [Parameter(Mandatory, ParameterSetName = 'FloatArrayList')]
         [float[]] $FloatArrayList,
+
+        [Parameter(Mandatory, ParameterSetName = 'DoubleArray')]
+        [double[]] $DoubleArray,
+
+        [Parameter(Mandatory, ParameterSetName = 'DoubleArrayList')]
+        [double[]] $DoubleArrayList,
 
         [Parameter(Mandatory, ParameterSetName = 'StringArray')]
         [string[]] $StringArray,
@@ -98,18 +107,27 @@ function New-AdbBundlePair {
                 "--ef $sanitizedKey $($this.Value.ToString([System.Globalization.CultureInfo]::InvariantCulture))"
             }
         }
+        'Double' {
+            $pair | Add-Member -MemberType NoteProperty -Name Value -Value $Float
+            $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value {
+                $sanitizedKey = ConvertTo-ValidAdbStringArgument $this.Key
+                "--ed $sanitizedKey $($this.Value.ToString([System.Globalization.CultureInfo]::InvariantCulture))"
+            }
+        }
         'Uri' {
             $pair | Add-Member -MemberType NoteProperty -Name Value -Value $Uri
             $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value {
                 $sanitizedKey = ConvertTo-ValidAdbStringArgument $this.Key
-                "--eu $sanitizedKey $(ConvertTo-ValidAdbStringArgument $this.Value)"
+                $sanitizedValue = ConvertTo-ValidAdbStringArgument $this.Value
+                "--eu $sanitizedKey $sanitizedValue"
             }
         }
         'ComponentName' {
             $pair | Add-Member -MemberType NoteProperty -Name Value -Value "$PackageName/$ClassName"
             $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value {
                 $sanitizedKey = ConvertTo-ValidAdbStringArgument $this.Key
-                "--ecn $sanitizedKey '$($this.Value)'"
+                $sanitizedValue = ConvertTo-ValidAdbStringArgument $this.Value
+                "--ecn $sanitizedKey $sanitizedValue"
             }
         }
         'IntArray' {
@@ -152,6 +170,20 @@ function New-AdbBundlePair {
             $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value {
                 $sanitizedKey = ConvertTo-ValidAdbStringArgument $this.Key
                 "--efal $sanitizedKey $(($this.Value | ForEach-Object { $_.ToString([System.Globalization.CultureInfo]::InvariantCulture) }) -join ',')"
+            }
+        }
+        'DoubleArray' {
+            $pair | Add-Member -MemberType NoteProperty -Name Value -Value $DoubleArray
+            $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value {
+                $sanitizedKey = ConvertTo-ValidAdbStringArgument $this.Key
+                "--eda $sanitizedKey $(($this.Value | ForEach-Object { $_.ToString([System.Globalization.CultureInfo]::InvariantCulture) }) -join ',')"
+            }
+        }
+        'DoubleArrayList' {
+            $pair | Add-Member -MemberType NoteProperty -Name Value -Value $DoubleArrayList
+            $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value {
+                $sanitizedKey = ConvertTo-ValidAdbStringArgument $this.Key
+                "--edal $sanitizedKey $(($this.Value | ForEach-Object { $_.ToString([System.Globalization.CultureInfo]::InvariantCulture) }) -join ',')"
             }
         }
         'StringArray' {

@@ -1,0 +1,9 @@
+Toybox 0.8.9-android multicall binary (see toybox --help)
+
+usage: pidof [-s] [-o omitpid[,omitpid...]] [NAME...]
+
+Print the PIDs of all processes with the given names.
+
+-o      Omit PID(s)
+-s      Single shot, only return one pid
+-x      Match shell scripts too

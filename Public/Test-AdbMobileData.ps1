@@ -1,28 +1,18 @@
 function Test-AdbMobileData {
 
-    [OutputType([bool[]])]
+    [OutputType([bool])]
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId
+        [string] $DeviceId
     )
 
-    process {
-        foreach ($id in $DeviceId) {
-            $apiLevel = Get-AdbApiLevel -DeviceId $id -Verbose:$false
-            if ($apiLevel -lt 17) {
-                Write-ApiLevelError -DeviceId $id -ApiLevelLessThan 17
-                continue
-            }
+    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17
 
-            Get-AdbSetting -DeviceId $id -Namespace Global -Key "mobile_data" -Verbose:$VerbosePreference `
-            | ForEach-Object {
-                switch ($_) {
-                    "1" { $true }
-                    "0" { $false }
-                    default { $null }
-                }
-            }
-        }
+    $result = Get-AdbSetting -DeviceId $DeviceId -Namespace global -Key 'mobile_data' -Verbose:$VerbosePreference
+
+    switch ($result) {
+        '1' { $true }
+        '0' { $false }
+        default { $null }
     }
 }

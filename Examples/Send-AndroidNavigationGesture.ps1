@@ -45,5 +45,5 @@ function Send-AndroidNavigationGesture {
         }
     }
 
-    Send-AdbSwipe -DeviceId $DeviceId -X1 $x1 -Y1 $y1 -X2 $x2 -Y2 $y2 -DurationInMilliseconds $time -DisableCoordinateCheck
+    Send-AdbSwipe -DeviceId $DeviceId -X1 $x1 -Y1 $y1 -X2 $x2 -Y2 $y2 -DurationInMilliseconds $time
 }

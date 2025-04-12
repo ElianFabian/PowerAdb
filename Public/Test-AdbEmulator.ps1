@@ -1,15 +1,11 @@
 function Test-AdbEmulator {
 
     [CmdletBinding()]
-    [OutputType([bool[]])]
+    [OutputType([bool])]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId
+        [Parameter(Mandatory)]
+        [string] $DeviceId
     )
 
-    process {
-        foreach ($id in $DeviceId) {
-            $id.StartsWith("emulator-")
-        }
-    }
+    $DeviceId.StartsWith("emulator-")
 }

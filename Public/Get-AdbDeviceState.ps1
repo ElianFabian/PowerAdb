@@ -1,21 +1,18 @@
 function Get-AdbDeviceState {
 
     [CmdletBinding()]
-    [OutputType([string[]])]
+    [OutputType([string])]
     param(
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId
+        [string] $DeviceId
     )
 
-    process {
-        foreach ($id in $DeviceId) {
-            $state = Invoke-AdbExpression -DeviceId $id -Command "get-state" -Verbose:$VerbosePreference -ErrorAction SilentlyContinue 2>&1
-            if ($state -isnot [System.Management.Automation.ErrorRecord]) {
-                $state
-            }
-            else {
-                "offline"
-            }
+    try {
+        return Invoke-AdbExpression -DeviceId $DeviceId -Command "get-state" -Verbose:$VerbosePreference
+    }
+    catch [AdbCommandException] {
+        if ($_.Exception.Message -eq 'error: device offline') {
+            return 'offline'
         }
+        throw $_
     }
 }

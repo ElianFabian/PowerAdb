@@ -1,0 +1,14 @@
+OTA Dexopt (ota) commands:
+  help
+    Print this help text.
+
+  prepare
+    Prepare an OTA dexopt pass, collecting all packages.
+  done
+    Replies whether the OTA is complete or not.
+  step
+    OTA dexopt the next package.
+  next
+    Get parameters for OTA dexopt of the next package.
+  cleanup
+    Clean up internal states. Ends an OTA session.

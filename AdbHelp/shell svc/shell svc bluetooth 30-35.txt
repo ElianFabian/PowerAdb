@@ -1,0 +1,4 @@
+Control Bluetooth service
+
+usage: svc bluetooth [enable|disable]
+         Turn Bluetooth on or off.

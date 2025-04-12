@@ -1,0 +1,5 @@
+usage: screencap [-hp] [FILENAME]
+   -h: this message
+   -p: save the file as a png.
+If FILENAME ends with .png it will be saved as a png.
+If FILENAME is not given, the results will be printed to stdout.

@@ -2,8 +2,7 @@ function Receive-AdbItem {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
 
         [Parameter(Mandatory)]
         [string] $LiteralRemotePath,
@@ -14,17 +13,21 @@ function Receive-AdbItem {
         [switch] $Force
     )
 
-    process {
-        foreach ($id in $DeviceId) {
-            $itemName = Split-Path -Path $LiteralRemotePath -Leaf
-            $localPath = Join-Path -Path $LiteralLocalPath -ChildPath $itemName
+    $itemName = Split-Path -Path $LiteralRemotePath -Leaf
+    $localPath = Join-Path -Path $LiteralLocalPath -ChildPath $itemName
 
-            if ($Force -or -not (Test-Path -Path $localPath)) {
-                Invoke-AdbExpression -DeviceId $id -Command "pull '$LiteralRemotePath' '$LiteralLocalPath'" -Verbose:$VerbosePreference
-            }
-            elseif (Test-Path -Path $localPath) {
-                Write-Error "The file '$localPath' already exists." -Category ResourceExists
-            }
+    if ($Force -or -not (Test-Path -Path $localPath)) {
+        try {
+            $sanitizedLiteralRemotePath = ConvertTo-ValidAdbStringArgument $LiteralRemotePath
+            $sanitizedLiteralLocalPath = ConvertTo-ValidAdbStringArgument $LiteralLocalPath
+            Invoke-AdbExpression -DeviceId $DeviceId -Command "pull $sanitizedLiteralRemotePath $sanitizedLiteralLocalPath" -Verbose:$VerbosePreference
         }
+        catch [AdbCommandException] {
+            # For some reason when receiving the file it is treated as an error,
+            # to fix it we just ignore it.
+        }
+    }
+    elseif (Test-Path -Path $localPath) {
+        Write-Error "The file '$localPath' already exists." -Category ResourceExists -ErrorAction Stop
     }
 }

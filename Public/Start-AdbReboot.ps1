@@ -2,26 +2,26 @@ function Start-AdbReboot {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
 
-        [ValidateSet("Restart", "Recovery", "Bootloader")]
+        [Parameter(Mandatory)]
+        [ValidateSet("restart", "recovery", "bootloader")]
         [string] $Type
     )
 
-    begin {
-        $mode = switch ($Type) {
-            "Restart" { '' }
-            "Recovery" { ' recovery' }
-            "Bootloader" { '-bootloader' }
-        }
+    Assert-AdbExecution -DeviceId $DeviceId
+
+    $mode = switch ($Type) {
+        "restart" { '' }
+        "recovery" { ' recovery' }
+        "rootloader" { '-bootloader' }
     }
 
-    process {
-        foreach ($id in $DeviceId) {
-            if ($PSCmdlet.ShouldProcess("adb -s $id reboot$mode", '', 'Start-AdbReboot')) {
-                adb -s $id reboot$mode
-            }
-        }
+    if ($DeviceId) {
+        $deviceIdArg = " -s '$DeviceId'"
+    }
+
+    if ($PSCmdlet.ShouldProcess("adb$deviceIdArg reboot$mode", '', 'Start-AdbReboot')) {
+        adb -s $DeviceId reboot$mode
     }
 }

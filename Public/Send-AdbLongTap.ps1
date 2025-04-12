@@ -2,8 +2,7 @@ function Send-AdbLongTap {
 
     [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'Default')]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
 
         [Parameter(Mandatory, ParameterSetName = 'Default')]
         [float] $X,
@@ -17,52 +16,49 @@ function Send-AdbLongTap {
         [Parameter(Mandatory, ParameterSetName = 'Node')]
         [System.Xml.XmlElement] $Node,
 
-        [switch] $DisableCoordinateCheck
+        [switch] $EnableCoordinateCheck
     )
 
-    process {
-        switch ($PSCmdlet.ParameterSetName) {
-            'Default' {
-                $positionX = $X
-                $positionY = $Y
-            }
-            'Node' {
-                $bounds = Get-ScreenNodeBounds -Node $Node
-                if (-not $bounds) {
-                    continue
-                }
-
-                $positionX = $bounds.CenterX
-                $positionY = $bounds.CenterY
-            }
+    switch ($PSCmdlet.ParameterSetName) {
+        'Default' {
+            $positionX = $X
+            $positionY = $Y
         }
-
-        foreach ($id in $DeviceId) {
-            if (-not $DisableCoordinateCheck) {
-                $size = Get-AdbScreenSize -DeviceId $id -Verbose:$false
-                $width = $size.Width
-                $height = $size.Height
-            }
-
-            if (-not $DisableCoordinateCheck -and ($positionX -lt 0.0 -or $positionX -gt $width)) {
-                Write-Error "X coordinate in device with id '$id' must be between 0 and $width, but was '$positionX'"
-                continue
-            }
-            if (-not $DisableCoordinateCheck -and ($positionY -lt 0.0 -or $positionY -gt $height)) {
-                Write-Error "Y coordinate in device with id '$id' must be between 0 and $height, but was '$positionY'"
+        'Node' {
+            $bounds = Get-ScreenNodeBounds -Node $Node
+            if (-not $bounds) {
                 continue
             }
 
-            if ($null -ne $Timeout) {
-                $longPressTimeout = $Timeout
-            }
-            else {
-                $longPressTimeout = Get-AdbSetting -DeviceId $id -Namespace Secure -Key long_press_timeout -Verbose:$false
-                if (-not $longPressTimeout) {
-                    $longPressTimeout = 400
-                }
-            }
-            Send-AdbSwipe -DeviceId $id -X1 $positionX -Y1 $positionY -X2 $positionX -Y2 $positionY -DurationInMilliseconds $longPressTimeout -DisableCoordinateCheck:$DisableCoordinateCheck -Verbose:$VerbosePreference
+            $positionX = $bounds.CenterX
+            $positionY = $bounds.CenterY
         }
     }
+
+    if ($EnableCoordinateCheck) {
+        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 18 -FeatureName "$($MyInvocation.MyCommand.Name) -EnableCoordinateCheck"
+
+        $size = Get-AdbScreenSize -DeviceId $DeviceId -Verbose:$false
+        $width = $size.Width
+        $height = $size.Height
+
+        if ($positionX -lt 0.0 -or $positionX -gt $width) {
+            Write-Error "X coordinate in device with id '$DeviceId' must be between 0 and $width, but was '$positionX'" -ErrorAction Stop
+        }
+        if ($positionY -lt 0.0 -or $positionY -gt $height) {
+            Write-Error "Y coordinate in device with id '$DeviceId' must be between 0 and $height, but was '$positionY'" -ErrorAction Stop
+        }
+    }
+
+    if ($null -ne $Timeout) {
+        $longPressTimeout = $Timeout
+    }
+    else {
+        $longPressTimeout = Get-AdbSetting -DeviceId $DeviceId -Namespace secure -Key long_press_timeout -Verbose:$false
+        if (-not $longPressTimeout) {
+            $longPressTimeout = 400
+        }
+    }
+
+    Send-AdbSwipe -DeviceId $DeviceId -X1 $positionX -Y1 $positionY -X2 $positionX -Y2 $positionY -DurationInMilliseconds $longPressTimeout -EnableCoordinateCheck:$EnableCoordinateCheck -Verbose:$VerbosePreference
 }

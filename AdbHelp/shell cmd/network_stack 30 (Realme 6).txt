@@ -1,0 +1,51 @@
+NetworkStack service commands:
+  help
+    Print this help text.
+  is-uid-networking-blocked <uid> <metered>
+    Get whether the networking is blocked for given uid and metered.
+    <uid>: The target uid.
+    <metered>: [true|false], Whether the target network is metered.
+  send-raw-packet-downstream <interface> <packet-in-hex>
+    Send raw packet for testing purpose.
+    <interface>: Target interface name, note that this is limited
+      to tethering downstream for security considerations.
+    <packet_in_hex>: A valid hexadecimal representation of
+      a packet starting from L2 header.
+  capture <cmd>
+    APF utility commands for multi-devices tests.
+    start <interface>
+      start capture packets in the received buffer.
+      The capture is up to 300 sec, then it will stop.
+      <interface>: Target interface name, note that this is limited
+        to tethering downstream for security considerations.
+    stop <interface>
+      stop capture packets and clear the received buffer.
+    matched-packet-counts <interface> <pkt-hex-string>
+      the <pkt-hex-string> starts from ether header.
+      Expect to do full packet match.
+  apf <iface> <cmd>
+    APF utility commands for integration tests.
+    <iface>: the network interface the provided command operates on.
+    <cmd>: [status]
+      status
+        returns whether the APF filter is "running" or "paused".
+      pause
+        pause APF filter generation.
+      resume
+        resume APF filter generation.
+      install <program-hex-string>
+        install the APF program contained in <program-hex-string>.
+        The filter must be paused before installing a new program.
+      capabilities
+        return the reported APF capabilities.
+        Format: <apfVersion>,<maxProgramSize>,<packetFormat>
+      read
+        reads and returns the current state of APF memory.
+
+
+
+
+
+
+NOTES:
+- In emulators this command is not available, but I don't know if it is in all real devices and for which Android versions.

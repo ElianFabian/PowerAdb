@@ -1,30 +1,24 @@
 function Get-AdbPackageApkPath {
 
-    [OutputType([string[]])]
+    [OutputType([string])]
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
         [string] $DeviceId,
 
         [Parameter(Mandatory)]
         [string[]] $PackageName,
 
         [AllowNull()]
-        [Nullable[uint32]] $UserId
+        [object] $UserId
     )
 
-    begin {
-        if ($null -ne $UserId) {
-            $userArg = " --user $UserId"
-        }
+    $user = Resolve-AdbUser -DeviceId $DeviceId -UserId $UserId
+    if ($null -ne $user) {
+        $userArg = " --user $user"
     }
 
-    process {
-        foreach ($id in $DeviceId) {
-            foreach ($package in $PackageName) {
-                Invoke-AdbExpression -DeviceId $id -Command "shell pm path '$package'$userArg" -Verbose:$VerbosePreference `
-                | ForEach-Object { $_.Substring('package:'.Length) }
-            }
-        }
+    foreach ($package in $PackageName) {
+        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pm path '$package'$userArg" -Verbose:$VerbosePreference `
+        | ForEach-Object { $_.Substring('package:'.Length) }
     }
 }

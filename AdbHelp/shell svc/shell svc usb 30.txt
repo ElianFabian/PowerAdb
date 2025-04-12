@@ -1,0 +1,12 @@
+Control Usb state
+
+usage: svc usb setFunctions [function]
+         Set the current usb function. If function is blank, sets to charging.
+       svc usb setScreenUnlockedFunctions [function]
+         Sets the functions which, if the device was charging, become current onscreen unlock. If function is blank, turn off this feature.
+       svc usb getFunctions
+          Gets the list of currently enabled functions
+       svc usb resetUsbGadget
+          Reset usb gadget
+
+possible values of [function] are any of 'mtp', 'ptp', 'rndis', 'midi'

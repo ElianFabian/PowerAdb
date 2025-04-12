@@ -25,7 +25,7 @@ function Send-AndroidFcmNotification {
         -Action 'com.google.android.c2dm.intent.RECEIVE' `
         -PackageName $PackageName `
         -ComponentClassName 'com.google.firebase.iid.FirebaseInstanceIdReceiver' `
-        -Flags 0x11080010 `
+        -Flag 0x11080010 `
         -Extras {
         New-AdbBundlePair -Key 'gcm.notification.title' -String $Title
         New-AdbBundlePair -Key 'gcm.notification.body' -String $Body

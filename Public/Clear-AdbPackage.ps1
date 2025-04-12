@@ -2,28 +2,22 @@ function Clear-AdbPackage {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
 
         [AllowNull()]
-        [Nullable[uint32]] $UserId,
+        [object] $UserId,
 
         [Parameter(Mandatory)]
         [string[]] $PackageName
     )
 
-    begin {
-        if ($null -ne $UserId) {
-            $userArg = " --user $UserId"
-        }
+    $user = Resolve-AdbUser -DeviceId $DeviceId -UserId $UserId
+    if ($null -ne $user) {
+        $userArg = " --user $user"
     }
 
-    process {
-        foreach ($id in $DeviceId) {
-            foreach ($package in $PackageName) {
-                $result = Invoke-AdbExpression -DeviceId $id -Command "shell pm clear$userArg $package" -Verbose:$VerbosePreference
-                Write-Verbose "Clear data in device with id '$id' from '$package': $result"
-            }
-        }
+    foreach ($package in $PackageName) {
+        $result = Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pm clear$userArg $package" -Verbose:$VerbosePreference
+        Write-Verbose "Clear data in device with id '$DeviceId' from '$package': $result"
     }
 }

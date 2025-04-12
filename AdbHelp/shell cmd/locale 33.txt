@@ -1,0 +1,12 @@
+Locale manager (locale) shell commands:
+  help
+      Print this help text.
+  set-app-locales <PACKAGE_NAME> [--user <USER_ID>] [--locales <LOCALE_INFO>]
+      Set the locales for the specified app.
+      --user <USER_ID>: apply for the given user, the current user is used when unspecified.
+      --locales <LOCALE_INFO>: The language tags of locale to be included as a single String separated by commas
+                 Empty locale list is used when unspecified.
+                 eg. en,en-US,hi
+  get-app-locales <PACKAGE_NAME> [--user <USER_ID>]
+      Get the locales for the specified app.
+      --user <USER_ID>: get for the given user, the current user is used when unspecified.

@@ -1,0 +1,21 @@
+usage: wm [subcommand] [options]
+       wm size [reset|WxH|WdpxHdp]
+       wm density [reset|DENSITY]
+       wm overscan [reset|LEFT,TOP,RIGHT,BOTTOM]
+       wm scaling [off|auto]
+       wm screen-capture [userId] [true|false]
+
+wm size: return or override display size.
+         width and height in pixels unless suffixed with 'dp'.
+
+wm density: override display density.
+
+wm overscan: set overscan area for display.
+
+wm scaling: set display scaling mode.
+
+wm screen-capture: enable/disable screen capture.
+
+wm dismiss-keyguard: dismiss the keyguard, prompting the user for auth if necessary.
+
+wm surface-trace: log surface commands to stdout in a binary format.

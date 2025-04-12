@@ -1,0 +1,94 @@
+Wi-Fi (wifi) commands:
+  help or -h
+    Print this help text.
+  get-country-code
+    Gets country code as a two-letter string
+  set-wifi-enabled enabled|disabled
+    Enables/disables Wifi on this device.
+  set-scan-always-available enabled|disabled
+    Sets whether scanning should be available even when wifi is off.
+  list-scan-results
+    Lists the latest scan results
+  start-scan
+    Start a new scan
+  list-networks
+    Lists the saved networks
+  connect-network <ssid> open|owe|wpa2|wpa3 [<passphrase>] [-m] [-d] [-b <bssid>]
+    Connect to a network with provided params and add to saved networks list
+    <ssid> - SSID of the network
+    open|owe|wpa2|wpa3 - Security type of the network.
+        - Use 'open' or 'owe' for networks with no passphrase
+           - 'open' - Open networks (Most prevalent)
+           - 'owe' - Enhanced open networks
+        - Use 'wpa2' or 'wpa3' for networks with passphrase
+           - 'wpa2' - WPA-2 PSK networks (Most prevalent)
+           - 'wpa3' - WPA-3 PSK networks
+    -m - Mark the network metered.
+    -d - Mark the network autojoin disabled.
+    -b <bssid> - Set specific BSSID.
+  add-network <ssid> open|owe|wpa2|wpa3 [<passphrase>] [-m] [-d] [-b <bssid>]
+    Add/update saved network with provided params
+    <ssid> - SSID of the network
+    open|owe|wpa2|wpa3 - Security type of the network.
+        - Use 'open' or 'owe' for networks with no passphrase
+           - 'open' - Open networks (Most prevalent)
+           - 'owe' - Enhanced open networks
+        - Use 'wpa2' or 'wpa3' for networks with passphrase
+           - 'wpa2' - WPA-2 PSK networks (Most prevalent)
+           - 'wpa3' - WPA-3 PSK networks
+    -m - Mark the network metered.
+    -d - Mark the network autojoin disabled.
+    -b <bssid> - Set specific BSSID.
+  forget-network <networkId>
+    Remove the network mentioned by <networkId>
+        - Use list-networks to retrieve <networkId> for the network
+  status
+    Current wifi status
+  set-verbose-logging enabled|disabled
+    Set the verbose logging enabled or disabled
+  add-suggestion <ssid> open|owe|wpa2|wpa3 [<passphrase>] [-u] [-m] [-s] [-d][-b <bssid>]
+    Add a network suggestion with provided params
+    Use 'network-suggestions-set-user-approved com.android.shell yes' to approve suggestions added via shell (Needs root access)
+    <ssid> - SSID of the network
+    open|owe|wpa2|wpa3 - Security type of the network.
+        - Use 'open' or 'owe' for networks with no passphrase
+           - 'open' - Open networks (Most prevalent)
+           - 'owe' - Enhanced open networks
+        - Use 'wpa2' or 'wpa3' for networks with passphrase
+           - 'wpa2' - WPA-2 PSK networks (Most prevalent)
+           - 'wpa3' - WPA-3 PSK networks
+    -u - Mark the suggestion untrusted.
+    -m - Mark the suggestion metered.
+    -s - Share the suggestion with user.
+    -d - Mark the suggestion autojoin disabled.
+    -b <bssid> - Set specific BSSID.
+  remove-suggestion <ssid>
+    Remove a network suggestion with provided SSID of the network
+  remove-all-suggestions
+    Removes all suggestions added via shell
+  list-suggestions
+    Lists the suggested networks added via shell
+  set-connected-score <score>
+    Set connected wifi network score (to choose between LTE & Wifi for default route).
+    This turns off the active connected scorer (default or external).
+    Only works while connected to a wifi network. This score will stay in effect until you call reset-connected-score or the device disconnects from the current network.
+    <score> - Integer score should be in the range of 0 - 60
+  reset-connected-score
+    Turns on the default connected scorer.
+    Note: Will clear any external scorer set.
+  start-softap <ssid> (open|wpa2) <passphrase> [-b 2|5|6|any]
+    Start softap with provided params
+    Note that the shell command doesn't activate internet tethering. In some devices, internet sharing is possible when Wi-Fi STA is also enabled and isassociated to another AP with internet access.
+    <ssid> - SSID of the network
+    open|wpa2 - Security type of the network.
+        - Use 'open' for networks with no passphrase
+        - Use 'wpa2' for networks with passphrase
+    -b 2|5|6|any - select the preferred band.
+        - Use '2' to select 2.4GHz band as the preferred band
+        - Use '5' to select 5GHz band as the preferred band
+        - Use '6' to select 6GHz band as the preferred band
+        - Use 'any' to indicate no band preference
+    Note: If the band option is not provided, 2.4GHz is the preferred band.
+          The exact channel is auto-selected by FW unless overridden by force-softap-channel command
+  stop-softap
+    Stop softap (hotspot)

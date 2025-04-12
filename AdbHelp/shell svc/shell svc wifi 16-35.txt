@@ -1,0 +1,7 @@
+Control the Wi-Fi manager
+
+usage: svc wifi [enable|disable]
+         Turn Wi-Fi on or off.
+
+       svc wifi prefer
+          Set Wi-Fi as the preferred data network

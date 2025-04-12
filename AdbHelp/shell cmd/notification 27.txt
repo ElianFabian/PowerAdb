@@ -1,0 +1,7 @@
+help
+allow_listener COMPONENT [user_id]
+disallow_listener COMPONENT [user_id]
+set_assistant COMPONENT
+remove_assistant COMPONENT
+allow_dnd PACKAGE
+disallow_dnd PACKAGE

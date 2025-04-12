@@ -1,10 +1,8 @@
 function Add-AdbContent {
 
-    [CmdletBinding()]
-    [OutputType([string[]])]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
 
         [Parameter(Mandatory)]
         [string] $RemotePath,
@@ -12,18 +10,19 @@ function Add-AdbContent {
         [Parameter(Mandatory)]
         [string] $Content,
 
-        [string] $RunAs
+        [string] $RunAs,
+
+        [switch] $NoNewline
     )
 
-    begin {
-        if ($RunAs) {
-            $runAsCommand = " run-as '$RunAs'"
-        }
+    if ($RunAs) {
+        $runAsCommand = " run-as '$RunAs'"
+    }
+    if ($NoNewline) {
+        $noNewLineArg = " -n"
     }
 
-    process {
-        foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $id -Command "shell$runAsCommand echo '$Content' >> '$RemotePath'" -Verbose:$VerbosePreference
-        }
-    }
+    $sanitizedContent = ConvertTo-ValidAdbStringArgument $Content
+
+    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell$runAsCommand echo$noNewLineArg $sanitizedContent ``>>`` '$RemotePath'" -Verbose:$VerbosePreference
 }

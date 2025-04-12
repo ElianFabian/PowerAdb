@@ -1,0 +1,20 @@
+Connectivity service commands:
+  help
+    Print this help text.
+  airplane-mode [enable|disable]
+    Turn airplane mode on or off.
+  airplane-mode
+    Get airplane mode.
+  set-chain3-enabled [true|false]
+    Enable or disable FIREWALL_CHAIN_OEM_DENY_3 for debugging.
+  get-chain3-enabled
+    Returns whether FIREWALL_CHAIN_OEM_DENY_3 is enabled.
+  set-package-networking-enabled [true|false] [package name]
+    Set the deny bit in FIREWALL_CHAIN_OEM_DENY_3 to package. This has
+    no effect if the chain is disabled.
+  get-package-networking-enabled [package name]
+    Get the deny bit in FIREWALL_CHAIN_OEM_DENY_3 for package.
+  set-background-networking-enabled-for-uid [uid] [true|false]
+    Set the allow bit in FIREWALL_CHAIN_BACKGROUND for the given uid.
+  get-background-networking-enabled-for-uid [uid]
+    Get the allow bit in FIREWALL_CHAIN_BACKGROUND for the given uid.

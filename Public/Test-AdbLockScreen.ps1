@@ -2,16 +2,10 @@ function Test-AdbLockScreen {
 
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory)]
-        [string[]] $DeviceId
+        [string] $DeviceId
     )
 
-    process {
-        foreach ($id in $DeviceId) {
-            # Get-TopActivity returns null if the user is on the lock screen
-            $topActivity = Get-AdbTopActivity -DeviceId $id -Verbose:$false
+    $topActivity = Get-AdbTopActivity -DeviceId $DeviceId -Verbose:$false
 
-            -not $topActivity
-        }
-    }
+    -not $topActivity
 }

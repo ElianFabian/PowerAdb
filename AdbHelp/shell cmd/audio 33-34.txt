@@ -1,0 +1,12 @@
+Audio manager commands:
+  help
+    Print this help text.
+
+  set-surround-format-enabled SURROUND_FORMAT IS_ENABLED
+    Enables/disabled the SURROUND_FORMAT based on IS_ENABLED
+  get-is-surround-format-enabled SURROUND_FORMAT
+    Returns if the SURROUND_FORMAT is enabled
+  set-encoded-surround-mode SURROUND_SOUND_MODE
+    Sets the encoded surround sound mode to SURROUND_SOUND_MODE
+  get-encoded-surround-mode
+    Returns the encoded surround sound mode

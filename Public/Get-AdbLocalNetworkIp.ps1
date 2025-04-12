@@ -1,32 +1,28 @@
 function Get-AdbLocalNetworkIp {
 
-    [OutputType([string[]])]
+    [OutputType([string])]
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory)]
         [string] $DeviceId,
 
         [switch] $Wait
     )
 
-    process {
-        foreach ($id in $DeviceId) {
-            do {
-                if ($Wait) {
-                    Wait-AdbDeviceState -DeviceId $id -State "Device" -Verbose:$VerbosePreference
-                }
-                $ipAddress = Invoke-AdbExpression -DeviceId $id -Command "shell ip -f inet addr show wlan0" `
-                    -Verbose:$VerbosePreference `
-                    -WhatIf:$false `
-                    -Confirm:$false `
-                | Select-String -Pattern "inet ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)" `
-                | ForEach-Object {
-                    $_.Matches.Groups[1].Value
-                }
-            }
-            while (-not $ipAddress -and $Wait)
+    # This might seem weird, but at least on emulators 'ip' is not available for API level 18.
+    Assert-ApiLevel -DeviceId $DeviceId -NotEqualTo 18
 
-            $ipAddress
+    do {
+        if ($Wait) {
+            Wait-AdbDeviceState -DeviceId $DeviceId -State 'device' -Verbose:$VerbosePreference
+        }
+
+        $ipAddress = Invoke-AdbExpression -DeviceId $DeviceId -Command 'shell ip route' -Verbose:$VerbosePreference `
+        | Select-String -Pattern '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/\d+ dev\s+[\w\d]+\s+proto\s+kernel\s+scope\s+link\s+src\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)' `
+        | ForEach-Object {
+            $_.Matches.Groups[1].Value
         }
     }
+    while (-not $ipAddress -and $Wait)
+
+    return $ipAddress
 }

@@ -1,22 +1,16 @@
 function ConvertTo-AdbIntentUri {
 
-    [OutputType([string[]])]
+    [OutputType([string])]
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [Parameter(Mandatory)]
+        [string] $DeviceId,
 
         [Parameter(Mandatory)]
         [PSCustomObject] $Intent
     )
 
-    begin {
-        $intentArgs = $element.ToAdbArguments()
-    }
+    $intentArgs = $element.ToAdbArguments($DeviceId)
 
-    process {
-        foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $id -Command "shell am to-intent-uri $intentArgs" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false
-        }
-    }
+    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell am to-intent-uri $intentArgs" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false
 }

@@ -2,23 +2,18 @@ function Revoke-AdbPermission {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
 
         [Parameter(Mandatory)]
         [string[]] $PackageName,
 
         [Parameter(Mandatory)]
-        [string[]] $Permission
+        [string[]] $PermissionName
     )
 
-    process {
-        foreach ($id in $DeviceId) {
-            foreach ($package in $PackageName) {
-                foreach ($permissionName in $Permission) {
-                    $id | Invoke-AdbExpression -Command "shell pm revoke '$package' '$permissionName'" -Verbose:$VerbosePreference
-                }
-            }
+    foreach ($package in $PackageName) {
+        foreach ($permission in $PermissionName) {
+            Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pm revoke '$package' '$permission'" -Verbose:$VerbosePreference
         }
     }
 }

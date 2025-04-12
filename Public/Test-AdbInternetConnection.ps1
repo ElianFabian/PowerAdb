@@ -1,17 +1,25 @@
 function Test-AdbInternetConnection {
 
-    [OutputType([bool[]])]
+    [OutputType([bool])]
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId
+        [string] $DeviceId
     )
 
-    process {
-        foreach ($id in $DeviceId) {
-            $result = Invoke-AdbExpression -DeviceId $id -Command 'shell ping -c1 www.google.com' -Verbose:$VerbosePreference 2>&1
+    try {
+        $result = Invoke-AdbExpression -DeviceId $DeviceId -Command 'shell ping -c1 www.google.com' -Verbose:$VerbosePreference
 
-            $result -and ($result -isnot [System.Management.Automation.ErrorRecord])
+        if ($result) {
+            return $true
         }
+        else {
+            return $false
+        }
+    }
+    catch [AdbCommandException] {
+        if ($_.Exception.Message.Contains('ping: unknown host www.google.com')) {
+            return $false
+        }
+        throw $_
     }
 }

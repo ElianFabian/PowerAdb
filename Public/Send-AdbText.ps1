@@ -5,8 +5,7 @@ function Send-AdbText {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
 
         [Parameter(Mandatory)]
         [string] $Text,
@@ -14,24 +13,13 @@ function Send-AdbText {
         [switch] $Force
     )
 
-    begin {
-        if ((Compare-Object -ReferenceObject ($script:Ascii.GetBytes($Text)) -DifferenceObject ($script:Latin1.GetBytes($Text))) -and -not $Force) {
-            Write-Error "'$($MyInvocation.MyCommand)' only accepts ASCII characters. Use the '-Force' switch to override this restriction. Text: $Text"
-            $skip = $true
-        }
+    if ((Compare-Object -ReferenceObject ($script:Ascii.GetBytes($Text)) -DifferenceObject ($script:Latin1.GetBytes($Text))) -and -not $Force) {
+        Write-Error "'$($MyInvocation.MyCommand)' only accepts ASCII characters. Use the '-Force' switch to override this restriction." -ErrorAction Stop
     }
 
-    process {
-        if ($skip) {
-            return
-        }
+    $sanitizedText = ConvertTo-ValidAdbStringArgument $Text
 
-        foreach ($id in $DeviceId) {
-            $sanitizedText = ConvertTo-ValidAdbStringArgument $Text
-
-            Invoke-AdbExpression -DeviceId $id -Command "shell input text $sanitizedText" -Verbose:$VerbosePreference
-        }
-    }
+    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell input text $sanitizedText" -Verbose:$VerbosePreference
 }
 
 

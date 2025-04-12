@@ -1,0 +1,9 @@
+InputMethodManagerService commands:
+  help
+    Prints this help text.
+  dump [options]
+    Synonym of dumpsys.
+  ime <command> [options]
+    Manipulate IMEs.  Run "ime help" for details.
+  set-bind-instant-service-allowed true|false
+    Set whether binding to services provided by instant apps is allowed.

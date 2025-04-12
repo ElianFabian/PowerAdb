@@ -1,0 +1,81 @@
+usage: adb shell cmd stats print-stats-log [tag_required] [timestamp_nsec_optional]
+
+
+usage: adb shell cmd stats meminfo
+
+  Prints the malloc debug information. You need to run the following first:
+   # adb shell stop
+   # adb shell setprop libc.debug.malloc.program statsd
+   # adb shell setprop libc.debug.malloc.options backtrace
+   # adb shell start
+
+
+usage: adb shell cmd stats print-uid-map [PKG]
+
+  Prints the UID, app name, version mapping.
+  PKG           Optional package name to print the uids of the package
+
+
+usage: adb shell cmd stats pull-source [int]
+
+  Prints the output of a pulled metrics source (int indicates source)
+
+
+usage: adb shell cmd stats write-to-disk
+
+  Flushes all data on memory to disk.
+
+
+usage: adb shell cmd stats log-app-breadcrumb [UID] LABEL STATE
+  Writes an AppBreadcrumbReported event to the statslog buffer.
+  UID           The uid to use. It is only possible to pass a UID
+                parameter on eng builds. If UID is omitted the calling
+                uid is used.
+  LABEL         Integer in [0, 15], as per atoms.proto.
+  STATE         Integer in [0, 3], as per atoms.proto.
+
+
+usage: adb shell cmd stats config remove [UID] [NAME]
+usage: adb shell cmd stats config update [UID] NAME
+
+  Adds, updates or removes a configuration. The proto should be in
+  wire-encoded protobuf format and passed via stdin. If no UID and name is
+  provided, then all configs will be removed from memory and disk.
+
+  UID           The uid to use. It is only possible to pass the UID
+                parameter on eng builds. If UID is omitted the calling
+                uid is used.
+  NAME          The per-uid name to use
+
+
+              *Note: If both UID and NAME are omitted then all configs will
+
+                     be removed from memory and disk!
+
+usage: adb shell cmd stats dump-report [UID] NAME [--proto]
+  Dump all metric data for a configuration.
+  UID           The uid of the configuration. It is only possible to pass
+                the UID parameter on eng builds. If UID is omitted the
+                calling uid is used.
+  NAME          The name of the configuration
+  --proto       Print proto binary.
+
+
+usage: adb shell cmd stats send-broadcast [UID] NAME
+  Send a broadcast that triggers the subscriber to fetch metrics.
+  UID           The uid of the configuration. It is only possible to pass
+                the UID parameter on eng builds. If UID is omitted the
+                calling uid is used.
+  NAME          The name of the configuration
+
+
+usage: adb shell cmd stats print-stats
+  Prints some basic stats.
+  --proto       Print proto binary instead of string format.
+
+
+usage: adb shell cmd stats clear-puller-cache
+  Clear cached puller data.
+
+usage: adb shell cmd stats print-logs
+      Only works on eng build

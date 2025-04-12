@@ -1,23 +1,20 @@
 function Get-AdbPackagePid {
 
-    [OutputType([int[]])]
+    [OutputType([int])]
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
 
         [Parameter(Mandatory)]
         [string] $PackageName
     )
 
-    process {
-        foreach ($id in $DeviceId) {
-            $processId = Invoke-AdbExpression -DeviceId $id -Command "shell pidof '$PackageName'" -Verbose:$VerbosePreference
+    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 23
 
-            if ($processId) {
-                [int] $processId
-            }
-            else { $null }
-        }
+    $processId = Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pidof '$PackageName'" -Verbose:$VerbosePreference
+
+    if ($processId) {
+        [int] $processId
     }
+    else { $null }
 }

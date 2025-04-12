@@ -1,0 +1,6 @@
+usage: cmd media.camera.proxy SUBCMD [args]
+
+SUBCMDs:
+    dump_events: Write out all collected camera usage events to statsd.
+        Does not print to terminal.
+    help: You're reading it.

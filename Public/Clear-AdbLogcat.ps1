@@ -2,58 +2,77 @@ function Clear-AdbLogcat {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
 
         [ValidateSet(
-            "Main",
-            "System",
-            "Radio",
-            "Events",
-            "Crash",
-            "Kernel",
-            "Security"
+            "main",
+            "system",
+            "radio",
+            "events",
+            "crash",
+            "kernel",
+            "security"
         )]
-        [string] $Buffer,
+        [string[]] $Buffer,
 
         [string] $Pattern,
 
         [switch] $Force
     )
 
-    begin {
-        $bufferLowerCase = switch ($Buffer) {
-            "Main" { "main" }
-            "System" { "system" }
-            "Radio" { "radio" }
-            "Events" { "events" }
-            "Crash" { "crash" }
-            "Kernel" { "kernel" }
-            "Security" { "security" }
-            default { $null }
-        }
-        if ($bufferLowerCase) {
-            $bufferArg = " --buffer=$bufferLowerCase"
-        }
-        if ($Pattern) {
-            $regexArg = " --regex=$Pattern"
-        }
-
-        $adbArgs = @(
-            $bufferArg,
-            $regexArg
-        ) -join ""
+    if ('crash' -in $Buffer) {
+        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 21 -FeatureName "$($MyInvocation.MyCommand.Name) -Buffer 'Crash'"
+    }
+    if ($Pattern) {
+        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 23 -FeatureName "$($MyInvocation.MyCommand.Name) -Pattern"
+    }
+    if ('kernel' -in $Buffer) {
+        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 29 -FeatureName "$($MyInvocation.MyCommand.Name) -Buffer 'Kernel'"
+    }
+    if ('security' -in $Buffer) {
+        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 29 -FeatureName "$($MyInvocation.MyCommand.Name) -Buffer 'Security'"
     }
 
-    process {
-        foreach ($id in $DeviceId) {
-            do {
-                $logcatError = Invoke-AdbExpression -DeviceId $id -Command "logcat -c$adbArgs" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false 2>&1
-                if ((-not $Force -or $logcatError -notmatch "logcat: failed to clear the '\w+' log.") -and $logcatError -and $logcatError -is [System.Management.Automation.ErrorRecord]) {
-                    Write-Error -Exception $logcatError.Exception
-                }
+    if ('all' -in $Buffer) {
+        $apiLevel = Get-AdbApiLevel -DeviceId $DeviceId -Verbose:$false
+
+        $bufferInternal = @('main', 'system', 'radio', 'events')
+
+        if ($apiLevel -ge 21) {
+            $bufferInternal += 'crash'
+        }
+        if ($apiLevel -ge 29) {
+            $bufferInternal += @('kernel', 'security')
+        }
+    }
+    else {
+        $bufferInternal = $Buffer
+    }
+
+    $bufferInternal = $bufferInternal | Select-Object -Unique
+
+    if ($bufferInternal) {
+        $bufferArg = " $(($bufferInternal | ForEach-Object { "-b $_" }) -join ' ')"
+    }
+    if ($Pattern) {
+        $regexArg = " --regex=$(ConvertTo-ValidAdbStringArgument $Pattern)"
+    }
+
+    $adbArgs = @(
+        $bufferArg
+        $regexArg
+    ) -join ""
+
+    do {
+        try {
+            Invoke-AdbExpression -DeviceId $DeviceId -Command "logcat -c$adbArgs" -Verbose:$VerbosePreference
+        }
+        catch {
+            if ($_.ErrorDetails -isnot [AdbCommandException] -and "logcat: failed to clear the '\w+' log." -notmatch $_.Exception.Message) {
+                throw $_
             }
-            while ($Force -and $logcatError -and $logcatError -is [System.Management.Automation.ErrorRecord] -and $logcatError.Exception.Message -match "logcat: failed to clear the '\w+' log.")
+            $logcatClearError = $_
         }
     }
+    while ($Force -and $logcatClearError)
 }

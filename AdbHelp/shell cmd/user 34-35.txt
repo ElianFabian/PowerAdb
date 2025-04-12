@@ -1,0 +1,41 @@
+User manager (user) commands:
+  help
+    Prints this help text.
+
+  list [-v | --verbose] [--all]
+    Prints all users on the system.
+
+  report-system-user-package-whitelist-problems [-v | --verbose] [--critical-only] [--mode MODE]
+    Reports all issues on user-type package allowlist XML files. Options:
+    -v | --verbose: shows extra info, like number of issues
+    --critical-only: show only critical issues, excluding warnings
+    --mode MODE: shows what errors would be if device used mode MODE
+      (where MODE is the allowlist mode integer as defined by config_userTypePackageWhitelistMode)
+
+  set-system-user-mode-emulation [--reboot | --no-restart] <headless | full | default>
+    Changes whether the system user is headless, full, or default (as defined by OEM).
+    WARNING: this command is meant just for development and debugging purposes.
+             It should NEVER be used on automated tests.
+    NOTE: by default it restarts the Android runtime, unless called with
+          --reboot (which does a full reboot) or
+          --no-restart (which requires a manual restart)
+
+  is-headless-system-user-mode [-v | --verbose]
+    Checks whether the device uses headless system user mode.
+  is-visible-background-users-on-default-display-supported [-v | --verbose]
+    Checks whether the device allows users to be start visible on background in the default display.
+    It returns the effective mode, even when using emulation
+    (to get the real mode as well, use -v or --verbose)
+
+  is-visible-background-users-supported [-v | --verbose]
+    Checks whether the device allows users to be start visible on background.
+    It returns the effective mode, even when using emulation
+    (to get the real mode as well, use -v or --verbose)
+
+  is-user-visible [--display DISPLAY_ID] <USER_ID>
+    Checks if the given user is visible in the given display.
+    If the display option is not set, it uses the user's context to check
+    (so it emulates what apps would get from UserManager.isUserVisible())
+
+  get-main-user
+    Displays main user id or message if there is no main user

@@ -1,0 +1,9 @@
+Fingerprint Service commands:
+  help
+      Print this help text.
+  sync
+      Sync enrollments now (virtualized sensors only).
+  fingerdown
+      Simulate finger down event (virtualized sensors only).
+  notification
+     Sends a Fingerprint re-enrollment notification

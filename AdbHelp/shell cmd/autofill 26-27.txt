@@ -1,0 +1,24 @@
+AutoFill Service (autofill) commands:
+  help
+    Prints this help text.
+
+  get log_level
+    Gets the Autofill log level (off | debug | verbose).
+
+  get max_partitions
+    Gets the maximum number of partitions per session.
+
+  set log_level [off | debug | verbose]
+    Sets the Autofill log level.
+
+  set max_partitions number
+    Sets the maximum number of partitions per session.
+
+  list sessions [--user USER_ID]
+    List all pending sessions.
+
+  destroy sessions [--user USER_ID]
+    Destroy all pending sessions.
+
+  reset
+    Reset all pending sessions and cached service connections.

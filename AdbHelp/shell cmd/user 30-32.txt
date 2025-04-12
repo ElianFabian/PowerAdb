@@ -1,0 +1,11 @@
+User manager (user) commands:
+  help
+    Prints this help text.
+
+  list [-v] [-all]
+    Prints all users on the system.
+  report-system-user-package-whitelist-problems [-v | --verbose] [--critical-only] [--mode MODE]
+    Reports all issues on user-type package whitelist XML files. Options:
+    -v | --verbose : shows extra info, like number of issues
+    --critical-only: show only critical issues, excluding warnings
+    --mode MODE: shows what errors would be if device used mode MODE (where MODE is the whitelist mode integer as defined by config_userTypePackageWhitelistMode)

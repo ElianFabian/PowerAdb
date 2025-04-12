@@ -1,0 +1,6 @@
+Commands
+status: Print the FRP state and associated information.
+activate:  Put FRP into "active" mode.
+deactivate <secret>:  Deactivate with a hash of 'secret'.
+auto_deactivate: Deactivate with the stored secret or the default
+set_secret <secret>:  Set the stored secret to a hash of `secret`

@@ -1,0 +1,7 @@
+Role manager (role) commands:
+  help
+    Print this help text.
+
+  add-role-holder [--user USER_ID] ROLE PACKAGE [FLAGS]
+  remove-role-holder [--user USER_ID] ROLE PACKAGE [FLAGS]
+  clear-role-holders [--user USER_ID] ROLE [FLAGS]

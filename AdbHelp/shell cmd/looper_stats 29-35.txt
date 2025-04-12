@@ -1,0 +1,5 @@
+looper_stats commands:
+  enable: Enable collecting stats.
+  disable: Disable collecting stats.
+  sampling_interval: Change the sampling interval.
+  reset: Reset stats.

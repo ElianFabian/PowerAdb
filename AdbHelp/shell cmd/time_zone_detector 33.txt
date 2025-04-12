@@ -1,0 +1,66 @@
+Time Zone Detector (time_zone_detector) commands:
+  help
+    Print this help text.
+  is_auto_detection_enabled
+    Prints true/false according to the automatic time zone detection setting
+  set_auto_detection_enabled true|false
+    Sets the automatic time zone detection setting.
+  is_telephony_detection_supported
+    Prints true/false according to whether telephony time zone detection is supported on this device.
+  is_geo_detection_supported
+    Prints true/false according to whether geolocation time zone detection is supported on this device.
+  is_geo_detection_enabled
+    Prints true/false according to the geolocation time zone detection setting.
+  set_geo_detection_enabled true|false
+    Sets the geolocation time zone detection enabled setting.
+  enable_telephony_fallback
+    Signals that telephony time zone detection fall back can be used if geolocation detection is supported and enabled. This is a temporary state until geolocation detection becomes "certain". To have an effect this requires that the telephony fallback feature is supported on the device, see below for for device_config flags.
+
+  suggest_geo_location_time_zone <geolocation suggestion opts>
+  suggest_manual_time_zone <manual suggestion opts>
+  suggest_telephony_time_zone <telephony suggestion opts>
+  dump_metrics
+    Dumps the service metrics to stdout for inspection.
+
+Geolocation suggestion options:
+  --zone_ids {UNCERTAIN|EMPTY|<Olson ID>+}
+
+See com.android.server.timezonedetector.GeolocationTimeZoneSuggestion for more information
+
+Manual suggestion options:
+  --zone_id <Olson ID>
+
+See android.app.timezonedetector.ManualTimeZoneSuggestion for more information
+
+Telephony suggestion options:
+  --slot_index <number>
+  To withdraw a previous suggestion:
+    [--zone_id "_"]
+  To make a new suggestion:
+    --zone_id <Olson ID>
+    --quality <single|multiple_same|multiple_different>
+    --match_type <emulator|country_with_offset|country|test_network>
+
+See android.app.timezonedetector.TelephonyTimeZoneSuggestion for more information
+
+This service is also affected by the following device_config flags in the system_time namespace:
+  location_time_zone_detection_feature_supported
+    Only observed if the geolocation time zone detection feature is enabled in config.
+    Set this to false to disable the feature.
+  location_time_zone_detection_run_in_background_enabled
+    Runs geolocation time zone detection even when it not enabled by the user. The result is not used to set the device's time zone [*]
+  location_time_zone_detection_setting_enabled_default
+    Only used if the device does not have an explicit 'geolocation time zone detection enabled' setting stored [*].
+    The default is when unset is false.
+  location_time_zone_detection_setting_enabled_override
+    Used to override the device's 'geolocation time zone detection enabled' setting [*].
+  time_zone_detector_telephony_fallback_supported
+    Used to enable / disable support for telephony detection fallback. Also see the enable_telephony_fallback command.
+  enhanced_metrics_collection_enabled
+    Used to increase the detail of metrics collected / reported.
+
+[*] To be enabled, the user must still have location = on / auto time zone detection = on.
+
+See "adb shell cmd device_config" for more information on setting flags.
+
+Also see "adb shell cmd location_time_zone_manager help" for lower-level location time zone commands / settings.

@@ -1,0 +1,9 @@
+Thermal service (thermalservice) commands:
+  help
+    Print this help text.
+
+  override-status STATUS
+    sets and locks the thermal status of the device to STATUS.
+    status code is defined in android.os.Temperature.
+  reset
+    unlocks the thermal status of the device.

@@ -1,0 +1,24 @@
+Status bar commands:
+  help
+    Print this help text.
+
+  expand-notifications
+    Open the notifications panel.
+
+  expand-settings
+    Open the notifications panel and expand quick settings if present.
+
+  collapse
+    Collapse the notifications and settings panel.
+
+  add-tile COMPONENT
+    Add a TileService of the specified component
+
+  remove-tile COMPONENT
+    Remove a TileService of the specified component
+
+  click-tile COMPONENT
+    Click on a TileService of the specified component
+
+  check-support
+    Check if this device supports QS + APIs

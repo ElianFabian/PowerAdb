@@ -1,0 +1,12 @@
+Battery service (battery) commands:
+  help
+    Print this help text.
+  set [-f] [ac|usb|wireless|status|level|temp|present|invalid] <value>
+    Force a battery property value, freezing battery state.
+    -f: force a battery change broadcast be sent, prints new sequence.
+  unplug [-f]
+    Force battery unplugged, freezing battery state.
+    -f: force a battery change broadcast be sent, prints new sequence.
+  reset [-f]
+    Unfreeze battery state, returning to current hardware values.
+    -f: force a battery change broadcast be sent, prints new sequence.

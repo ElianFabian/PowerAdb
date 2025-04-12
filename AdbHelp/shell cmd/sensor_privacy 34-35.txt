@@ -1,0 +1,9 @@
+Sensor privacy manager (sensor_privacy) commands:
+  help
+    Print this help text.
+
+  enable USER_ID SENSOR
+    Enable privacy for a certain sensor.
+
+  disable USER_ID SENSOR
+    Disable privacy for a certain sensor.

@@ -1,0 +1,30 @@
+Usage: cmd shortcut COMMAND [options ...]
+
+cmd shortcut reset-throttling [--user USER_ID]
+    Reset throttling for all packages and users
+
+cmd shortcut reset-all-throttling
+    Reset the throttling state for all users
+
+cmd shortcut override-config CONFIG
+    Override the configuration for testing (will last until reboot)
+
+cmd shortcut reset-config
+    Reset the configuration set with "update-config"
+
+[Deprecated] cmd shortcut get-default-launcher [--user USER_ID]
+    Show the default launcher
+    Note: This command is deprecated. Callers should query the default launcher from RoleManager instead.
+
+cmd shortcut unload-user [--user USER_ID]
+    Unload a user from the memory
+    (This should not affect any observable behavior)
+
+cmd shortcut clear-shortcuts [--user USER_ID] PACKAGE
+    Remove all shortcuts from a package, including pinned shortcuts
+
+cmd shortcut get-shortcuts [--user USER_ID] [--flags FLAGS] PACKAGE
+    Show the shortcuts for a package that match the given flags
+
+cmd shortcut has-shortcut-access [--user USER_ID] PACKAGE
+    Prints "true" if the package can access shortcuts, "false" otherwise

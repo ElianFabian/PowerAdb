@@ -1,0 +1,29 @@
+Camera service commands:
+  get-uid-state <PACKAGE> [--user USER_ID] gets the uid state
+  set-uid-state <PACKAGE> <active|idle> [--user USER_ID] overrides the uid state
+  reset-uid-state <PACKAGE> [--user USER_ID] clears the uid state override
+  set-rotate-and-crop <ROTATION> overrides the rotate-and-crop value for AUTO backcompat
+      Valid values 0=0 deg, 1=90 deg, 2=180 deg, 3=270 deg, 4=No override
+  get-rotate-and-crop returns the current override rotate-and-crop value
+  set-autoframing <VALUE> overrides the autoframing value for AUTO
+      Valid values 0=false, 1=true, 2=auto
+  get-autoframing returns the current override autoframing value
+  set-image-dump-mask <MASK> specifies the formats to be saved to disk
+      Valid values 0=OFF, 1=ON for JPEG
+  get-image-dump-mask returns the current image-dump-mask value
+  set-camera-mute <0/1> enable or disable camera muting
+  set-stream-use-case-override <usecase1> <usecase2> ... override stream use cases
+      Use cases applied in descending resolutions. So usecase1 is assigned to the
+      largest resolution, usecase2 is assigned to the 2nd largest resolution, and so
+      on. In case the number of usecases is smaller than the number of streams, the
+      last use case is assigned to all the remaining streams. In case of multiple
+      streams with the same resolution, the tie-breaker is (JPEG, RAW, YUV, and PRIV)
+      Valid values are (case sensitive): DEFAULT, PREVIEW, STILL_CAPTURE, VIDEO_RECORD,
+      PREVIEW_VIDEO_STILL, VIDEO_CALL, CROPPED_RAW
+  clear-stream-use-case-override clear the stream use case override
+  set-zoom-override <-1/0/1> enable or disable zoom override
+      Valid values -1: do not override, 0: override to OFF, 1: override to ZOOM
+  set-watchdog <VALUE> enables or disables the camera service watchdog
+      Valid values 0=disable, 1=enable
+  watch <start|stop|dump|print|clear> manages tag monitoring in connected clients
+  help print this message

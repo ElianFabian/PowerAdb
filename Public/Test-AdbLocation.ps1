@@ -1,31 +1,24 @@
 function Test-AdbLocation {
 
-    [OutputType([bool[]])]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId
+        [string] $DeviceId
     )
 
-    process {
-        foreach ($id in $DeviceId) {
-            $apiLevel = Get-AdbApiLevel -DeviceId $id -Verbose:$false
-            if ($apiLevel -ge 29) {
-                $locationMode = Get-AdbSetting -DeviceId $id -Namespace Secure -Key 'location_mode' -Verbose:$VerbosePreference
-                switch ($locationMode) {
-                    3 { $true }
-                    0 { $false }
-                }
-            }
-            elseif ($apiLevel -ge 17) {
-                $locationProviders = Get-AdbSetting -DeviceId $id -Namespace Secure -Key 'location_providers_allowed' -Verbose:$VerbosePreference `
-                | Select-Object -Last 1 # To avoid including the message 'WARNING: linker: libdvm.so has text relocations. This is wasting memory and is a security risk. Please fix.'
+    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17
 
-                $locationProviders -ceq 'gps,network' -or $locationProviders -ceq 'gps' -or $locationProviders -ceq 'network'
-            }
-            else {
-                Write-ApiLevelError -DeviceId $id -ApiLevelLessThan 17
-            }
+    $apiLevel = Get-AdbApiLevel -DeviceId $DeviceId -Verbose:$false
+    if ($apiLevel -ge 29) {
+        $locationMode = Get-AdbSetting -DeviceId $DeviceId -Namespace secure -Key 'location_mode' -Verbose:$VerbosePreference
+        switch ($locationMode) {
+            3 { $true }
+            0 { $false }
         }
+    }
+    elseif ($apiLevel -ge 17) {
+        $locationProviders = Get-AdbSetting -DeviceId $DeviceId -Namespace secure -Key 'location_providers_allowed' -Verbose:$VerbosePreference `
+        | Select-Object -Last 1 # To avoid including the message 'WARNING: linker: libdvm.so has text relocations. This is wasting memory and is a security risk. Please fix.'
+
+        $locationProviders -ceq 'gps,network' -or $locationProviders -ceq 'gps' -or $locationProviders -ceq 'network'
     }
 }
 

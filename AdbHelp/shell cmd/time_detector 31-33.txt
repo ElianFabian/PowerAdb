@@ -1,0 +1,14 @@
+Time Detector (time_detector) commands:
+  help
+    Print this help text.
+  is_auto_detection_enabled
+    Prints true/false according to the automatic time detection setting.
+
+This service is also affected by the following device_config flags in the system_time namespace:
+  time_detector_lower_bound_millis_override
+    The lower bound used to validate time suggestions when they are received.
+    Specified in milliseconds since the start of the Unix epoch.
+  time_detector_origin_priorities_override
+    A comma separated list of origins. See TimeDetectorStrategy for details.
+
+See "adb shell cmd device_config" for more information on setting flags.

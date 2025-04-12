@@ -1,0 +1,19 @@
+AmbientContextEvent commands:
+  help
+    Print this help text.
+
+  start-detection USER_ID PACKAGE_NAME: Starts AmbientContextEvent detection.
+  start-detection-wearable USER_ID PACKAGE_NAME: Starts AmbientContextEvent detection for wearable.
+  start-detection-mixed USER_ID PACKAGE_NAME:  Starts AmbientContextEvent detection for mixed events.
+  stop-detection USER_ID PACKAGE_NAME: Stops AmbientContextEvent detection.
+  get-last-status-code: Prints the latest request status code.
+  query-service-status USER_ID PACKAGE_NAME: Prints the service status code.
+  query-wearable-service-status USER_ID PACKAGE_NAME: Prints the service status code for wearable.
+  query-mixed-service-status USER_ID PACKAGE_NAME: Prints the service status code for mixed events.
+  get-bound-package USER_ID:     Print the bound package that implements the service.
+  set-temporary-service USER_ID [PACKAGE_NAME] [COMPONENT_NAME DURATION]
+    Temporarily (for DURATION ms) changes the service implementation.
+    To reset, call with just the USER_ID argument.
+  set-temporary-services USER_ID [FIRST_PACKAGE_NAME] [SECOND_PACKAGE_NAME] [COMPONENT_NAME DURATION]
+    Temporarily (for DURATION ms) changes the service implementation.
+    To reset, call with just the USER_ID argument.

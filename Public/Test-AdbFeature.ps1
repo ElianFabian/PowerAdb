@@ -1,10 +1,9 @@
 function Test-AdbFeature {
 
     [CmdletBinding()]
-    [OutputType([bool[]])]
+    [OutputType([bool])]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
 
         [Parameter(Mandatory)]
         [string[]] $Feature,
@@ -13,31 +12,24 @@ function Test-AdbFeature {
         [switch] $Fast
     )
 
-    process {
-        foreach ($id in $DeviceId) {
-            if ($Fast) {
-                $supportedFeatures = Get-AdbFeature -DeviceId $id -Verbose:$VerbosePreference
-                foreach ($featureName in $Feature) {
-                    if ($featureName.Contains(' ')) {
-                        Write-Error "Feature '$featureName' can't contain any space"
-                        continue
-                    }
+    $apiLevel = Get-AdbApiLevel -DeviceId $DeviceId -Verbose:$false
+    if ($Fast -or $apiLevel -lt 26) {
+        $supportedFeatures = Get-AdbFeature -DeviceId $DeviceId -Verbose:$VerbosePreference
+    }
 
-                    $featureName -in $supportedFeatures
-                }
-            }
-            else {
-                foreach ($featureName in $Feature) {
-                    if ($featureName.Contains(' ')) {
-                        Write-Error "Feature '$featureName' can't contain any space"
-                        continue
-                    }
+    foreach ($featureName in $Feature) {
+        if ($featureName.Contains(' ')) {
+            Write-Error "Feature '$featureName' can't contain any space"
+            continue
+        }
 
-                    $result = Invoke-AdbExpression -DeviceId $id -Command "shell pm has-feature $featureName" -Verbose:$VerbosePreference
+        if ($Fast -or $apiLevel -lt 26) {
+            $featureName -in $supportedFeatures
+        }
+        else {
+            $result = Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pm has-feature '$featureName'" -Verbose:$VerbosePreference
 
-                    [bool]::Parse($result)
-                }
-            }
+            [bool]::Parse($result)
         }
     }
 }

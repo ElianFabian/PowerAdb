@@ -1,0 +1,9 @@
+UsageStats service (usagestats) commands:
+help
+    Print this help text.
+
+clear-last-used-timestamps PACKAGE_NAME [-u | --user USER_ID]
+    Clears the last used timestamps for the given package.
+
+delete-package-data PACKAGE_NAME [-u | --user USER_ID]
+    Deletes all the usage stats for the given package.

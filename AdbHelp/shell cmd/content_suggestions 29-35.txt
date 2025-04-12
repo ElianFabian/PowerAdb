@@ -1,0 +1,13 @@
+ContentSuggestionsManagerService commands:
+  help
+    Prints this help text.
+
+  set temporary-service USER_ID [COMPONENT_NAME DURATION]
+    Temporarily (for DURATION ms) changes the service implementation.
+    To reset, call with just the USER_ID argument.
+
+  set default-service-enabled USER_ID [true|false]
+    Enable / disable the default service for the user.
+
+  get default-service-enabled USER_ID
+    Checks whether the default service is enabled for the user.

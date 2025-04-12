@@ -1,0 +1,72 @@
+Telephony Commands:
+  help
+    Print this help text.
+  ims
+    IMS Commands.
+  emergency-number-test-mode
+    Emergency Number Test Mode Commands.
+  data
+    Data Test Mode Commands.
+  cc
+    Carrier Config Commands.
+IMS Commands:
+  ims set-ims-service [-s SLOT_ID] (-c | -d | -f) PACKAGE_NAME
+    Sets the ImsService defined in PACKAGE_NAME to to be the bound
+    ImsService. Options are:
+      -s: the slot ID that the ImsService should be bound for. If no option
+          is specified, it will choose the default voice SIM slot.
+      -c: Override the ImsService defined in the carrier configuration.
+      -d: Override the ImsService defined in the device overlay.
+      -f: Set the feature that this override if for, if no option is
+          specified, the new package name will be used for all features.
+  ims get-ims-service [-s SLOT_ID] [-c | -d]
+    Gets the package name of the currently defined ImsService.
+    Options are:
+      -s: The SIM slot ID for the registered ImsService. If no option
+          is specified, it will choose the default voice SIM slot.
+      -c: The ImsService defined as the carrier configured ImsService.
+      -c: The ImsService defined as the device default ImsService.
+      -f: The feature type that the query will be requested for. If none is
+          specified, the returned package name will correspond to MMTEL.
+  ims enable [-s SLOT_ID]
+    enables IMS for the SIM slot specified, or for the default voice SIM slot
+    if none is specified.
+  ims disable [-s SLOT_ID]
+    disables IMS for the SIM slot specified, or for the default voice SIM
+    slot if none is specified.
+  ims conference-event-package [enable/disable]
+    enables or disables handling or network conference event package data.
+Emergency Number Test Mode Commands:
+  emergency-number-test-mode
+    Add(-a), Clear(-c), Print (-p) or Remove(-r) the emergency number list in the test mode
+      -a <emergency number address>: add an emergency number address for the test mode, only allows '0'-'9', '*', '#' or '+'.
+      -c: clear the emergency number list in the test mode.
+      -r <emergency number address>: remove an existing emergency number address added by the test mode, only allows '0'-'9', '*', '#' or '+'.
+      -p: get the full emergency number list in the test mode.
+Mobile Data Test Mode Commands:
+  data enable: enable mobile data connectivity
+  data disable: disable mobile data connectivity
+Carrier Config Commands:
+  cc get-value [-s SLOT_ID] [KEY]
+    Print carrier config values.
+    Options are:
+      -s: The SIM slot ID to read carrier config value for. If no option
+          is specified, it will choose the default voice SIM slot.
+    KEY: The key to the carrier config value to print. All values are printed
+         if KEY is not specified.
+  cc set-value [-s SLOT_ID] [-p] KEY [NEW_VALUE]
+    Set carrier config KEY to NEW_VALUE.
+    Options are:
+      -s: The SIM slot ID to set carrier config value for. If no option
+          is specified, it will choose the default voice SIM slot.
+      -p: Value will be stored persistent
+    NEW_VALUE specifies the new value for carrier config KEY. Null will be
+      used if NEW_VALUE is not set. Strings should be encapsulated with
+      quotation marks. Spaces needs to be escaped. Example: "Hello\ World"
+      Separate items in arrays with space . Example: "item1" "item2"
+  cc clear-values [-s SLOT_ID]
+    Clear all carrier override values that has previously been set
+    with set-value
+    Options are:
+      -s: The SIM slot ID to clear carrier config values for. If no option
+          is specified, it will choose the default voice SIM slot.

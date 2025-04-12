@@ -1,0 +1,7 @@
+Connectivity service commands:
+  help
+    Print this help text.
+  airplane-mode [enable|disable]
+    Turn airplane mode on or off.
+  airplane-mode
+    Get airplane mode.

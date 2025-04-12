@@ -2,10 +2,8 @@
 function New-AdbItem {
 
     [CmdletBinding(SupportsShouldProcess)]
-    [OutputType([string[]])]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
 
         [Parameter(Mandatory)]
         [string] $LiteralRemotePath,
@@ -18,33 +16,27 @@ function New-AdbItem {
         [switch] $Force
     )
 
-    begin {
-        if ($RunAs) {
-            $runAsCommand = " run-as '$RunAs'"
-        }
-
-        $sanitizedValue = ConvertTo-ValidAdbStringArgument $Value
+    if ($RunAs) {
+        $runAsCommand = " run-as '$RunAs'"
     }
 
-    process {
-        foreach ($id in $DeviceId) {
-            switch ($Type) {
-                'File' {
-                    if (($Force -or -not (TestItem -DeviceId $id -LiteralRemotePath $LiteralRemotePath))) {
-                        Invoke-AdbExpression -DeviceId $id -Command "shell$runAsCommand echo $sanitizedValue ``>`` '$LiteralRemotePath'"  -Verbose:$VerbosePreference
-                    }
-                    else {
-                        Write-Error "File '$LiteralRemotePath' already exists on device with id '$id'." -Category ResourceExists
-                    }
-                }
-                'Directory' {
-                    if ($Force -or -not (TestItem -DeviceId $id -LiteralRemotePath $LiteralRemotePath)) {
-                        Invoke-AdbExpression -DeviceId $id -Command "shell$runAsCommand mkdir '$LiteralRemotePath'" -Verbose:$VerbosePreference
-                    }
-                    else {
-                        Write-Error "Directory '$LiteralRemotePath' already exists on device with id '$id'." -Category ResourceExists
-                    }
-                }
+    $sanitizedValue = ConvertTo-ValidAdbStringArgument $Value
+
+    switch ($Type) {
+        'File' {
+            if (($Force -or -not (TestItem -DeviceId $DeviceId -LiteralRemotePath $LiteralRemotePath))) {
+                Invoke-AdbExpression -DeviceId $DeviceId -Command "shell$runAsCommand echo $sanitizedValue ``>`` '$LiteralRemotePath'" -Verbose:$VerbosePreference
+            }
+            else {
+                Write-Error "File '$LiteralRemotePath' already exists on device with id '$DeviceId'." -Category ResourceExists
+            }
+        }
+        'Directory' {
+            if ($Force -or -not (TestItem -DeviceId $DeviceId -LiteralRemotePath $LiteralRemotePath)) {
+                Invoke-AdbExpression -DeviceId $DeviceId -Command "shell$runAsCommand mkdir '$LiteralRemotePath'" -Verbose:$VerbosePreference
+            }
+            else {
+                Write-Error "Directory '$LiteralRemotePath' already exists on device with id '$DeviceId'." -Category ResourceExists
             }
         }
     }

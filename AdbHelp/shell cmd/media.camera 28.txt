@@ -1,0 +1,5 @@
+Camera service commands:
+  get-uid-state <PACKAGE> gets the uid state
+  set-uid-state <PACKAGE> <active|idle> overrides the uid state
+  reset-uid-state <PACKAGE> clears the uid state override
+  help print this message

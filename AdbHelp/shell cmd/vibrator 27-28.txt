@@ -1,0 +1,13 @@
+Vibrator commands:
+  help
+    Prints this help text.
+
+  vibrate duration [description]
+    Vibrates for duration milliseconds; ignored when device is on DND
+    (Do Not Disturb) mode.
+
+
+
+
+
+# TODO: Maybe the behavior of ignore when device is on DND is on API 26, that way we could only have one file.

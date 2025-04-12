@@ -1,20 +1,17 @@
 function Test-AdbPackageEnabled {
 
+    [OutputType([bool[]])]
+    [CmdletBinding()]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
 
         [Parameter(Mandatory)]
         [string[]] $PackageName
     )
 
-    process {
-        foreach ($id in $DeviceId) {
-            $disabledPackages = Get-AdbPackage -DeviceId $id -FilterBy Disabled -Verbose:$false
+    $disabledPackages = Get-AdbPackage -DeviceId $DeviceId -FilterBy Disabled -Verbose:$false
 
-            foreach ($package in $PackageName) {
-                $package -notin $disabledPackages
-            }
-        }
+    foreach ($package in $PackageName) {
+        $package -notin $disabledPackages
     }
 }

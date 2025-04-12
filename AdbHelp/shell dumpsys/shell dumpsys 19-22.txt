@@ -1,0 +1,8 @@
+### This help is not real, is based on testing on emulators.
+
+usage: dumpsys
+         To dump all services.
+or:
+       dumpsys [-l | SERVICE [ARGS]]
+         -l: only list services, do not dump them
+         SERVICE [ARGS]: dumps only service SERVICE, optionally passing ARGS to it

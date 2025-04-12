@@ -1,0 +1,34 @@
+Companion Device Manager (companiondevice) commands:
+  help
+      Print this help text.
+  list USER_ID
+      List all Associations for a user.
+  associate USER_ID PACKAGE MAC_ADDRESS
+      Create a new Association.
+  disassociate USER_ID PACKAGE MAC_ADDRESS
+      Remove an existing Association.
+  clear-association-memory-cache
+      Clear the in-memory association cache and reload all association
+      information from persistent storage. USE FOR DEBUGGING PURPOSES ONLY.
+      USE FOR DEBUGGING AND/OR TESTING PURPOSES ONLY.
+  simulate-device-appeared ASSOCIATION_ID
+      Make CDM act as if the given companion device has appeared.
+      I.e. bind the associated companion application's
+      CompanionDeviceService(s) and trigger onDeviceAppeared() callback.
+      The CDM will consider the devices as present for 60 seconds and then
+      will act as if device disappeared, unless 'simulate-device-disappeared'
+      or 'simulate-device-appeared' is called again before 60 seconds run out.
+      USE FOR DEBUGGING AND/OR TESTING PURPOSES ONLY.
+  simulate-device-disappeared ASSOCIATION_ID
+      Make CDM act as if the given companion device has disappeared.
+      I.e. unbind the associated companion application's
+      CompanionDeviceService(s) and trigger onDeviceDisappeared() callback.
+      NOTE: This will only have effect if 'simulate-device-appeared' was
+      invoked for the same device (same ASSOCIATION_ID) no longer than
+      60 seconds ago.
+      USE FOR DEBUGGING AND/OR TESTING PURPOSES ONLY.
+  remove-inactive-associations
+      Remove self-managed associations that have not been active
+      for a long time (90 days or as configured via
+      "debug.cdm.cdmservice.cleanup_time_window" system property).
+      USE FOR DEBUGGING AND/OR TESTING PURPOSES ONLY.

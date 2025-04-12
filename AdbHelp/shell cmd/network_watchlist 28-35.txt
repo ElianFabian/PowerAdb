@@ -1,0 +1,7 @@
+Network watchlist manager commands:
+  help
+    Print this help text.
+  set-test-config your_watchlist_config.xml
+    Set network watchlist test config file.
+  force-generate-report
+    Force generate watchlist test report.

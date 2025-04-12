@@ -1,0 +1,4 @@
+Control NFC functions
+
+usage: svc nfc [enable|disable]
+         Turn NFC on or off.

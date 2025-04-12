@@ -1,0 +1,10 @@
+OnDeviceIntelligenceShellCommand commands:
+  help
+    Print this help text.
+
+  set-temporary-services [IntelligenceServiceComponentName] [InferenceServiceComponentName] [DURATION]
+    Temporarily (for DURATION ms) changes the service implementations.
+    To reset, call without any arguments.
+  get-services To get the names of services that are currently being used.
+  set-model-broadcasts [ModelLoadedBroadcastKey] [ModelUnloadedBroadcastKey] [ReceiverPackageName] [DURATION] To set the names of broadcast intent keys that are to be emitted for cts tests.
+  set-deviceconfig-namespace [DeviceConfigNamespace] [DURATION] To set the device config namespace to use for cts tests.

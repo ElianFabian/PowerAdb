@@ -1,0 +1,32 @@
+Overlay manager (overlay) commands:
+  help
+    Print this help text.
+  dump [--verbose] [--user USER_ID] [[FIELD] PACKAGE]
+    Print debugging information about the overlay manager.
+    With optional parameter PACKAGE, limit output to the specified
+    package. With optional parameter FIELD, limit output to
+    the value of that SettingsItem field. Field names are
+    case insensitive and out.println the m prefix can be omitted,
+    so the following are equivalent: mState, mstate, State, state.
+  list [--user USER_ID] [PACKAGE]
+    Print information about target and overlay packages.
+    Overlay packages are printed in priority order. With optional
+    parameter PACKAGE, limit output to the specified package.
+  enable [--user USER_ID] PACKAGE
+    Enable overlay package PACKAGE.
+  disable [--user USER_ID] PACKAGE
+    Disable overlay package PACKAGE.
+  enable-exclusive [--user USER_ID] [--category] PACKAGE
+    Enable overlay package PACKAGE and disable all other overlays for
+    its target package. If the --category option is given, only disables
+    other overlays in the same category.
+  set-priority [--user USER_ID] PACKAGE PARENT|lowest|highest
+    Change the priority of the overlay PACKAGE to be just higher than
+    the priority of PACKAGE_PARENT If PARENT is the special keyword
+    'lowest', change priority of PACKAGE to the lowest priority.
+    If PARENT is the special keyword 'highest', change priority of
+    PACKAGE to the highest priority.
+  lookup [--verbose] PACKAGE-TO-LOAD PACKAGE:TYPE/NAME
+    Load a package and print the value of a given resource
+    applying the current configuration and enabled overlays.
+    For a more fine-grained alernative, use 'idmap2 lookup'.

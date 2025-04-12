@@ -1,0 +1,3 @@
+Enable/Disable Mobile Data Connectivity
+
+usage: svc data [enable|disable]

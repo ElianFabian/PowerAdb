@@ -1,0 +1,6 @@
+Input manager commands:
+  help
+    Print this help text.
+
+  setlayout IME_ID IME_SUPTYPE_HASH_CODE DEVICE_DESCRIPTOR VENDOR_ID PRODUCT_ID KEYBOARD_DESCRIPTOR
+    Sets a keyboard layout for a given IME subtype and input device pair

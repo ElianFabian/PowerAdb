@@ -1,0 +1,25 @@
+Control Usb state
+
+usage: svc usb setFunctions [function]
+         Set the current usb function. If function is blank, sets to charging.
+       svc usb setScreenUnlockedFunctions [function]
+         Sets the functions which, if the device was charging, become current onscreen unlock. If function is blank, turn off this feature.
+       svc usb getFunctions
+         Gets the list of currently enabled functions
+         possible values of [function] are any of 'mtp', 'ptp', 'rndis',
+         'midi', 'ncm (if supporting gadget hal v1.2)'
+       svc usb resetUsbGadget
+         Reset usb gadget
+       svc usb getUsbSpeed
+         Gets current USB speed
+         possible values of USB speed are any of 'low speed', 'full speed',
+         'high speed', 'super speed', 'super speed (10G)',
+         'super speed (20G)', or higher (future extension)
+       svc usb getGadgetHalVersion
+         Gets current Gadget Hal Version
+         possible values of Hal version are any of 'unknown', 'V1_0', 'V1_1',
+         'V1_2'
+       svc usb getUsbHalVersion
+         Gets current USB Hal Version
+         possible values of Hal version are any of 'unknown', 'V1_0', 'V1_1',
+         'V1_2', 'V1_3'

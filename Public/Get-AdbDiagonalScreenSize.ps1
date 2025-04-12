@@ -1,23 +1,18 @@
 function Get-AdbDiagonalScreenSize {
 
+    [OutputType([double])]
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId
+        [string] $DeviceId
     )
 
-    process {
-        foreach ($id in $DeviceId) {
-            $apiLevel = Get-AdbApiLevel -DeviceId $id
-            if ($apiLevel -lt 18) {
-                Write-ApiLevelError -DeviceId $id -ApiLevelLessThan 18
-                continue
-            }
+    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 18
 
-            $realScreenDensity = Get-AdbRealPhysicalDensity -DeviceId $id
-            $screenSize = Get-AdbRealScreenSize -DeviceId $id
+    $realScreenDensity = Get-AdbRealPhysicalDensity -DeviceId $DeviceId
+    $screenSize = Get-AdbRealScreenSize -DeviceId $DeviceId
 
-            [math]::Sqrt(($screenSize.Width / $realScreenDensity) * ($screenSize.Width / $realScreenDensity) + ($screenSize.Height / $realScreenDensity) * ($screenSize.Height / $realScreenDensity))
-        }
-    }
+    $widthInInch = $screenSize.Width / $realScreenDensity
+    $heightInInch = $screenSize.Height / $realScreenDensity
+
+    return [math]::Sqrt($widthInInch * $widthInInch + $heightInInch * $heightInInch)
 }

@@ -1,15 +1,15 @@
 function Get-AdbApiLevel {
 
     [CmdletBinding()]
-    [OutputType([uint32[]])]
+    [OutputType([int])]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId
+        [string] $DeviceId
     )
 
-    process {
-        foreach ($id in $DeviceId) {
-            Get-AdbProperty -DeviceId $id -Name 'ro.build.version.sdk' -Verbose:$VerbosePreference 2> $null
-        }
+    $result = Get-AdbProperty -DeviceId $DeviceId -Name 'ro.build.version.sdk' -Verbose:$VerbosePreference
+    if ([string]::IsNullOrEmpty($result.Trim())) {
+        return $null
     }
+
+    [int] $result
 }

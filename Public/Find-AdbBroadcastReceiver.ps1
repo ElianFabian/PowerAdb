@@ -3,31 +3,46 @@ function Find-AdbBroadcastReceiver {
     [OutputType([string[]])]
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
         [string] $DeviceId,
 
         [AllowNull()]
-        [Nullable[uint32]] $UserId,
+        [object] $UserId,
 
         [Parameter(Mandatory)]
-        [PSCustomObject] $Intent
+        [PSCustomObject] $Intent,
+
+        [switch] $Raw
     )
 
-    begin {
-        if ($null -ne $UserId) {
-            $userArg = " --user $UserId"
-        }
-        $intentArgs = $Intent.ToAdbArguments()
+    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 24
+
+    Assert-ValidIntent -DeviceId $DeviceId -Intent $Intent
+
+    $user = Resolve-AdbUser -DeviceId $DeviceId -UserId $UserId
+    if ($null -ne $user) {
+        $userArg = " --user $user"
     }
 
-    process {
-        foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $id -Command "shell pm query-services --brief --components $userArg$intentArgs" -Verbose:$VerbosePreference
+    $intentArgs = $Intent.ToAdbArguments($DeviceId)
+
+    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pm query-receivers --brief --components$userArg$intentArgs" -Verbose:$VerbosePreference `
+    | ForEach-Object {
+        if ('No receivers found' -eq $_) {
+            return $null
+        }
+        if ('Error: Could not access the Package Manager.  Is the system running?' -eq $_) {
+            Write-Error $_ -ErrorAction Stop
+        }
+
+        if ($Raw) {
+            $_
+        }
+        else {
+            $package, $component = $_.Split('/')
+            [PSCustomObject]@{
+                PackageName        = $package
+                ComponentClassName = $component
+            }
         }
     }
 }
-
-# TODO: Add support for --query-flags
-# query-receivers [--brief] [--components] [--query-flags FLAGS]
-#      [--user USER_ID] INTENT
-#   Prints all broadcast receivers that can handle the given INTENT.

@@ -1,0 +1,7 @@
+Account manager service commands:
+  help
+    Print this help text.
+  set-bind-instant-service-allowed [--user <USER_ID> (current user if not specified)] true|false
+    Set whether binding to services provided by instant apps is allowed.
+  get-bind-instant-service-allowed [--user <USER_ID> (current user if not specified)]
+    Get whether binding to services provided by instant apps is allowed.

@@ -1,0 +1,6 @@
+Status bar commands:
+  help
+    Print this help text.
+
+  get-permissions <authority>
+    List the pkgs that have permission to an authority.

@@ -2,38 +2,25 @@ function Stop-AdbService {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
+        [string] $DeviceId,
+
+        [AllowNull()]
+        [object] $UserId,
+
         [Parameter(Mandatory)]
-        [string[]] $DeviceId,
-
-        [Parameter(Mandatory, ParameterSetName = 'Intent')]
-        [PSCustomObject] $Intent,
-
-        [Parameter(Mandatory, ParameterSetName = 'ComponentName')]
-        [string] $PackageName,
-
-        [Parameter(Mandatory, ParameterSetName = 'ComponentName')]
-        [string] $ServiceName
+        [PSCustomObject] $Intent
     )
 
-    begin {
-        switch ($PSCmdlet.ParameterSetName) {
-            'Intent' {
-                $adbArgs = $Intent.ToAdbArguments()
-            }
-            'ComponentName' {
-                $adbArgs = "-n '$PackageName/$ServiceName'"
-            }
-        }
+    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 19
+
+    $user = Resolve-AdbUser -DeviceId $DeviceId -UserId $UserId
+    if ($null -ne $user) {
+        $userArg = " --user $user"
     }
 
-    process {
-        foreach ($id in $DeviceId) {
-            $apiLevel = Get-AdbApiLevel -DeviceId $id -Verbose:$false
-            if ($apiLevel -lt 19) {
-                Write-ApiLevelError -DeviceId $id -ApiLevelLessThan 19
-                continue
-            }
-            Invoke-AdbExpression -DeviceId $id -Command "shell am stopservice $adbArgs" -Verbose:$VerbosePreference
-        }
-    }
+    Assert-ValidIntent -DeviceId $DeviceId -Intent $Intent
+
+    $intentArgs = $Intent.ToAdbArguments($DeviceId)
+
+    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell am stopservice$userArg$intentArgs" -Verbose:$VerbosePreference
 }

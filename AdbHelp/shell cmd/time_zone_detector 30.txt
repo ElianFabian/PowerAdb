@@ -1,0 +1,23 @@
+Time Zone Detector (time_zone_detector) commands:
+  help
+    Print this help text.
+  suggest_telephony_time_zone
+    --suggestion <telephony suggestion opts>
+  suggest_manual_time_zone
+    --suggestion <manual suggestion opts>
+
+Manual suggestion options:
+  --zone_id <Olson ID>
+
+See android.app.timezonedetector.ManualTimeZoneSuggestion for more information
+
+Telephony suggestion options:
+  --slot_index <number>
+  To withdraw a previous suggestion:
+    [--zone_id "_"]
+  To make a new suggestion:
+    --zone_id <Olson ID>
+    --quality <single|multiple_same|multiple_different>
+    --match_type <emulator|country_with_offset|country|test_network>
+
+See android.app.timezonedetector.TelephonyTimeZoneSuggestion for more information

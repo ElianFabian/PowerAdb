@@ -1,0 +1,14 @@
+usage: cmd remote_provisioning SUBCOMMAND [ARGS]
+help
+  Show this message.
+dump
+  Dump service diagnostics.
+list
+  List the names of the IRemotelyProvisionedComponent instances.
+csr [--challenge CHALLENGE] NAME
+  Generate and print a base64-encoded CSR from the named
+  IRemotelyProvisionedComponent. A base64-encoded challenge can be provided,
+  or else it defaults to an empty challenge.
+certify NAME
+  Output the PEM-encoded certificate chain provisioned for the named
+  IRemotelyProvisionedComponent.

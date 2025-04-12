@@ -1,0 +1,19 @@
+VoiceInteraction Service (voiceinteraction) commands:
+  help
+    Prints this help text.
+
+  show
+    Shows a session for the active service
+
+  hide
+    Hides the current session
+
+  disable [true|false]
+    Temporarily disable (when true) service
+
+  restart-detection
+    Force a restart of a hotword detection service
+
+  set-debug-hotword-logging [true|false]
+    Temporarily enable or disable debug logging for hotword result.
+    The debug logging will be reset after one hour from last enable.

@@ -3,11 +3,8 @@ function Get-AdbSystemTimeZone {
     [CmdletBinding()]
     [OutputType([string[]])]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId
+        [string] $DeviceId
     )
 
-    process {
-        $DeviceId | Get-AdbProperty -Name 'persist.sys.timezone' -Verbose:$VerbosePreference
-    }
+    Get-AdbProperty -DeviceId $DeviceId -Name 'persist.sys.timezone' -Verbose:$VerbosePreference
 }

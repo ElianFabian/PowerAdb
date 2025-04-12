@@ -1,0 +1,22 @@
+About:
+  Test Harness Mode is a mode that the device can be placed in to prepare
+  the device for running UI tests. The device is placed into this mode by
+  first wiping all data from the device, preserving ADB keys.
+
+  By default, the following settings are configured:
+    * Package Verifier is disabled
+    * Stay Awake While Charging is enabled
+    * OTA Updates are disabled
+    * Auto-Sync for accounts is disabled
+
+  Other apps may configure themselves differently in Test Harness Mode by
+  checking ActivityManager.isRunningInUserTestHarness()
+
+Test Harness Mode commands:
+  help
+    Print this help text.
+
+  enable|restore
+    Erase all data from this device and enable Test Harness Mode,
+    preserving the stored ADB keys currently on the device and toggling
+    settings in a way that are conducive to Instrumentation testing.

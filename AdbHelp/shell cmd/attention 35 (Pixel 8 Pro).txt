@@ -1,0 +1,28 @@
+Attention commands:
+  setTestableAttentionService <service_package>: Bind to a custom implementation of attention service
+  ---<service_package>:
+       := Package containing the Attention Service implementation to bind to
+  ---returns:
+       := true, if was bound successfully
+       := false, if was not bound successfully
+  clearTestableAttentionService: Undo custom bindings. Revert to previous behavior
+  getAttentionServiceComponent: Get the current service component string
+  ---returns:
+       := If valid, the component string (in shorten form) for the currently bound service.
+       := else, empty string
+  call checkAttention: Calls check attention
+  ---returns:
+       := true, if the call was successfully dispatched to the service implementation. (to see the result, call getLastTestCallbackCode)
+       := false, otherwise
+  call cancelCheckAttention: Cancels check attention
+  call onStartProximityUpdates: Calls onStartProximityUpdates
+  ---returns:
+       := true, if the request was successfully dispatched to the service implementation. (to see the result, call getLastTestProximityUpdateCallbackCode)
+       := false, otherwise
+  call onStopProximityUpdates: Cancels proximity updates
+  getLastTestCallbackCode
+  ---returns:
+       := An integer, representing the last callback code received from the bounded implementation. If none, it will return -1
+  getLastTestProximityUpdateCallbackCode
+  ---returns:
+       := A double, representing the last proximity value received from the bounded implementation. If none, it will return -1.0

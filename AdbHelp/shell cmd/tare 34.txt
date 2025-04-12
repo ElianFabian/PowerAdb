@@ -1,0 +1,11 @@
+TARE commands:
+  help
+    Print this help text.
+  clear-vip
+    Clears all VIP settings resulting from previous calls using `set-vip` and
+    resets them all to default.
+  set-vip <USER_ID> <PACKAGE> <true|false|default>
+    Designate the app as a Very Important Package or not. A VIP is allowed to
+    do as much work as it wants, regardless of TARE state.
+    The user ID must be an explicit user ID. USER_ALL, CURRENT, etc. are not
+    supported.

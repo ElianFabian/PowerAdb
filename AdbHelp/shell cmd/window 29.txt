@@ -1,0 +1,20 @@
+Window manager (window) commands:
+  help
+      Print this help text.
+  size [reset|WxH|WdpxHdp] [-d DISPLAY_ID]
+    Return or override display size.
+    width and height in pixels unless suffixed with 'dp'.
+  density [reset|DENSITY] [-d DISPLAY_ID]
+    Return or override display density.
+  folded-area [reset|LEFT,TOP,RIGHT,BOTTOM]
+    Return or override folded area.
+  overscan [reset|LEFT,TOP,RIGHT,BOTTOM] [-d DISPLAY ID]
+    Set overscan area for display.
+  scaling [off|auto] [-d DISPLAY_ID]
+    Set display scaling mode.
+  dismiss-keyguard
+    Dismiss the keyguard, prompting user for auth if necessary.
+  set-user-rotation [free|lock] [-d DISPLAY_ID] [rotation]
+    Set user rotation mode and user rotation.
+  set-fix-to-user-rotation [-d DISPLAY_ID] [enabled|disabled]
+    Enable or disable rotating display for app requested orientation.

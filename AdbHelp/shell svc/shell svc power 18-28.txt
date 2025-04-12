@@ -1,0 +1,8 @@
+Control the power manager
+
+usage: svc power stayon [true|false|usb|ac|wireless]
+         Set the 'keep awake while plugged in' setting.
+       svc power reboot [reason]
+         Perform a runtime shutdown and reboot device with specified reason.
+       svc power shutdown
+         Perform a runtime shutdown and power off the device.

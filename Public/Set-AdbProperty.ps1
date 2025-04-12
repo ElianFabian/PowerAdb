@@ -2,29 +2,23 @@ function Set-AdbProperty {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
 
         [Parameter(Mandatory)]
         [string] $Name,
 
+        # Custom properties starts with 'debug.'
+        # New line characters are ignored
         [AllowEmptyString()]
         [Parameter(Mandatory)]
         [string] $Value
     )
 
-    begin {
-        if ($Name.Contains(" ")) {
-            Write-Error "Property name '$Name' can't contain space characters"
-            return
-        }
-
-        $sanitizedValue = ConvertTo-ValidAdbStringArgument $Value
+    if ($Name.Contains(" ")) {
+        Write-Error "Property name '$Name' can't contain space characters" -ErrorAction Stop
     }
 
-    process {
-        foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $id -Command "shell setprop $Name $sanitizedValue" -Verbose:$VerbosePreference
-        }
-    }
+    $sanitizedValue = ConvertTo-ValidAdbStringArgument $Value
+
+    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell setprop '$Name' $sanitizedValue" -Verbose:$VerbosePreference
 }

@@ -1,0 +1,1 @@
+Got a null BluetoothAdapter, is the system running?

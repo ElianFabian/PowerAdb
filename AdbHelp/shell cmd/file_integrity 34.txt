@@ -1,0 +1,7 @@
+File integrity service commands:
+  help
+    Print this help text.
+  append-cert path/to/cert.der
+    Add the DER-encoded certificate (only in debug builds)
+  remove-last-cert
+    Remove the last certificate in the key list (only in debug builds)

@@ -1,0 +1,16 @@
+Device Config (device_config) commands:
+  help
+      Print this help text.
+  get NAMESPACE KEY
+      Retrieve the current value of KEY from the given NAMESPACE.
+  put NAMESPACE KEY VALUE [default]
+      Change the contents of KEY to VALUE for the given NAMESPACE.
+      {default} to set as the default value.
+  delete NAMESPACE KEY
+      Delete the entry for KEY for the given NAMESPACE.
+  list [NAMESPACE]
+      Print all keys and values defined, optionally for the given NAMESPACE.
+  reset RESET_MODE [NAMESPACE]
+      Reset all flag values, optionally for a NAMESPACE, according to RESET_MODE.
+      RESET_MODE is one of {untrusted_defaults, untrusted_clear, trusted_defaults}
+      NAMESPACE limits which flags are reset if provided, otherwise all flags are reset

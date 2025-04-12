@@ -1,0 +1,12 @@
+AmbientContextEvent commands:
+  help
+    Print this help text.
+
+  start-detection USER_ID PACKAGE_NAME: Starts AmbientContextEvent detection.
+  stop-detection USER_ID PACKAGE_NAME: Stops AmbientContextEvent detection.
+  get-last-status-code: Prints the latest request status code.
+  query-service-status USER_ID PACKAGE_NAME: Prints the service status code.
+  get-bound-package USER_ID:     Print the bound package that implements the service.
+  set-temporary-service USER_ID [PACKAGE_NAME] [COMPONENT_NAME DURATION]
+    Temporarily (for DURATION ms) changes the service implementation.
+    To reset, call with just the USER_ID argument.

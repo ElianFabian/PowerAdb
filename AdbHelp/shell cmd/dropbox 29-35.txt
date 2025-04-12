@@ -1,0 +1,11 @@
+Dropbox manager service commands:
+  help
+    Print this help text.
+  set-rate-limit PERIOD
+    Sets low priority broadcast rate limit period to PERIOD ms
+  add-low-priority TAG
+    Add TAG to dropbox low priority list
+  remove-low-priority TAG
+    Remove TAG from dropbox low priority list
+  restore-defaults
+    restore dropbox settings to defaults

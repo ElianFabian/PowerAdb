@@ -1,0 +1,34 @@
+Audio manager commands:
+  help
+    Print this help text.
+
+  set-surround-format-enabled SURROUND_FORMAT IS_ENABLED
+    Enables/disabled the SURROUND_FORMAT based on IS_ENABLED
+  get-is-surround-format-enabled SURROUND_FORMAT
+    Returns if the SURROUND_FORMAT is enabled
+  set-encoded-surround-mode SURROUND_SOUND_MODE
+    Sets the encoded surround sound mode to SURROUND_SOUND_MODE
+  get-encoded-surround-mode
+    Returns the encoded surround sound mode
+  set-sound-dose-value
+    Sets the current sound dose value
+  get-sound-dose-value
+    Returns the current sound dose value
+  reset-sound-dose-timeout
+    Resets the sound dose timeout used for momentary exposure
+  set-ringer-mode NORMAL|SILENT|VIBRATE
+    Sets the Ringer mode to one of NORMAL|SILENT|VIBRATE
+  set-volume STREAM_TYPE VOLUME_INDEX
+    Sets the volume for STREAM_TYPE to VOLUME_INDEX
+  set-device-volume STREAM_TYPE VOLUME_INDEX NATIVE_DEVICE_TYPE
+    Sets for NATIVE_DEVICE_TYPE the STREAM_TYPE volume to VOLUME_INDEX
+  adj-mute STREAM_TYPE
+    mutes the STREAM_TYPE
+  adj-unmute STREAM_TYPE
+    unmutes the STREAM_TYPE
+  adj-volume STREAM_TYPE <RAISE|LOWER|MUTE|UNMUTE>
+    Adjusts the STREAM_TYPE volume given the specified direction
+  set-group-volume GROUP_ID VOLUME_INDEX
+    Sets the volume for GROUP_ID to VOLUME_INDEX
+  adj-group-volume GROUP_ID <RAISE|LOWER|MUTE|UNMUTE>
+    Adjusts the group volume for GROUP_ID given the specified direction

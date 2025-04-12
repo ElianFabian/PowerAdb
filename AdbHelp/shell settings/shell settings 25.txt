@@ -1,0 +1,7 @@
+usage:  settings [--user <USER_ID> | current] get namespace key
+        settings [--user <USER_ID> | current] put namespace key value
+        settings [--user <USER_ID> | current] delete namespace key
+        settings [--user <USER_ID> | current] list namespace
+
+'namespace' is one of {system, secure, global}, case-insensitive
+If '--user <USER_ID> | current' is not given, the operations are performed on the system user.

@@ -1,0 +1,12 @@
+Device storage monitor service (devicestoragemonitor) commands:
+  help
+    Print this help text.
+  force-low [-f]
+    Force storage to be low, freezing storage state.
+    -f: force a storage change broadcast be sent, prints new sequence.
+  force-not-low [-f]
+    Force storage to not be low, freezing storage state.
+    -f: force a storage change broadcast be sent, prints new sequence.
+  reset [-f]
+    Unfreeze storage state, returning to current real values.
+    -f: force a storage change broadcast be sent, prints new sequence.

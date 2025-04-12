@@ -1,0 +1,34 @@
+Accessibility service (accessibility) commands:
+  help
+    Print this help text.
+  set-bind-instant-service-allowed [--user <USER_ID>] true|false
+    Set whether binding to services provided by instant apps is allowed.
+  get-bind-instant-service-allowed [--user <USER_ID>]
+    Get whether binding to services provided by instant apps is allowed.
+  call-system-action <ACTION_ID>
+    Calls the system action with the given action id.
+  start-trace [-t LOGGING_TYPE [LOGGING_TYPE...]]
+    Start the debug tracing. If no option is present, full trace will be
+    generated. Options are:
+      -t: Only generate tracing for the logging type(s) specified here.
+          LOGGING_TYPE can be any one of below:
+            IAccessibilityServiceConnection
+            IAccessibilityServiceClient
+            IAccessibilityManager
+            IAccessibilityManagerClient
+            IAccessibilityInteractionConnection
+            IAccessibilityInteractionConnectionCallback
+            IRemoteMagnificationAnimationCallback
+            IWindowMagnificationConnection
+            IWindowMagnificationConnectionCallback
+            WindowManagerInternal
+            WindowsForAccessibilityCallback
+            MagnificationCallbacks
+            InputFilter
+            Gesture
+            AccessibilityService
+            PMBroadcastReceiver
+            UserBroadcastReceiver
+            FingerprintGesture
+  stop-trace
+    Stop the debug tracing.

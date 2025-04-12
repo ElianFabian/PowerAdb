@@ -1,0 +1,7 @@
+usage: input ...
+       input text <string>
+       input keyevent <key code number or name>
+       input [touchscreen|touchpad|touchnavigation] tap <x> <y>
+       input [touchscreen|touchpad|touchnavigation] swipe <x1> <y1> <x2> <y2> [duration(ms)]
+       input trackball press
+       input trackball roll <dx> <dy>

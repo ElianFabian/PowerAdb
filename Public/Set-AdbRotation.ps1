@@ -3,8 +3,7 @@ function Set-AdbRotation {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
 
         [ValidateSet(
             'Portrait',
@@ -14,20 +13,29 @@ function Set-AdbRotation {
             '0', '1', '2', '3'
         )]
         [Parameter(Mandatory)]
-        [string] $Rotation
+        [string] $Rotation,
+
+        [switch] $Force
     )
 
-    begin {
-        $rotationCode = switch ($Rotation) {
-            Portrait { 0 }
-            Landscape { 1 }
-            ReversePortrait { 2 }
-            ReverseLandscape { 3 }
-            default { $Rotation }
+    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17
+
+    if ($Force) {
+        Disable-AdbAutoRotate -DeviceId $DeviceId
+    }
+    else {
+        if (Test-AdbAutoRotate -DeviceId $DeviceId -Verbose:$false) {
+            Write-Warning "Can't set rotation if 'Auto-rotate' is enabled. Use -Force or disable it yourself."
         }
     }
 
-    process {
-        $DeviceId | Invoke-AdbExpression -Command "shell settings put system user_rotation $rotationCode" -Verbose:$VerbosePreference
+    $rotationCode = switch ($Rotation) {
+        'Portrait' { 0 }
+        'Landscape' { 1 }
+        'ReversePortrait' { 2 }
+        'ReverseLandscape' { 3 }
+        default { $Rotation }
     }
+
+    Set-AdbSetting -DeviceId $DeviceId -Namespace system -Key 'user_rotation' -Value $rotationCode -Verbose:$VerbosePreference
 }

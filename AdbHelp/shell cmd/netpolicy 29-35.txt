@@ -1,0 +1,32 @@
+Network policy manager (netpolicy) commands:
+  help
+    Print this help text.
+
+  add restrict-background-whitelist UID
+    Adds a UID to the whitelist for restrict background usage.
+  add restrict-background-blacklist UID
+    Adds a UID to the blacklist for restrict background usage.
+  add app-idle-whitelist UID
+    Adds a UID to the temporary app idle whitelist.
+  get restrict-background
+    Gets the global restrict background usage status.
+  list wifi-networks [true|false]
+    Lists all saved wifi networks and whether they are metered or not.
+    If a boolean argument is passed, filters just the metered (or unmetered)
+    networks.
+  list restrict-background-whitelist
+    Lists UIDs that are whitelisted for restrict background usage.
+  list restrict-background-blacklist
+    Lists UIDs that are blacklisted for restrict background usage.
+  remove restrict-background-whitelist UID
+    Removes a UID from the whitelist for restrict background usage.
+  remove restrict-background-blacklist UID
+    Removes a UID from the blacklist for restrict background usage.
+  remove app-idle-whitelist UID
+    Removes a UID from the temporary app idle whitelist.
+  set metered-network ID [undefined|true|false]
+    Toggles whether the given wi-fi network is metered.
+  set restrict-background BOOLEAN
+    Sets the global restrict background usage status.
+  set sub-plan-owner subId [packageName]
+    Sets the data plan owner package for subId.

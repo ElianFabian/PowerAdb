@@ -1,0 +1,6 @@
+Vibrator commands:
+  help
+    Prints this help text.
+
+  vibrate duration [description]
+    Vibrates for duration milliseconds.

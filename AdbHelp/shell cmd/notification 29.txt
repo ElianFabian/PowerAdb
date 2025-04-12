@@ -1,0 +1,14 @@
+usage: cmd notification SUBCMD [args]
+
+SUBCMDs:
+  allow_listener COMPONENT [user_id (current user if not specified)]
+  disallow_listener COMPONENT [user_id (current user if not specified)]
+  allow_assistant COMPONENT [user_id (current user if not specified)]
+  remove_assistant COMPONENT [user_id (current user if not specified)]
+  allow_dnd PACKAGE [user_id (current user if not specified)]
+  disallow_dnd PACKAGE [user_id (current user if not specified)]
+  suspend_package PACKAGE
+  unsuspend_package PACKAGE
+  reset_assistant_user_set [user_id (current user if not specified)]
+  get_approved_assistant [user_id (current user if not specified)]
+  post [--help | flags] TAG TEXT

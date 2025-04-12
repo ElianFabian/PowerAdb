@@ -3,8 +3,7 @@ function Start-AdbPackageProcessDeath {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
 
         [Parameter(Mandatory)]
         [string[]] $PackageName,
@@ -12,17 +11,13 @@ function Start-AdbPackageProcessDeath {
         [switch] $Force
     )
 
-    process {
-        foreach ($id in $DeviceId) {
-            foreach ($package in $PackageName) {
-                if ($Force) {
-                    $topActivity = Get-AdbTopActivity -DeviceId $id -Verbose:$false
-                    if ($topActivity.PackageName -eq $package) {
-                        Send-AdbKeyEvent -DeviceId $id -KeyCode HOME -Verbose:$VerbosePreference
-                    }
-                }
-                Invoke-AdbExpression -DeviceId $id -Command "shell am kill '$package'" -Verbose:$VerbosePreference
+    foreach ($package in $PackageName) {
+        if ($Force) {
+            $topActivity = Get-AdbTopActivity -DeviceId $DeviceId -Verbose:$false
+            if ($topActivity.PackageName -eq $package) {
+                Send-AdbKeyEvent -DeviceId $DeviceId -KeyCode HOME -Verbose:$VerbosePreference
             }
         }
+        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell am kill '$package'" -Verbose:$VerbosePreference
     }
 }

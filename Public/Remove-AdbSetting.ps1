@@ -2,40 +2,25 @@ function Remove-AdbSetting {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
 
         [Parameter(Mandatory)]
-        [ValidateSet("Global", "System", "Secure")]
+        [ValidateSet("global", "system", "secure")]
         [string] $Namespace,
 
         [Parameter(Mandatory)]
-        [string] $Key
+        [string[]] $Key
     )
 
-    begin {
-        $Key = [string] $PSBoundParameters['Key']
-        if ($Key.Contains(" ")) {
-            Write-Error "Key '$Key' can't contain space characters"
-            return
-        }
-
-        $namespaceLowercase = switch ($Namespace) {
-            "Global" { "global" }
-            "System" { "system" }
-            "Secure" { "secure" }
-        }
+    $Key = [string] $PSBoundParameters['Key']
+    if ($Key.Contains(" ")) {
+        Write-Error "Key '$Key' can't contain space characters"
+        return
     }
 
-    process {
-        foreach ($id in $DeviceId) {
-            $apiLevel = Get-AdbApiLevel -DeviceId $id -Verbose:$false
-            if ($apiLevel -lt 21) {
-                Write-ApiLevelError -DeviceId $id -ApiLevelLessThan 21
-                continue
-            }
+    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 21
 
-            Invoke-AdbExpression -DeviceId $id -Command "shell settings delete $namespaceLowercase $Key" -Verbose:$VerbosePreference
-        }
+    foreach ($k in $Key) {
+        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell settings delete $Namespace '$k'" -Verbose:$VerbosePreference
     }
 }

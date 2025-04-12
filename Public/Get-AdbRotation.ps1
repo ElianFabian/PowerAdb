@@ -2,29 +2,37 @@
 function Get-AdbRotation {
 
     [CmdletBinding()]
-    [OutputType([bool[]])]
+    [OutputType([string], [int])]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId,
+        [string] $DeviceId,
 
-        [switch] $AsCode
+        [switch] $AsCode,
+
+        [switch] $Force
     )
 
-    process {
-        $DeviceId `
-        | Invoke-AdbExpression -Command "shell settings get system user_rotation" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
-        | ForEach-Object {
-            if ($AsCode) {
-                [uint32] $_
-            }
-            else {
-                switch ($_) {
-                    '0' { 'Portrait' }
-                    '1' { 'Landscape' }
-                    '2' { 'ReversePortrait' }
-                    '3' { 'ReverseLandscape' }
-                }
-            }
+    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17
+
+    if ($Force) {
+        Disable-AdbAutoRotate -DeviceId $DeviceId
+    }
+    else {
+        if (Test-AdbAutoRotate -DeviceId $DeviceId -Verbose:$false) {
+            Write-Warning "Can't set rotation if 'Auto-rotate' is enabled. Use -Force or disable it yourself."
+        }
+    }
+
+    $result = Get-AdbSetting -DeviceId $DeviceId -Namespace system -Key 'user_rotation' -Verbose:$VerbosePreference
+
+    if ($AsCode) {
+        [int] $result
+    }
+    else {
+        switch ($result) {
+            '0' { 'Portrait' }
+            '1' { 'Landscape' }
+            '2' { 'ReversePortrait' }
+            '3' { 'ReverseLandscape' }
         }
     }
 }

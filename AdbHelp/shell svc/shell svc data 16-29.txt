@@ -1,0 +1,7 @@
+Control mobile data connectivity
+
+usage: svc data [enable|disable]
+         Turn mobile data on or off.
+
+       svc data prefer
+          Set mobile as the preferred data network

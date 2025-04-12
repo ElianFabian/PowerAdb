@@ -1,20 +1,20 @@
 function Get-AdbLogcat {
 
-    [CmdletBinding(DefaultParameterSetName = "Default")]
+    [CmdletBinding(DefaultParameterSetName = 'Default')]
     param (
-        [Parameter(Mandatory)]
         [string] $DeviceId,
 
         [ValidateSet(
-            "Main",
-            "System",
-            "Radio",
-            "Events",
-            "Crash",
-            "Kernel",
-            "Security"
+            'main',
+            'system',
+            'radio',
+            'events',
+            'all',
+            'crash',
+            'kernel',
+            'security'
         )]
-        [string] $Buffer,
+        [string[]] $Buffer,
 
         [switch] $LogsBeforeLastReboot,
 
@@ -23,52 +23,71 @@ function Get-AdbLogcat {
         [string] $ParentProcessId,
 
         [ValidateSet(
-            "Brief",
-            "Long",
-            "Process",
-            "Raw",
-            "Tag",
-            "Thread",
-            "ThreadTime",
-            "Time"
+            'brief',
+            'process',
+            'tag',
+            'thread',
+            'raw',
+            'time',
+            'threadTime',
+            'long'
         )]
-        [string] $Format,
+        [string] $FormatVerb = 'threadtime',
+
+        # TODO: Maybe add support for "<zone>"
+        [ValidateSet(
+            'color',
+            'epoch',
+            'monotonic',
+            'printable',
+            'uid',
+            'usec',
+            'UTC',
+            'year',
+            'zone',
+            'descriptive'
+        )]
+        [string[]] $FormatAdverd,
 
         [switch] $Dividers,
 
         [switch] $Binary,
 
-        [Parameter(ParameterSetName = "Default")]
-        [Parameter(ParameterSetName = "Last")]
-        [Parameter(ParameterSetName = "LastAt")]
-        [Parameter(ParameterSetName = "IgnoreOld")]
-        [Parameter(ParameterSetName = "Print")]
+        [switch] $Proto,
+
+        # TODO: Maybe add support for Logd control
+
+        [Parameter(ParameterSetName = 'Default"')]
+        [Parameter(ParameterSetName = 'Last"')]
+        [Parameter(ParameterSetName = 'LastAt"')]
+        [Parameter(ParameterSetName = 'IgnoreOld"')]
+        [Parameter(ParameterSetName = 'Print"')]
         [string] $Pattern,
 
-        [Parameter(ParameterSetName = "Last")]
+        [Parameter(ParameterSetName = 'Last')]
         [int] $Last,
 
         # Valid formats:
         # - MM-DD hh:mm:ss.mmm...
         # - YYYY-MM-DD hh:mm:ss.mmm...
         # - sssss.mmm...
-        [Parameter(ParameterSetName = "Print")]
-        [Parameter(ParameterSetName = "LastAt")]
-        [ValidatePattern(
-            "^\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+$|^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+$|^\d+\.\d+$"
-        )]
+        [Parameter(ParameterSetName = 'Print')]
+        [Parameter(ParameterSetName = 'LastAt')]
+        # [ValidatePattern(
+        #     '^\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+$|^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\.\d+$|^\d+\.\d+$'
+        # )]
         [string] $LastAt,
 
-        [Parameter(ParameterSetName = "Print")]
-        [Parameter(ParameterSetName = "IgnoreOld")]
+        [Parameter(ParameterSetName = 'Print')]
+        [Parameter(ParameterSetName = 'IgnoreOld')]
         [switch] $IgnoreOld,
 
-        [Parameter(ParameterSetName = "Print")]
-        [Parameter(ParameterSetName = "Last")]
-        [Parameter(ParameterSetName = "LastAt")]
+        [Parameter(ParameterSetName = 'Print')]
+        [Parameter(ParameterSetName = 'Last')]
+        [Parameter(ParameterSetName = 'LastAt')]
         [switch] $Block,
 
-        [Parameter(Mandatory, ParameterSetName = "Print")]
+        [Parameter(Mandatory, ParameterSetName = 'Print')]
         [int] $StopAtMatchCount,
 
         # Valid formats:
@@ -78,103 +97,124 @@ function Get-AdbLogcat {
         [string[]] $FilteredTag
     )
 
-    begin {
-        $bufferLowerCase = switch ($Buffer) {
-            "Main" { "main" }
-            "System" { "system" }
-            "Radio" { "radio" }
-            "Events" { "events" }
-            "Crash" { "crash" }
-            "Kernel" { "kernel" }
-            "Security" { "security" }
-            default { $null }
-        }
-        $formatLowerCase = switch ($Format) {
-            "Brief" { "brief" }
-            "Long" { "long" }
-            "Process" { "process" }
-            "Raw" { "raw" }
-            "Tag" { "tag" }
-            "Thread" { "thread" }
-            "ThreadTime" { "threadtime" }
-            "Time" { "time" }
-            default { $null }
-        }
-
-        if ($bufferLowerCase) {
-            $bufferArg = " --buffer=$bufferLowerCase"
-        }
-        if ($LogsBeforeLastReboot) {
-            $lastArg = " --last"
-        }
-        if ($ExitAfterDump) {
-            $dArg = " -d"
-        }
-        if ($ParentProcessId) {
-            $pidArg = " --pid=$ParentProcessId"
-        }
-        if ($Format) {
-            $formatArg = " --format=$formatLowerCase"
-        }
-        if ($Dividers) {
-            $dividersArg = " --dividers"
-        }
-        if ($Binary) {
-            $binaryArg = " --binary"
-        }
-        if ($Pattern) {
-            $regexArg = " --regex='$Pattern'"
-        }
-        if ($PSCmdlet.ParameterSetName -eq "Print") {
-            $maxCountArg = " --max-count=$StopAtMatchCount"
-            $printArg = " --print"
-        }
-
-        if ($Block) {
-            if ($Last) {
-                $countOrTimeFilterArg = " -T $Last"
-            }
-            elseif ($LastAt) {
-                $countOrTimeFilterArg = " -T '$LastAt'"
-            }
-        }
-        else {
-            if ($Last) {
-                $countOrTimeFilterArg = " -t $Last"
-            }
-            elseif ($LastAt) {
-                $countOrTimeFilterArg = " -t '$LastAt'"
-            }
-        }
-
-        if ($IgnoreOld) {
-            $currentDate = Get-Date -Format "yyyy-MM-dd HH:mm:ss.fff"
-            $countOrTimeFilterArg = " -T '$currentDate'"
-        }
-
-        if ($FilteredTag) {
-            $filterspec = " $($FilteredTag -join ' ') *:S"
-        }
-
-        $adbArgs = @(
-            $bufferArg,
-            $lastArg,
-            $dArg,
-            $pidArg,
-            $formatArg,
-            $dividersArg,
-            $binaryArg,
-            $regexArg,
-            $printArg,
-            $maxCountArg,
-            $countOrTimeFilterArg,
-            $filterspec
-        ) -join ""
+    if ('crash' -in $Buffer) {
+        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 21 -FeatureName "$($MyInvocation.MyCommand.Name) -Buffer 'Crash'"
+    }
+    if ($Last) {
+        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 21 -FeatureName "$($MyInvocation.MyCommand.Name) -Last"
+    }
+    if ($LastAt) {
+        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 21 -FeatureName "$($MyInvocation.MyCommand.Name) -LastAt"
+    }
+    if ($IgnoreOld) {
+        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 21 -FeatureName "$($MyInvocation.MyCommand.Name) -IgnoreOld"
+    }
+    if ($StopAtMatchCount) {
+        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 21 -FeatureName "$($MyInvocation.MyCommand.Name) -StopAtMatchCount"
+    }
+    if ($FormatAdverd) {
+        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 23 -FeatureName "$($MyInvocation.MyCommand.Name) -FormatAdverd"
+    }
+    if ($Dividers) {
+        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 23 -FeatureName "$($MyInvocation.MyCommand.Name) -Dividers"
+    }
+    if ($Pattern) {
+        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 23 -FeatureName "$($MyInvocation.MyCommand.Name) -Pattern"
+    }
+    if ($LogsBeforeLastReboot) {
+        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 23 -FeatureName "$($MyInvocation.MyCommand.Name) -LogsBeforeLastReboot"
+    }
+    if ($ParentProcessId) {
+        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 23 -FeatureName "$($MyInvocation.MyCommand.Name) -ParentProcessId"
+    }
+    if ('descriptive' -in $FormatVerb) {
+        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 26 -FeatureName "$($MyInvocation.MyCommand.Name) -FormatAdverd 'descriptive'"
+    }
+    if ('kernel' -in $Buffer) {
+        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 29 -FeatureName "$($MyInvocation.MyCommand.Name) -Buffer 'Kernel'"
+    }
+    if ('security' -in $Buffer) {
+        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 29 -FeatureName "$($MyInvocation.MyCommand.Name) -Buffer 'Security'"
+    }
+    if ($Proto) {
+        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 35 -FeatureName "$($MyInvocation.MyCommand.Name) -Proto"
     }
 
-    process {
-        foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $DeviceId -Command "logcat$adbArgs" -Verbose:$VerbosePreference
+    if ('all' -in $Buffer) {
+        $apiLevel = Get-AdbApiLevel -DeviceId $DeviceId -Verbose:$false
+
+        $bufferInternal = @('main', 'system', 'radio', 'events')
+
+        if ($apiLevel -ge 21) {
+            $bufferInternal += 'crash'
+        }
+        if ($apiLevel -ge 29) {
+            $bufferInternal += @('kernel', 'security')
         }
     }
+    else {
+        $bufferInternal = $Buffer
+    }
+
+    $bufferInternal = $bufferInternal | Select-Object -Unique
+
+    $adbArgSb = [System.Text.StringBuilder]::new()
+
+    if ($bufferInternal) {
+        $adbArgSb.Append(" $(($bufferInternal | ForEach-Object { "-b $_" }) -join ' ')")
+    }
+    if ($ExitAfterDump) {
+        $adbArgSb.Append(" -d")
+    }
+    if ($LogsBeforeLastReboot) {
+        $adbArgSb.Append(" --last")
+    }
+    if ($ParentProcessId) {
+        $adbArgSb.Append(" --pid=$ParentProcessId")
+    }
+    if ($FormatVerb -or $FormatAdverd) {
+        $formatArg = ($FormatVerb + $FormatAdverd) -join ','
+        $adbArgSb.Append(" -v $formatArg")
+    }
+    if ($Dividers) {
+        $adbArgSb.Append(" --dividers")
+    }
+    if ($Binary) {
+        $adbArgSb.Append(" -B")
+    }
+    if ($Proto) {
+        $adbArgSb.Append(" --proto")
+    }
+    if ($Pattern) {
+        $adbArgSb.Append(" --regex=$(ConvertTo-ValidAdbStringArgument $Pattern)")
+    }
+    if ($PSCmdlet.ParameterSetName -eq "Print") {
+        $adbArgSb.Append(" --print")
+        $adbArgSb.Append(" --max-count=$StopAtMatchCount")
+    }
+    if ($Block) {
+        if ($Last) {
+            $adbArgSb.Append(" -T $Last")
+        }
+        elseif ($LastAt) {
+            $adbArgSb.Append(" -T '$LastAt'")
+        }
+    }
+    else {
+        if ($Last) {
+            $adbArgSb.Append(" -t $Last")
+        }
+        elseif ($LastAt) {
+            $adbArgSb.Append(" -t '$LastAt'")
+        }
+    }
+    if ($IgnoreOld) {
+        $currentDate = Get-Date -Format 'yyyy-MM-dd HH:mm:ss.fff'
+        $adbArgSb.Append(" -T '$currentDate'")
+    }
+    if ($FilteredTag) {
+        $adbArgSb.Append(" $($FilteredTag -join ' ') *:S")
+    }
+
+    Invoke-AdbExpression -DeviceId $DeviceId -Command "logcat$adbArgSb" -Verbose:$VerbosePreference
 }

@@ -1,0 +1,28 @@
+eboot readiness (reboot_readiness) commands:
+    help:
+        Prints this help text.
+    check-interactivity-state:
+        Checks interactivity state.
+    check-app-activity-state [--list-blocking]:
+        Checks background app activity state. If --list-blocking is passed, a
+        list of blocking uids will be printed if any exist.
+    check-subsystems-state [--list-blocking]:
+        Checks subsystems state. If --list-blocking is passed, a list of
+        blocking subsystems will be printed if any exist.
+    start-readiness-checks [--timeout-secs <TIMEOUT-SECS>]:
+        Performs reboot readiness checks for either 5 minutes, or the
+        number of seconds declared by TIMEOUT-SECS. Prints the new reboot
+        readiness state along with a timestamp whenever the state changes.
+
+Additional flags that may be passed:
+    --polling-interval-ms <POLLING-INTERVAL-MS>:
+        How frequently the reboot readiness state is polled, in milliseconds.
+    --interactivity-threshold-ms <INTERACTIVITY-THRESHOLD-MS>:
+        How long the device must not have been interacted with before
+        being deemed ready to reboot.
+    --disable-interactivity-checks:
+        Disable interactivity checks.
+    --disable-subsystems-check:
+        Disable subsystems checks:
+    --disable-app-activity-check:
+        Disable app activity checks.

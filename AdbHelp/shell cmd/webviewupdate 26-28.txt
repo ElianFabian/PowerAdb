@@ -1,0 +1,17 @@
+WebView updater commands:
+  help
+    Print this help text.
+
+  enable-redundant-packages
+    Allow a fallback package to be installed and enabled even when a
+    more-preferred package is available. This command is useful when testing
+    fallback packages.
+  disable-redundant-packages
+    Disallow installing and enabling fallback packages when a more-preferred
+    package is available.
+  set-webview-implementation PACKAGE
+    Set the WebView implementation to the specified package.
+  enable-multiprocess
+    Enable multi-process mode for WebView
+  disable-multiprocess
+    Disable multi-process mode for WebView

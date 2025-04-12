@@ -1,0 +1,11 @@
+InputMethodManagerService commands:
+  help
+    Prints this help text.
+  dump [options]
+    Synonym of dumpsys.
+  ime <command> [options]
+    Manipulate IMEs.  Run "ime help" for details.
+  tracing <command>
+    start: Start tracing.
+    stop : Stop tracing.
+    help : Show help.

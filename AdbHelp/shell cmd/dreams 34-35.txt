@@ -1,0 +1,7 @@
+Dream manager (dreams) commands:
+  help
+      Print this help text.
+  start-dreaming
+      Start the currently configured dream.
+  stop-dreaming
+      Stops any active dream

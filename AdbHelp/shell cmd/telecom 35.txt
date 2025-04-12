@@ -1,0 +1,47 @@
+usage: telecom [subcommand] [options]
+usage: telecom set-phone-account-enabled <COMPONENT> <ID> <USER_SN>
+usage: telecom set-phone-account-disabled <COMPONENT> <ID> <USER_SN>
+usage: telecom register-phone-account <COMPONENT> <ID> <USER_SN> <LABEL>
+usage: telecom register-sim-phone-account [-e] <COMPONENT> <ID> <USER_SN> <LABEL>: registers a PhoneAccount with CAPABILITY_SIM_SUBSCRIPTION and optionally CAPABILITY_PLACE_EMERGENCY_CALLS if "-e" is provided
+usage: telecom set-user-selected-outgoing-phone-account [-e] <COMPONENT> <ID> <USER_SN>
+usage: telecom set-test-call-redirection-app <PACKAGE>
+usage: telecom set-test-call-screening-app <PACKAGE>
+usage: telecom set-phone-acct-suggestion-component <COMPONENT>
+usage: telecom add-or-remove-call-companion-app <PACKAGE> <1/0>
+usage: telecom register-sim-phone-account <COMPONENT> <ID> <USER_SN> <LABEL> <ADDRESS>
+usage: telecom unregister-phone-account <COMPONENT> <ID> <USER_SN>
+usage: telecom set-call-diagnostic-service <PACKAGE>
+usage: telecom set-default-dialer <PACKAGE>
+usage: telecom get-default-dialer
+usage: telecom get-system-dialer
+usage: telecom wait-on-handlers
+usage: telecom set-sim-count <COUNT>
+usage: telecom get-sim-config
+usage: telecom get-max-phones
+usage: telecom stop-block-suppression: Stop suppressing the blocked number provider after a call to emergency services.
+usage: telecom cleanup-stuck-calls: Clear any disconnected calls that have gotten wedged in Telecom.
+usage: telecom cleanup-orphan-phone-accounts: remove any phone accounts that no longer have a valid UserHandle or accounts that no longer belongs to an installed package.
+usage: telecom set-emer-phone-account-filter <PACKAGE>
+
+telecom set-phone-account-enabled: Enables the given phone account, if it has already been registered with Telecom.
+
+telecom set-phone-account-disabled: Disables the given phone account, if it has already been registered with telecom.
+
+telecom set-call-diagnostic-service: overrides call diagnostic service.
+telecom set-default-dialer: Sets the override default dialer to the given component; this will override whatever the dialer role is set to.
+
+telecom get-default-dialer: Displays the current default dialer.
+
+telecom get-system-dialer: Displays the current system dialer.
+telecom set-system-dialer: Set the override system dialer to the given component. To remove the override, send "default"
+
+telecom wait-on-handlers: Wait until all handlers finish their work.
+
+telecom set-sim-count: Set num SIMs (2 for DSDS, 1 for single SIM. This may restart the device.
+
+telecom get-sim-config: Get the mSIM config string. "DSDS" for DSDS mode, or "" for single SIM
+
+telecom get-max-phones: Get the max supported phones from the modem.
+telecom set-test-emergency-phone-account-package-filter <PACKAGE>: sets a package name that will be used for test emergency calls. To clear, send an empty package name. Real emergency calls will still be placed over Telephony.
+telecom log-mark <MESSAGE>: emits a message into the telecom logs.  Useful for testers to indicate where in the logs various test steps take place.
+telecom is-non-ui-in-call-service-bound <PACKAGE>: queries a particular non-ui-InCallService in InCallController to determine if it is bound

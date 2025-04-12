@@ -1,0 +1,37 @@
+Location Time Zone Manager (location_time_zone_manager) commands for tests:
+  help
+    Print this help text.
+  start
+    Starts the service, creating location time zone providers.
+  start_with_test_providers <primary package name|@null> <secondary package name|@null> <record states>
+    Starts the service with test provider packages configured / provider permission checks disabled.
+    <record states> - true|false, determines whether state recording is enabled.
+    See dump_state and clear_recorded_provider_states.
+  stop
+    Stops the service, destroying location time zone providers.
+  clear_recorded_provider_states
+    Clears recorded provider state. See also start_with_test_providers and dump_state.
+    Note: This is only intended for use during testing.
+  dump_state [--proto]
+    Dumps service state for tests as text or binary proto form.
+    See the LocationTimeZoneManagerServiceStateProto definition for details.
+
+This service is also affected by the following device_config flags in the system_time namespace:
+  primary_location_time_zone_provider_mode_override
+    Overrides the mode of the primary provider. Values=disabled|enabled
+  secondary_location_time_zone_provider_mode_override
+    Overrides the mode of the secondary provider. Values=disabled|enabled
+  location_time_zone_detection_uncertainty_delay_millis
+    Sets the amount of time the service waits when uncertain before making an 'uncertain' suggestion to the time zone detector.
+  ltzp_init_timeout_millis
+    Sets the initialization time passed to the providers.
+  ltzp_init_timeout_fuzz_millis
+    Sets the amount of extra time added to the providers' initialization time.
+  ltzp_event_filtering_age_threshold_millis
+    Sets the amount of time that must pass between equivalent LTZP events before they will be reported to the system server.
+
+Typically, use 'stop' to stop the service before setting individual flags and 'start' after to restart it.
+
+See "adb shell cmd device_config" for more information on setting flags.
+
+Also see "adb shell cmd time_zone_detector help" for higher-level location time zone commands / settings.

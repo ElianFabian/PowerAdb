@@ -1,0 +1,26 @@
+Telephony Commands:
+  help
+    Print this help text.
+  ims
+    IMS Commands.
+IMS Commands:
+  ims set-ims-service [-s SLOT_ID] (-c | -d) PACKAGE_NAME
+    Sets the ImsService defined in PACKAGE_NAME to to be the bound
+    ImsService. Options are:
+      -s: the slot ID that the ImsService should be bound for. If no option
+          is specified, it will choose the default voice SIM slot.
+      -c: Override the ImsService defined in the carrier configuration.
+      -d: Override the ImsService defined in the device overlay.
+  ims get-ims-service [-s SLOT_ID] [-c | -d]
+    Gets the package name of the currently defined ImsService.
+    Options are:
+      -s: The SIM slot ID for the registered ImsService. If no option
+          is specified, it will choose the default voice SIM slot.
+      -c: The ImsService defined as the carrier configured ImsService.
+      -c: The ImsService defined as the device default ImsService.
+  ims enable [-s SLOT_ID]
+    enables IMS for the SIM slot specified, or for the default voice SIM slot
+    if none is specified.
+  ims disable [-s SLOT_ID]
+    disables IMS for the SIM slot specified, or for the default voice SIM
+    slot if none is specified.

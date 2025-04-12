@@ -1,99 +1,36 @@
 function Get-AdbDiskInfo {
 
-    [OutputType([PSCustomObject[]])]
+    [OutputType([PSCustomObject])]
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [string[]] $DeviceId
+        [string] $DeviceId
     )
 
-    process {
-        foreach ($id in $DeviceId) {
-            Invoke-AdbExpression -DeviceId $id -Command "shell dumpsys diskstats" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
-            | Out-String `
-            | Select-String -Pattern $diskInfoPattern -AllMatches `
-            | Select-Object -ExpandProperty Matches `
-            | ForEach-Object {
-                $groups = $_.Groups[0].Captures[0].Groups
+    $output = [PSCustomObject]@{}
 
-                $packageNames = $groups['packageNamesStr'].Value.Split(',').Trim() | ForEach-Object { $_.Trim('"') }
-                $appSizes = $groups['appSizesStr'].Value.Split(',').Trim() | ForEach-Object { [uint64] $_ }
-                $appDataSizes = $groups['appDataSizesStr'].Value.Split(',').Trim() | ForEach-Object { [uint64] $_ }
-                $cacheSizes = $groups['cacheSizesStr'].Value.Split(',').Trim() | ForEach-Object { [uint64] $_ }
+    Get-AdbServiceDump -DeviceId $DeviceId -Name 'diskstats' -Verbose:$VerbosePreference `
+    | Select-String -Pattern $script:RowPattern `
+    | ForEach-Object {
+        $groups = $_.Matches[0].Groups
 
-                $fileBasedEncryption = $groups['fileBasedEncryption'].Value
-                $appSize = $groups['appSize'].Value
-                $appDataSize = $groups['appDataSize'].Value
-                $appCacheSize = $groups['appCacheSize'].Value
-                $photosSize = $groups['photosSize'].Value
-                $videosSize = $groups['videosSize'].Value
-                $audioSize = $groups['audioSize'].Value
-                $downloadsSize = $groups['downloadsSize'].Value
-                $systemSize = $groups['systemSize'].Value
-                $otherSize = $groups['otherSize'].Value
+        $rawName = $groups['name'].Value
+        $name = $rawName.Replace(' ', '').Replace('-', '')
 
-                [PSCustomObject]@{
-                    DeviceId            = $id
-                    DataFree            = ([uint64] $groups['dataFreeInKb'].Value) * 1024
-                    DataTotal           = ([uint64] $groups['dataTotalInKb'].Value) * 1024
-                    CacheFree           = ([uint64] $groups['cacheFreeInKb'].Value) * 1024
-                    SystemFree          = ([uint64] $groups['systemFreeInKb'].Value) * 1024
-                    SystemTotal         = ([uint64] $groups['systemTotalInKb'].Value) * 1024
-                    FileBasedEncryption = if ($fileBasedEncryption) { [bool]::Parse($fileBasedEncryption) } else { $null }
-                    AppSize             = if ($appSize) { [uint64] $appSize } else { $null }
-                    AppDataSize         = if ($appDataSize) { [uint64] $appDataSize } else { $null }
-                    AppCacheSize        = if ($appCacheSize) { [uint64] $appCacheSize } else { $null }
-                    PhotosSize          = if ($photosSize) { [uint64] $photosSize } else { $null }
-                    VideosSize          = if ($videosSize) { [uint64] $videosSize } else { $null }
-                    AudioSize           = if ($audioSize) { [uint64] $audioSize } else { $null }
-                    DownloadsSize       = if ($downloadsSize) { [uint64] $downloadsSize } else { $null }
-                    SystemSize          = if ($systemSize) { [uint64] $systemSize } else { $null }
-                    OtherSize           = if ($otherSize) { [uint64] $otherSize } else { $null }
-                    InstalledApps       = for ($i = 0; $i -lt $packageNames.Count; $i++) {
-                        [PSCustomObject]@{
-                            PackageName = $packageNames[$i]
-                            AppSize     = $appSizes[$i]
-                            AppDataSize = $appDataSizes[$i]
-                            CacheSize   = $cacheSizes[$i]
-                        }
-                    }
-                }
-            }
+        $rawValue = $groups['value'].Value
+
+        if ($rawValue[0] -eq '[') {
+            $value = $rawValue.Trim('[', ']', ' ').Split(',') | ForEach-Object { $_.Trim('"') }
         }
+        else {
+            $value = $rawValue
+        }
+
+        $output | Add-Member -MemberType NoteProperty -Name $name -Value $value -Force
     }
+
+    $output
 }
 
 
-# TODO: Make this function work with this:
-# From real Pixel 8 Pro device with API level 34:
-#
-# Latency: 0ms [512B Data Write]
-# Recent Disk Write Speed data unavailable
-# Data-Free: 109270404K / 114982996K total = 95% free
-# Cache-Free: 109270404K / 114982996K total = 95% free
-# System-Free: 0K / 776884K total = 0% free
-# Metadata-Free: 28496K / 63488K total = 44% free
-# File-based Encryption: true
 
-
-$diskInfoPattern = @"
-Data-Free: (?<dataFreeInKb>\d+)K / (?<dataTotalInKb>\d+)K.+(\r?\n)+
-Cache-Free: (?<cacheFreeInKb>\d+)K.+(\r?\n)+
-System-Free: (?<systemFreeInKb>\d+)K / (?<systemTotalInKb>\d+)K.+(\r?\n)+
-(
-File-based Encryption: (?<fileBasedEncryption>true|false)\r?\n
-App Size: (?<appSize>\d+)\r?\n
-App Data Size: (?<appDataSize>\d+)\r?\n
-App Cache Size: (?<appCacheSize>\d+)\r?\n
-Photos Size: (?<photosSize>\d+)\r?\n
-Videos Size: (?<videosSize>\d+)\r?\n
-Audio Size: (?<audioSize>\d+)\r?\n
-Downloads Size: (?<downloadsSize>\d+)\r?\n
-System Size: (?<systemSize>\d+)\r?\n
-Other Size: (?<otherSize>\d+)\r?\n
-Package Names: \[(?<packageNamesStr>.+)\]\r?\n
-App Sizes: \[(?<appSizesStr>.+)\]\r?\n
-App Data Sizes: \[(?<appDataSizesStr>.+)\]\r?\n
-Cache Sizes: \[(?<cacheSizesStr>.+)\]
-)?
-"@.Replace("`r`n", "").Replace("`n", "")
+$script:RowPattern = '(?<name>[\w-\s]+)(: | = )(?<value>\S.+)'

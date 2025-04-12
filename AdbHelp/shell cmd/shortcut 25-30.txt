@@ -1,0 +1,26 @@
+Usage: cmd shortcut COMMAND [options ...]
+
+cmd shortcut reset-throttling [--user USER_ID]
+    Reset throttling for all packages and users
+
+cmd shortcut reset-all-throttling
+    Reset the throttling state for all users
+
+cmd shortcut override-config CONFIG
+    Override the configuration for testing (will last until reboot)
+
+cmd shortcut reset-config
+    Reset the configuration set with "update-config"
+
+cmd shortcut clear-default-launcher [--user USER_ID]
+    Clear the cached default launcher
+
+cmd shortcut get-default-launcher [--user USER_ID]
+    Show the default launcher
+
+cmd shortcut unload-user [--user USER_ID]
+    Unload a user from the memory
+    (This should not affect any observable behavior)
+
+cmd shortcut clear-shortcuts [--user USER_ID] PACKAGE
+    Remove all shortcuts from a package, including pinned shortcuts
