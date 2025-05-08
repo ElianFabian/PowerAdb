@@ -1,0 +1,9 @@
+allows to change battery and AC power status
+
+available sub-commands:
+    display          display battery and charger state
+    ac               set AC charging state
+    status           set battery status
+    present          set battery present state
+    health           set battery health state
+    capacity         set battery capacity state

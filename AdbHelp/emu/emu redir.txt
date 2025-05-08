@@ -1,0 +1,10 @@
+allows you to add, list and remove UDP and/or PORT redirection from the host to the device
+as an example, 'redir add tcp:5000:6000' will route any ipv4 packet sent to the host's TCP port 5000
+to TCP port 6000 of the emulated device
+
+available sub-commands:
+    list             list current redirections
+    add              add new ipv4 redirection
+    del              remove existing ipv4 redirection
+    add-ipv6         add new ipv6 redirection
+    del-ipv6         remove existing ipv6 redirection

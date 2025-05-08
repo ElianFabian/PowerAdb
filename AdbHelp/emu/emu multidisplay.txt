@@ -1,0 +1,8 @@
+allows you to create/modify/delete displays besides the default android display, as an example,
+'multidisplay add 1 1200 800 240 0' will create/modify display 1 with dimension 1200x800,
+ dpi 240 and the default flag
+'multidisplay del 1' will delete the display 1
+
+available sub-commands:
+    add              add new or modify existing display
+    del              remove existing display

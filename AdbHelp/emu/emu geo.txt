@@ -1,0 +1,6 @@
+allows you to change Geo-related settings, or to send GPS NMEA sentences
+
+available sub-commands:
+    nmea             send a GPS NMEA sentence
+    fix              send a simple GPS fix
+    gnss             send a GNSS sentence

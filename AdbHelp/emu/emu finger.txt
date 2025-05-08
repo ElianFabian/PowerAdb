@@ -1,0 +1,5 @@
+allows you to touch the emulator finger print sensor
+
+available sub-commands:
+    touch            touch finger print sensor with <fingerid>
+    remove           remove finger from the fingerprint sensor

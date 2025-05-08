@@ -1,0 +1,1 @@
+Usage: "posture <posture_id>" 1: closed     2: half-opened  3: opened       4: flipped      5: tent

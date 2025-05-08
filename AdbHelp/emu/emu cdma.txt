@@ -1,0 +1,5 @@
+allows you to change CDMA-related settings
+
+available sub-commands:
+    ssource          Set the current CDMA subscription source
+    prl_version      Dump the current PRL version

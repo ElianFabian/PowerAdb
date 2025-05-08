@@ -1,0 +1,8 @@
+allows you to manage the settings related to the network data connection of the
+emulated device.
+
+available sub-commands:
+    status           dump network status
+    speed            change network speed
+    delay            change network latency
+    capture          dump network packets to file

@@ -1,0 +1,7 @@
+allows you to record and play back macros for device state automation
+
+available sub-commands:
+    record           start recording a macro.
+    stop-record      stop recording a macro.
+    play             playback macro.
+    stop-play        stop playing macro.

@@ -1,0 +1,22 @@
+allows you to control (e.g. start/stop) the execution of the virtual device
+
+available sub-commands:
+    stop             stop the virtual device
+    start            start/restart the virtual device
+    status           query virtual device status
+    heartbeat        query the heart beat number of the guest system
+    rewindaudio      rewind the input audio to the beginning
+    name             query virtual device name
+    grpc             query the grpc port
+    snapshot         state snapshot commands
+    pause            pause the virtual device
+    hostmicon        activate the host audio input device
+    hostmicoff       deactivate the host audio input device
+    resume           resume the virtual device
+    bugreport        generate bug report info.
+    id               query virtual device ID
+    windowtype       query virtual device headless or qtwindow
+    path             query AVD path
+    discoverypath    query AVD discovery path
+    snapshotspath    query AVD snapshots path
+    snapshotpath     query path to a particular AVD snapshot

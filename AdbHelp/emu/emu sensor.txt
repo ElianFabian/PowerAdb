@@ -1,0 +1,6 @@
+allows you to request the emulator sensors
+
+available sub-commands:
+    status           list all sensors and their status.
+    get              get sensor values
+    set              set sensor values

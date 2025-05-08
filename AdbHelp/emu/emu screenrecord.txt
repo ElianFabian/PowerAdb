@@ -1,0 +1,7 @@
+Records the emulator's display
+
+available sub-commands:
+    start            start screen recording
+    stop             stop screen recording
+    screenshot       Take a screenshot
+    webrtc           start/stop the webrtc module

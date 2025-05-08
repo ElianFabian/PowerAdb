@@ -1,0 +1,1 @@
+usage: "virtualscene-image <wall|table> [path-to-image]"

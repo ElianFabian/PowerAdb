@@ -1,0 +1,5 @@
+allows you to record and playback physical model state changes
+
+available sub-commands:
+    record-gt        start recording ground truth of the physical model's 6dof poses
+    stop             stop recording ground truth

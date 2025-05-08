@@ -1,0 +1,15 @@
+allows you to change GSM-related settings, or to make a new inbound phone call
+
+available sub-commands:
+    list             list current phone calls
+    call             create inbound phone call
+    busy             close waiting outbound call as busy
+    hold             change the state of an outbound call to 'held'
+    accept           change the state of an outbound call to 'active'
+    cancel           disconnect an inbound or outbound phone call
+    data             modify data connection state
+    meter            modify mobile data meterness
+    voice            modify voice connection state
+    status           display GSM status
+    signal           set sets the rssi and ber
+    signal-profile   set the signal strength profile

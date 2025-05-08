@@ -1,0 +1,5 @@
+manage network proxy server settings
+
+available sub-commands:
+    set              set the proxy server to use
+    clear            clear proxy server setting

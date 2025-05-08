@@ -1,0 +1,4 @@
+allows to connect to the QEMU virtual machine monitor
+
+available sub-commands:
+    monitor          enter QEMU monitor

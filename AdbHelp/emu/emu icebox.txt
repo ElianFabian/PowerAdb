@@ -1,0 +1,3 @@
+allows emulator to automatically take snapshot on uncaught exceptions, for test and debug purpose. (experimental)
+available sub-commands:
+    track            (experimental) track exceptions in <pid> and take (up to [max_snapshots]) snasphots when there are assert failures
