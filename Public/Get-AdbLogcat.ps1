@@ -57,11 +57,6 @@ function Get-AdbLogcat {
 
         # TODO: Maybe add support for Logd control
 
-        [Parameter(ParameterSetName = 'Default"')]
-        [Parameter(ParameterSetName = 'Last"')]
-        [Parameter(ParameterSetName = 'LastAt"')]
-        [Parameter(ParameterSetName = 'IgnoreOld"')]
-        [Parameter(ParameterSetName = 'Print"')]
         [string] $Pattern,
 
         [Parameter(ParameterSetName = 'Last')]
@@ -186,7 +181,7 @@ function Get-AdbLogcat {
         $adbArgSb.Append(" --proto")
     }
     if ($Pattern) {
-        $adbArgSb.Append(" --regex=$(ConvertTo-ValidAdbStringArgument $Pattern)")
+        $adbArgSb.Append(" -e '$Pattern'")
     }
     if ($PSCmdlet.ParameterSetName -eq "Print") {
         $adbArgSb.Append(" --print")
