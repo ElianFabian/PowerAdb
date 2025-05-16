@@ -156,59 +156,59 @@ function Get-AdbLogcat {
     $adbArgSb = [System.Text.StringBuilder]::new()
 
     if ($bufferInternal) {
-        $adbArgSb.Append(" $(($bufferInternal | ForEach-Object { "-b $_" }) -join ' ')")
+        $adbArgSb.Append(" $(($bufferInternal | ForEach-Object { "-b $_" }) -join ' ')") > $null
     }
     if ($ExitAfterDump) {
-        $adbArgSb.Append(" -d")
+        $adbArgSb.Append(" -d") > $null
     }
     if ($LogsBeforeLastReboot) {
-        $adbArgSb.Append(" --last")
+        $adbArgSb.Append(" --last") > $null
     }
     if ($ParentProcessId) {
-        $adbArgSb.Append(" --pid=$ParentProcessId")
+        $adbArgSb.Append(" --pid=$ParentProcessId") > $null
     }
     if ($FormatVerb -or $FormatAdverd) {
         $formatArg = ($FormatVerb + $FormatAdverd) -join ','
-        $adbArgSb.Append(" -v $formatArg")
+        $adbArgSb.Append(" -v $formatArg") > $null
     }
     if ($Dividers) {
-        $adbArgSb.Append(" --dividers")
+        $adbArgSb.Append(" --dividers") > $null
     }
     if ($Binary) {
-        $adbArgSb.Append(" -B")
+        $adbArgSb.Append(" -B") > $null
     }
     if ($Proto) {
-        $adbArgSb.Append(" --proto")
+        $adbArgSb.Append(" --proto") > $null
     }
     if ($Pattern) {
-        $adbArgSb.Append(" -e '$Pattern'")
+        $adbArgSb.Append(" -e '$Pattern'") > $null
     }
     if ($PSCmdlet.ParameterSetName -eq "Print") {
-        $adbArgSb.Append(" --print")
-        $adbArgSb.Append(" --max-count=$StopAtMatchCount")
+        $adbArgSb.Append(" --print") > $null
+        $adbArgSb.Append(" --max-count=$StopAtMatchCount") > $null
     }
     if ($Block) {
         if ($Last) {
-            $adbArgSb.Append(" -T $Last")
+            $adbArgSb.Append(" -T $Last") > $null
         }
         elseif ($LastAt) {
-            $adbArgSb.Append(" -T '$LastAt'")
+            $adbArgSb.Append(" -T '$LastAt'") > $null
         }
     }
     else {
         if ($Last) {
-            $adbArgSb.Append(" -t $Last")
+            $adbArgSb.Append(" -t $Last") > $null
         }
         elseif ($LastAt) {
-            $adbArgSb.Append(" -t '$LastAt'")
+            $adbArgSb.Append(" -t '$LastAt'") > $null
         }
     }
     if ($IgnoreOld) {
         $currentDate = Get-Date -Format 'yyyy-MM-dd HH:mm:ss.fff'
-        $adbArgSb.Append(" -T '$currentDate'")
+        $adbArgSb.Append(" -T '$currentDate'") > $null
     }
     if ($FilteredTag) {
-        $adbArgSb.Append(" $($FilteredTag -join ' ') *:S")
+        $adbArgSb.Append(" $($FilteredTag -join ' ') *:S") > $null
     }
 
     Invoke-AdbExpression -DeviceId $DeviceId -Command "logcat$adbArgSb" -Verbose:$VerbosePreference
