@@ -40,6 +40,9 @@ $systemSettings = @(
 )
 
 $secureSettings = @(
+    'android_id'
     'location_mode'
     'location_mode_providers_allowed'
+    'bluetooth_name'
+    'bluetooth_address'
 )
