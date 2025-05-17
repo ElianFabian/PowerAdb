@@ -9,9 +9,9 @@ function Disable-AdbLocation {
 
     $apiLevel = Get-AdbApiLevel -DeviceId $DeviceId -Verbose:$false
     if ($apiLevel -ge 29) {
-        Set-AdbSetting -DeviceId $DeviceId -Namespace secure -Key 'location_mode' -Value 0 -Verbose:$VerbosePreference
+        Set-AdbSetting -DeviceId $DeviceId -Namespace secure -Name 'location_mode' -Value 0 -Verbose:$VerbosePreference
     }
     elseif ($apiLevel -ge 17) {
-        Set-AdbSetting -DeviceId $DeviceId -Namespace secure -Key 'location_providers_allowed' -Value '-' -Verbose:$VerbosePreference
+        Set-AdbSetting -DeviceId $DeviceId -Namespace secure -Name 'location_providers_allowed' -Value '-' -Verbose:$VerbosePreference
     }
 }

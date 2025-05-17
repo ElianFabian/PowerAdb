@@ -9,7 +9,7 @@ function Set-AdbSetting {
         [string] $Namespace,
 
         [Parameter(Mandatory)]
-        [string[]] $Key,
+        [string[]] $Name,
 
         # New line characters are ignored
         [AllowEmptyString()]
@@ -19,22 +19,22 @@ function Set-AdbSetting {
 
     Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17
 
-    if ($Key.Contains(' ')) {
-        Write-Error "Key '$Key' can't contain space characters"
+    if ($Name.Contains(' ')) {
+        Write-Error "Name '$Name' can't contain space characters"
         return
     }
-    if ($Key.Contains('=')) {
+    if ($Name.Contains('=')) {
         # This is not a real restriction, we rely on this to proper parse key-value pairs in 'Get-AdbSetting -List'
         # this is the format: key=value
-        Write-Error "Key '$Key' can't contain the character '='"
+        Write-Error "Name '$Name' can't contain the character '='"
         return
     }
 
     $sanitizedValue = ConvertTo-ValidAdbStringArgument $Value
 
-    foreach ($k in $Key) {
+    foreach ($settingName in $Name) {
         try {
-            Invoke-AdbExpression -DeviceId $DeviceId -Command "shell settings put $Namespace '$k' $sanitizedValue" -Verbose:$VerbosePreference
+            Invoke-AdbExpression -DeviceId $DeviceId -Command "shell settings put $Namespace '$settingName' $sanitizedValue" -Verbose:$VerbosePreference
         }
         catch { [AdbCommandException]
             if ($_.Exception.Message.Contains('java.lang.SecurityException: com.android.shell was not granted  this permission: android.permission.WRITE_SETTINGS')) {
@@ -44,4 +44,3 @@ function Set-AdbSetting {
         }
     }
 }
-

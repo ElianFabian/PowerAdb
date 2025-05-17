@@ -7,7 +7,7 @@ function Test-AdbAutoRotate {
         [string] $DeviceId
     )
 
-    $result = Get-AdbSetting -DeviceId $DeviceId -Namespace system -Key 'accelerometer_rotation' -Verbose:$VerbosePreference
+    $result = Get-AdbSetting -DeviceId $DeviceId -Namespace system -Name 'accelerometer_rotation' -Verbose:$VerbosePreference
     if ($result) {
         return $result -eq '1'
     }

@@ -7,5 +7,5 @@ function Enable-AdbMobileData {
 
     Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17
 
-    Set-AdbSetting -DeviceId $DeviceId -Namespace global -Key 'mobile_data' -Value '1' -Verbose:$VerbosePreference
+    Set-AdbSetting -DeviceId $DeviceId -Namespace global -Name 'mobile_data' -Value '1' -Verbose:$VerbosePreference
 }

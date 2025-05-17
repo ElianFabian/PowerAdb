@@ -8,7 +8,7 @@ function Get-AdbFontScale {
 
     Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17
 
-    $result = Get-AdbSetting -DeviceId $DeviceId -Namespace system -Key 'font_scale' -Verbose:$VerbosePreference
+    $result = Get-AdbSetting -DeviceId $DeviceId -Namespace system -Name 'font_scale' -Verbose:$VerbosePreference
     if ($result) {
         return [double] $result
     }

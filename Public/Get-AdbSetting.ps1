@@ -10,7 +10,7 @@ function Get-AdbSetting {
         [string] $Namespace,
 
         [Parameter(Mandatory, ParameterSetName = "Default")]
-        [string[]] $Key,
+        [string[]] $Name,
 
         # Fast query of multiple values
         # Be careful with this parameter, as it relies on the assumption that no key contains '='
@@ -43,10 +43,10 @@ function Get-AdbSetting {
                 # It turns out that some settings have no equals symbol, so we just skip them
                 return
             }
-            $itemKey = $_.Substring(0, $indexOfEqualsSymbol)
+            $itemName = $_.Substring(0, $indexOfEqualsSymbol)
             $itemValue = $_.Substring($indexOfEqualsSymbol + 1)
             [PSCustomObject]@{
-                Key   = $itemKey
+                Name  = $itemName
                 Value = $itemValue
             }
         }
@@ -54,18 +54,18 @@ function Get-AdbSetting {
 
     if ($QueryFromList) {
         $properties = Get-AdbSetting -DeviceId $DeviceId -Namespace $Namespace -List -Verbose:$VerbosePreference | Out-String
-        $targetProperties = foreach ($keyName in $Key) {
+        $targetProperties = foreach ($propertyName in $Name) {
             $properties | Where-Object {
-                $_.Key -ceq $keyName
+                $_.Name -ceq $propertyName
             } `
             | Select-Object -First 1
         }
 
-        $targetProperties | Where-Object { $_.Key -cin $Key } `
+        $targetProperties | Where-Object { $_.Name -cin $Name } `
         | Select-Object -ExpandProperty Value
     }
     else {
-        $Key | ForEach-Object {
+        $Name | ForEach-Object {
             Invoke-AdbExpression -DeviceId $DeviceId -Command "shell settings get $Namespace '$_'" -Verbose:$VerbosePreference | Out-String -NoNewline
         }
     }

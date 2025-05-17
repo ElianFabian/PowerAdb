@@ -22,7 +22,7 @@ function Get-AdbRotation {
         }
     }
 
-    $result = Get-AdbSetting -DeviceId $DeviceId -Namespace system -Key 'user_rotation' -Verbose:$VerbosePreference
+    $result = Get-AdbSetting -DeviceId $DeviceId -Namespace system -Name 'user_rotation' -Verbose:$VerbosePreference
 
     if ($AsCode) {
         [int] $result

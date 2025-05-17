@@ -37,5 +37,5 @@ function Set-AdbRotation {
         default { $Rotation }
     }
 
-    Set-AdbSetting -DeviceId $DeviceId -Namespace system -Key 'user_rotation' -Value $rotationCode -Verbose:$VerbosePreference
+    Set-AdbSetting -DeviceId $DeviceId -Namespace system -Name 'user_rotation' -Value $rotationCode -Verbose:$VerbosePreference
 }

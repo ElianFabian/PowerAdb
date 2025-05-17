@@ -8,7 +8,7 @@ function Test-AdbMobileData {
 
     Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17
 
-    $result = Get-AdbSetting -DeviceId $DeviceId -Namespace global -Key 'mobile_data' -Verbose:$VerbosePreference
+    $result = Get-AdbSetting -DeviceId $DeviceId -Namespace global -Name 'mobile_data' -Verbose:$VerbosePreference
 
     switch ($result) {
         '1' { $true }

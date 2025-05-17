@@ -9,18 +9,18 @@ function Remove-AdbSetting {
         [string] $Namespace,
 
         [Parameter(Mandatory)]
-        [string[]] $Key
+        [string[]] $Name
     )
-
-    $Key = [string] $PSBoundParameters['Key']
-    if ($Key.Contains(" ")) {
-        Write-Error "Key '$Key' can't contain space characters"
-        return
-    }
 
     Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 21
 
-    foreach ($k in $Key) {
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell settings delete $Namespace '$k'" -Verbose:$VerbosePreference
+    foreach ($settingName in $Name) {
+        if ($settingName.Contains(" ")) {
+            Write-Error "Setting name '$settingName' can't contain space characters" -ErrorAction Stop
+        }
+    }
+
+    foreach ($settingName in $Name) {
+        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell settings delete $Namespace '$settingName'" -Verbose:$VerbosePreference
     }
 }

@@ -54,7 +54,7 @@ function Send-AdbLongTap {
         $longPressTimeout = $Timeout
     }
     else {
-        $longPressTimeout = Get-AdbSetting -DeviceId $DeviceId -Namespace secure -Key long_press_timeout -Verbose:$false
+        $longPressTimeout = Get-AdbSetting -DeviceId $DeviceId -Namespace secure -Name 'long_press_timeout' -Verbose:$false
         if (-not $longPressTimeout) {
             $longPressTimeout = 400
         }

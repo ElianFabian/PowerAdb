@@ -9,5 +9,5 @@ function Set-AdbFontScale {
         [float] $FontScale
     )
 
-    Set-AdbSetting -DeviceId $DeviceId -Namespace system -Key 'font_scale' -Value $FontScale -Verbose:$VerbosePreference
+    Set-AdbSetting -DeviceId $DeviceId -Namespace system -Name 'font_scale' -Value $FontScale -Verbose:$VerbosePreference
 }

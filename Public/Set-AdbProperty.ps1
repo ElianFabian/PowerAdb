@@ -5,7 +5,7 @@ function Set-AdbProperty {
         [string] $DeviceId,
 
         [Parameter(Mandatory)]
-        [string] $Name,
+        [string[]] $Name,
 
         # Custom properties starts with 'debug.'
         # New line characters are ignored
@@ -14,11 +14,15 @@ function Set-AdbProperty {
         [string] $Value
     )
 
-    if ($Name.Contains(" ")) {
-        Write-Error "Property name '$Name' can't contain space characters" -ErrorAction Stop
+    foreach ($propertyName in $Name) {
+        if ($propertyName.Contains("=")) {
+            Write-Error "Property name '$propertyName' can't contain the character '='" -ErrorAction Stop
+        }
     }
 
     $sanitizedValue = ConvertTo-ValidAdbStringArgument $Value
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell setprop '$Name' $sanitizedValue" -Verbose:$VerbosePreference
+    foreach ($propertyName in $Name) {
+        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell setprop '$propertyName' $sanitizedValue" -Verbose:$VerbosePreference
+    }
 }

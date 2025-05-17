@@ -8,5 +8,5 @@ function Enable-AdbAutoRotate {
 
     Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17
 
-    Set-AdbSetting -DeviceId $DeviceId -Namespace system -Key 'accelerometer_rotation' -Value 1 -Verbose:$VerbosePreference
+    Set-AdbSetting -DeviceId $DeviceId -Namespace system -Name 'accelerometer_rotation' -Value 1 -Verbose:$VerbosePreference
 }

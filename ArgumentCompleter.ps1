@@ -148,7 +148,7 @@ $settingFunctions = @(
 )
 AssertFunctionExists $settingFunctions
 
-Register-ArgumentCompleter -CommandName $settingFunctions -ParameterName Key -ScriptBlock {
+Register-ArgumentCompleter -CommandName $settingFunctions -ParameterName Name -ScriptBlock {
 
     param(
         $commandName,
@@ -168,7 +168,7 @@ Register-ArgumentCompleter -CommandName $settingFunctions -ParameterName Key -Sc
 
     $WarningPreference = 'Ignore'
 
-    $keys = [string[]] (Get-AdbSetting -DeviceId $deviceId -Namespace $namespace -List -Verbose:$false | Select-Object -ExpandProperty Key)
+    $keys = [string[]] (Get-AdbSetting -DeviceId $deviceId -Namespace $namespace -List -Verbose:$false | Select-Object -ExpandProperty Name)
     $startMatches = [string[]] ($keys | Where-Object { $_ -like "$wordToComplete*" })
     $containMatches = [string[]] ($keys | Where-Object { $_ -like "*$wordToComplete*" })
 

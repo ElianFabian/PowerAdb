@@ -8,7 +8,7 @@ function Get-AdbSystemLocale {
 
     $apiLevel = Get-AdbApiLevel -DeviceId $DeviceId -Verbose:$false
     if ($apiLevel -ge 24) {
-        $systemLocaleList = Get-AdbSetting -DeviceId $DeviceId -Namespace system -Key 'system_locales' -Verbose:$VerbosePreference
+        $systemLocaleList = Get-AdbSetting -DeviceId $DeviceId -Namespace system -Name 'system_locales' -Verbose:$VerbosePreference
         if ($systemLocaleList -like '*null*') {
             Get-AdbProperty -DeviceId $DeviceId -Name 'ro.product.locale' -Verbose:$VerbosePreference
         }
