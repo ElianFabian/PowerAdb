@@ -36,6 +36,10 @@ function Get-AdbSetting {
     }
 
     if ($List) {
+        # There's not gaurantee that all settings will be propertly parsed since the output is not guaranteed to be in a specific format.
+        # This will when:
+        # - The setting name contains an equals symbol
+        # - The setting value contains newline characters
         return Invoke-AdbExpression -DeviceId $DeviceId -Command "shell settings list $Namespace" -Verbose:$VerbosePreference `
         | ForEach-Object {
             $indexOfEqualsSymbol = $_.IndexOf('=')
