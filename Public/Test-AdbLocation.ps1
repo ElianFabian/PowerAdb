@@ -16,6 +16,7 @@ function Test-AdbLocation {
     }
     elseif ($apiLevel -ge 17) {
         $locationProviders = Get-AdbSetting -DeviceId $DeviceId -Namespace secure -Name 'location_providers_allowed' -Verbose:$VerbosePreference `
+        # TODO: add a more general way of suppressing the warning message
         | Select-Object -Last 1 # To avoid including the message 'WARNING: linker: libdvm.so has text relocations. This is wasting memory and is a security risk. Please fix.'
 
         $locationProviders -ceq 'gps,network' -or $locationProviders -ceq 'gps' -or $locationProviders -ceq 'network'
