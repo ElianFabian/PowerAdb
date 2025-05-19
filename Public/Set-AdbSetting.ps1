@@ -34,7 +34,8 @@ function Set-AdbSetting {
 
     foreach ($settingName in $Name) {
         try {
-            Invoke-AdbExpression -DeviceId $DeviceId -Command "shell settings put $Namespace '$settingName' $sanitizedValue" -Verbose:$VerbosePreference
+            $sanitizedSettingName = ConvertTo-ValidAdbStringArgument $settingName
+            Invoke-AdbExpression -DeviceId $DeviceId -Command "shell settings put $Namespace $sanitizedSettingName $sanitizedValue" -Verbose:$VerbosePreference
         }
         catch { [AdbCommandException]
             if ($_.Exception.Message.Contains('java.lang.SecurityException: com.android.shell was not granted  this permission: android.permission.WRITE_SETTINGS')) {

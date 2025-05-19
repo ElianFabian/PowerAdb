@@ -23,6 +23,7 @@ function Set-AdbProperty {
     $sanitizedValue = ConvertTo-ValidAdbStringArgument $Value
 
     foreach ($propertyName in $Name) {
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell setprop '$propertyName' $sanitizedValue" -Verbose:$VerbosePreference
+        $sanitizedPropertyName = ConvertTo-ValidAdbStringArgument $propertyName
+        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell setprop $sanitizedPropertyName $sanitizedValue" -Verbose:$VerbosePreference
     }
 }

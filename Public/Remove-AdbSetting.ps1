@@ -21,6 +21,7 @@ function Remove-AdbSetting {
     }
 
     foreach ($settingName in $Name) {
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell settings delete $Namespace '$settingName'" -Verbose:$VerbosePreference
+        $sanitizedSettingName = ConvertTo-ValidAdbStringArgument $settingName
+        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell settings delete $Namespace $sanitizedSettingName" -Verbose:$VerbosePreference
     }
 }

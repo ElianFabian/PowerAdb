@@ -70,7 +70,8 @@ function Get-AdbSetting {
     }
     else {
         $Name | ForEach-Object {
-            Invoke-AdbExpression -DeviceId $DeviceId -Command "shell settings get $Namespace '$_'" -Verbose:$VerbosePreference | Out-String -NoNewline
+            $sanitizedName = ConvertTo-ValidAdbStringArgument $_
+            Invoke-AdbExpression -DeviceId $DeviceId -Command "shell settings get $Namespace $sanitizedName" -Verbose:$VerbosePreference | Out-String -NoNewline
         }
     }
 }

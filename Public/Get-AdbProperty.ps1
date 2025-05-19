@@ -54,13 +54,15 @@ function Get-AdbProperty {
                     Get-CacheValue -DeviceId $DeviceId -Key $_ -Verbose:$VerbosePreference
                 }
                 else {
-                    $value = Invoke-AdbExpression -DeviceId $DeviceId -Command "shell getprop '$_'" -Verbose:$VerbosePreference | Out-String -NoNewline
+                    $sanitizedPropertyName = ConvertTo-ValidAdbStringArgument $_
+                    $value = Invoke-AdbExpression -DeviceId $DeviceId -Command "shell getprop $sanitizedPropertyName" -Verbose:$VerbosePreference | Out-String -NoNewline
                     Set-CacheValue -DeviceId $DeviceId -Key $_ -Value $value
                     $value
                 }
             }
             else {
-                Invoke-AdbExpression -DeviceId $DeviceId -Command "shell getprop '$_'" -Verbose:$VerbosePreference | Out-String -NoNewline
+                $sanitizedPropertyName = ConvertTo-ValidAdbStringArgument $_
+                Invoke-AdbExpression -DeviceId $DeviceId -Command "shell getprop $sanitizedPropertyName" -Verbose:$VerbosePreference | Out-String -NoNewline
             }
         }
     }
