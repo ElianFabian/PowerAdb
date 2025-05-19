@@ -14,7 +14,7 @@ function Connect-AdbDevice2 {
         continue
     }
 
-    if (-not (Test-AdbWifi -DeviceId $DeviceId -Verbose:$false) -or -not (Test-AdbMobileData -DeviceId $DeviceId -Verbose:$false)) {
+    if (-not (Test-AdbInternetConnection -DeviceId $DeviceId -Verbose:$false)) {
         Write-Error "Device '$DeviceId' has no internet connection. Please check your connection."
         continue
     }
