@@ -28,6 +28,7 @@ $globalSettings = @(
     'private_dns_specifier'
     'user_switcher_enabled'
     'wifi_on'
+    'device_name'
 )
 
 $systemSettings = @(
