@@ -23,7 +23,7 @@ Effect commands:
     wait time in milliseconds.
     If -a is provided, the command accepts a second argument for
     amplitude, in a scale of 1-255.
-    waveform [-w delay] [-r index] [-a] [-f] [-c] (<duration> [<amplitude>] [<frequency>])...
+  waveform [-w delay] [-r index] [-a] [-f] [-c] (<duration> [<amplitude>] [<frequency>])...
     Vibrates for durations and amplitudes in list; ignored when
     device is on DND (Do Not Disturb) mode; touch feedback strength
     user setting will be used to scale amplitude.
