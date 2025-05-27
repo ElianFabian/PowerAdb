@@ -27,6 +27,9 @@ function Uninstall-AdbPackage {
         $versionCodeArg = " --versionCode $VersionCode"
     }
 
+    # TODO: errors like Failure [INSTALL_FAILED_INVALID_APK: Split not found: --user] are returned as a string
+    # We should see if there's a clear pattern to check for that and throw it as an exception
+
     foreach ($package in $PackageName) {
         Invoke-AdbExpression -DeviceId $DeviceId -Command "uninstall '$package'$keepArg$userArg$versionCodeArg" -Verbose:$VerbosePreference
     }
