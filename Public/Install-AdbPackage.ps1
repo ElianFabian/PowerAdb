@@ -7,6 +7,9 @@ function Install-AdbPackage {
         [Parameter(Mandatory, ParameterSetName = 'Path')]
         [string[]] $Path,
 
+        [AllowNull()]
+        [object] $UserId,
+
         [Parameter(Mandatory, ParameterSetName = 'LiteralPath')]
         [string[]] $LiteralPath
 
@@ -26,10 +29,15 @@ function Install-AdbPackage {
         # [switch] $GrantAllRantimePermissions
     )
 
+    $user = Resolve-AdbUser -DeviceId $DeviceId -UserId $UserId -CurrentUserAsNull -RequireApiLevel 23
+    if ($null -ne $user) {
+        $userArg = " --user $user"
+    }
+
     # In certain API levels the default behavior is to prevent installing
     # if the app is already installed
     if ($Replace) {
-        $replaceParam = "-r "
+        $replaceArg = "-r "
     }
 
     $items = switch ($PSCmdlet.ParameterSetName) {
@@ -37,7 +45,7 @@ function Install-AdbPackage {
         LiteralPath { Get-Item -LiteralPath $LiteralPath }
     }
     foreach ($item in $items) {
-        $itemPath = $item.FullName
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "install $replaceParam'$itemPath'" -Verbose:$VerbosePreference
+        $sanitizedPath = ConvertTo-ValidAdbStringArgument $item.FullName
+        Invoke-AdbExpression -DeviceId $DeviceId -Command "install $replaceArg$userArg$sanitizedPath" -Verbose:$VerbosePreference
     }
 }

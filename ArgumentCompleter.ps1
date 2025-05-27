@@ -518,6 +518,8 @@ $longUserIdParamFunctions = @(
     'Start-AdbService'
     'Start-AdbForegroundService'
     'Stop-AdbService'
+    'Install-AdbPackage'
+    'Uninstall-AdbPackage'
 )
 
 Register-ArgumentCompleter -CommandName $longUserIdParamFunctions -ParameterName UserId -ScriptBlock $userIdCompletion

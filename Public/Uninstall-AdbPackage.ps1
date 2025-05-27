@@ -19,7 +19,7 @@ function Uninstall-AdbPackage {
     if ($KeepDataAndCache) {
         $keepArg = " -k"
     }
-    $user = Resolve-AdbUser -DeviceId $DeviceId -UserId $UserId
+    $user = Resolve-AdbUser -DeviceId $DeviceId -UserId $UserId -CurrentUserAsNull -RequireApiLevel 21
     if ($null -ne $user) {
         $userArg = " --user $user"
     }
@@ -31,6 +31,7 @@ function Uninstall-AdbPackage {
     # We should see if there's a clear pattern to check for that and throw it as an exception
 
     foreach ($package in $PackageName) {
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "uninstall '$package'$keepArg$userArg$versionCodeArg" -Verbose:$VerbosePreference
+        $sanitizedPackage = ConvertTo-ValidAdbStringArgument $package
+        Invoke-AdbExpression -DeviceId $DeviceId -Command "uninstall $sanitizedPackage$keepArg$userArg$versionCodeArg" -Verbose:$VerbosePreference
     }
 }
