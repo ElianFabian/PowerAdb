@@ -1,4 +1,4 @@
-function Get-AdbRealPhysicalDensity {
+function Get-AdbRealDensity {
 
     [OutputType([string])]
     [CmdletBinding()]
