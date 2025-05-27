@@ -32,7 +32,7 @@ function Resolve-AdbUser {
         # Default is 'current' for a more standard behavior across all API levels.
         return 'current'
     }
-    if ($UserId -notmatch '^\d+$' -or $UserId -ne 'current') {
+    if ($UserId -notmatch '^\d+$' -and $UserId -ne 'current') {
         Write-Error -Message "UserId must be a whole positive number or 'current', but was '$UserId'." -ErrorAction Stop
     }
     if ($UserId -eq 'current') {
