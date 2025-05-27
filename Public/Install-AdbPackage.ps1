@@ -29,7 +29,7 @@ function Install-AdbPackage {
         # [switch] $GrantAllRantimePermissions
     )
 
-    $user = Resolve-AdbUser -DeviceId $DeviceId -UserId $UserId -CurrentUserAsNull -RequireApiLevel 23
+    $user = Resolve-AdbUser -DeviceId $DeviceId -UserId $UserId -CurrentUserAsNull -RequireApiLevel 21
     if ($null -ne $user) {
         $userArg = " --user $user"
     }
@@ -45,7 +45,8 @@ function Install-AdbPackage {
         LiteralPath { Get-Item -LiteralPath $LiteralPath }
     }
     foreach ($item in $items) {
-        $sanitizedPath = ConvertTo-ValidAdbStringArgument $item.FullName
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "install $replaceArg$userArg$sanitizedPath" -Verbose:$VerbosePreference
+        # Sanitizing doesn't work for the path in here
+        $itemPath = $item.FullName
+        Invoke-AdbExpression -DeviceId $DeviceId -Command "install $replaceArg$userArg$itemPath" -Verbose:$VerbosePreference
     }
 }
