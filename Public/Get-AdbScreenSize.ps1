@@ -1,11 +1,15 @@
 function Get-AdbScreenSize {
 
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'Default')]
     [OutputType([PSCustomObject], [string])]
     param (
         [string] $DeviceId,
 
-        [switch] $AsString
+        [Parameter(ParameterSetName = 'AsString')]
+        [switch] $AsString,
+
+         [Parameter(ParameterSetName = 'SizeInDp')]
+        [switch] $SizeInDp
     )
 
     Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 18
@@ -31,15 +35,22 @@ function Get-AdbScreenSize {
 
     $physicalResolution = $physicalSize.Split("x")
 
+    $scaleFactor = 1
+
+    if ($SizeInDp) {
+        $density = Get-AdbScreenDensity -DeviceId $DeviceId | Select-Object -ExpandProperty Density
+        $scaleFactor = 160 / $density
+    }
+
     $output = [PSCustomObject] @{
-        PhysicalWidth  = [uint32] $physicalResolution[0]
-        PhysicalHeight = [uint32] $physicalResolution[1]
+        PhysicalWidth  = [uint32] $physicalResolution[0] * $scaleFactor
+        PhysicalHeight = [uint32] $physicalResolution[1] * $scaleFactor
     }
 
     if ($overrideSize) {
         $overrideResolution = $overrideSize.Split("x")
-        $output | Add-Member -MemberType NoteProperty -Name OverrideWidth -Value ([uint32] $overrideResolution[0])
-        $output | Add-Member -MemberType NoteProperty -Name OverrideHeight -Value ([uint32] $overrideResolution[1])
+        $output | Add-Member -MemberType NoteProperty -Name OverrideWidth -Value ([uint32] $overrideResolution[0] * $scaleFactor)
+        $output | Add-Member -MemberType NoteProperty -Name OverrideHeight -Value ([uint32] $overrideResolution[1 * $scaleFactor])
     }
 
     $output | Add-Member -MemberType ScriptProperty -Name Width -Value {
