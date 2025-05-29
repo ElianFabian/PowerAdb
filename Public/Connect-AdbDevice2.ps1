@@ -2,7 +2,6 @@ function Connect-AdbDevice2 {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(Mandatory)]
         [string] $DeviceId,
 
         [switch] $Force
