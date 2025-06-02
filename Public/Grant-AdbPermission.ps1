@@ -13,7 +13,9 @@ function Grant-AdbPermission {
 
     foreach ($package in $PackageName) {
         foreach ($permission in $PermissionName) {
-            Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pm grant '$package' '$permission'" -Verbose:$VerbosePreference > $null
+            $sanitizedPackage = ConvertTo-ValidAdbStringArgument $package
+            $sanitizedPermission = ConvertTo-ValidAdbStringArgument $permission
+            Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pm grant $sanitizedPackage $sanitizedPermission" -Verbose:$VerbosePreference
         }
     }
 }

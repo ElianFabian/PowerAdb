@@ -13,7 +13,10 @@ function Revoke-AdbPermission {
 
     foreach ($package in $PackageName) {
         foreach ($permission in $PermissionName) {
-            Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pm revoke '$package' '$permission'" -Verbose:$VerbosePreference
+            # For some permissions this closes the app without throwing an exception. I don't know why.
+            $sanitizedPackage = ConvertTo-ValidAdbStringArgument $package
+            $sanitizedPermission = ConvertTo-ValidAdbStringArgument $permission
+            Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pm revoke $sanitizedPackage $sanitizedPermission" -Verbose:$VerbosePreference
         }
     }
 }
