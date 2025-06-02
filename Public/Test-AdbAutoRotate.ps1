@@ -7,6 +7,8 @@ function Test-AdbAutoRotate {
         [string] $DeviceId
     )
 
+    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17
+
     $result = Get-AdbSetting -DeviceId $DeviceId -Namespace system -Name 'accelerometer_rotation' -Verbose:$VerbosePreference
     if ($result) {
         return $result -eq '1'
