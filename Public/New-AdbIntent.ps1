@@ -83,7 +83,7 @@ function New-AdbIntent {
             $adbArguments += " -i $(ConvertTo-ValidAdbStringArgument $this.Identifier)"
         }
         if ($this.Category) {
-            $adbArguments += " $($this.Category | ForEach-Object { "-c '$_'" })"
+            $adbArguments += " $($this.Category | ForEach-Object { "-c $(ConvertTo-ValidAdbStringArgument $_)" })"
         }
         if ($this.Flags) {
             $adbArguments += " -f 0x$($this.Flags.ToString('x8'))"
