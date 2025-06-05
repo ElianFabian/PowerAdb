@@ -137,7 +137,7 @@ function Start-AdbActivity {
     if ($activityTypeCode -ne 0) {
         $argumentsSb.Append(" --activityType $activityTypeCode") > $null
     }
-    $argumentsSb.Append(" $intentArgs") > $null
+    $argumentsSb.Append($intentArgs) > $null
 
     try {
         Invoke-AdbExpression -DeviceId $DeviceId -Command "shell am start$($argumentsSb.ToString())" -Verbose:$VerbosePreference
