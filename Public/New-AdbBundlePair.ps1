@@ -27,11 +27,11 @@ function New-AdbBundlePair {
         [Parameter(Mandatory, ParameterSetName = 'Uri')]
         [uri] $Uri,
 
-        [Parameter(Mandatory, ParameterSetName = 'ComponentName')]
+        [Parameter(Mandatory, ParameterSetName = 'ComponentClassName')]
         [string] $PackageName,
 
-        [Parameter(Mandatory, ParameterSetName = 'ComponentName')]
-        [string] $ClassName,
+        [Parameter(Mandatory, ParameterSetName = 'ComponentClassName')]
+        [string] $ComponentClassName,
 
         [Parameter(Mandatory, ParameterSetName = 'IntArray')]
         [int[]] $IntArray,
@@ -123,8 +123,8 @@ function New-AdbBundlePair {
                 "--eu $sanitizedKey $sanitizedValue"
             }
         }
-        'ComponentName' {
-            $pair | Add-Member -MemberType NoteProperty -Name Value -Value "$PackageName/$ClassName"
+        'ComponentClassName' {
+            $pair | Add-Member -MemberType NoteProperty -Name Value -Value "$PackageName/$ComponentClassName"
             $pair | Add-Member -MemberType ScriptMethod -Name ToAdbArguments -Value {
                 $sanitizedKey = ConvertTo-ValidAdbStringArgument $this.Key
                 $sanitizedValue = ConvertTo-ValidAdbStringArgument $this.Value
