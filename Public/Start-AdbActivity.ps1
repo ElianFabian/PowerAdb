@@ -1,6 +1,6 @@
 function Start-AdbActivity {
 
-    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'UserId')]
+    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'Default')]
     param (
         [string] $DeviceId,
 
