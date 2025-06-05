@@ -23,6 +23,7 @@ function New-AdbBundlePair {
         [Parameter(Mandatory, ParameterSetName = 'Double')]
         [double] $Double,
 
+        # The user is responsible for properly encoding the URI
         [Parameter(Mandatory, ParameterSetName = 'Uri')]
         [uri] $Uri,
 

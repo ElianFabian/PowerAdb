@@ -5,6 +5,7 @@ function New-AdbIntent {
     param (
         [string] $Action = $null,
 
+        # The user is responsible for properly encoding the URI
         [uri] $Data = $null,
 
         [string] $MimeType = $null,
