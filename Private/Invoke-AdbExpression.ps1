@@ -45,6 +45,8 @@ function Invoke-AdbExpression {
                 Write-Output $_
             }
 
+            # Exceptions with $ErroView = 'ConciseView' does not show new line characters in error messages.
+            # For a more easy-to-ready output consider the following: $ErroView = 'NormalView'
             if ($errors.Count -eq 1) {
                 throw [AdbCommandException]::new($errors[0].Exception.Message, $errors[0].Exception, $adbCommand)
             }
