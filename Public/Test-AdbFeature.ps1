@@ -27,7 +27,8 @@ function Test-AdbFeature {
             $featureName -in $supportedFeatures
         }
         else {
-            $result = Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pm has-feature '$featureName'" -Verbose:$VerbosePreference
+            $sanitizedFeatureName = ConvertTo-ValidAdbStringArgument $featureName
+            $result = Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pm has-feature $sanitizedFeatureName" -Verbose:$VerbosePreference
 
             [bool]::Parse($result)
         }
