@@ -181,6 +181,8 @@ function Get-AdbLogcat {
         $adbArgSb.Append(" --proto") > $null
     }
     if ($Pattern) {
+        # FIXME: Regex parameter does not support sanitizing it as we do for other string arguments.
+        # It would be cool to find a better way to avoid problems when adding single quotes or whatever.
         $adbArgSb.Append(" -e '$Pattern'") > $null
     }
     if ($PSCmdlet.ParameterSetName -eq "Print") {
