@@ -1,0 +1,27 @@
+function Test-AdbBluetooth {
+
+    [OutputType([bool])]
+    [CmdletBinding(SupportsShouldProcess)]
+    param (
+        [string] $DeviceId,
+
+        [switch] $IgnoreBluetoothFeatureCheck
+    )
+
+    if (-not $IgnoreBluetoothFeatureCheck -and -not (Test-AdbFeature -DeviceId $DeviceId -Feature 'android.hardware.bluetooth' -Verbose:$false)) {
+        Write-Error -Message "Device with id '$DeviceId' does not support Bluetooth." -Category InvalidOperation -ErrorAction Stop
+    }
+
+    do {
+        $result = Get-AdbServiceDump -DeviceId $DeviceId -Name bluetooth_manager | Select-Object -Skip 2 -First 1
+    }
+    while ($result.Contains('TURNING_OFF') -or $result.Contains('TURNING_ON'))
+
+    switch ($result.Trim()) {
+        'state: ON' { $true }
+        'state: OFF' { $false }
+        default {
+            Write-Error -Message "Unkown state: $_" -ErrorAction Stop
+        }
+    }
+}
