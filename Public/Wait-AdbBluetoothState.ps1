@@ -8,10 +8,16 @@ function Wait-AdbBluetoothState {
         [Parameter(Mandatory)]
         [string] $State,
 
-        [switch] $ForceWait
+        [switch] $ForceWait,
+
+        [switch] $IgnoreBluetoothFeatureCheck
     )
 
     Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 34
+
+    if ($IgnoreBluetoothFeatureCheck -and -not (Test-AdbFeature -DeviceId $DeviceId -Feature 'android.hardware.bluetooth' -Verbose:$false)) {
+        Write-Error -Message "Device with id '$DeviceId' does not support Bluetooth." -Category InvalidOperation -ErrorAction Stop
+    }
 
     $stateCode = switch ($State) {
         'On' { 'STATE_ON' }
