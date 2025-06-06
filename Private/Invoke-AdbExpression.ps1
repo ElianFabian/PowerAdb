@@ -12,6 +12,8 @@ function Invoke-AdbExpression {
     Assert-AdbExecution -DeviceId $DeviceId
 
     if ($DeviceId) {
+        # FIXME: '-s' parameter does not support string sanitizing as we do for other string arguments.
+        # We should find a way to deal with this, maybe just checking for special characters or something.
         $deviceIdArg = " -s '$DeviceId'"
     }
 
