@@ -93,7 +93,7 @@ function Get-AdbLogcat {
     )
 
     if ('crash' -in $Buffer) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 21 -FeatureName "$($MyInvocation.MyCommand.Name) -Buffer 'Crash'"
+        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 21 -FeatureName "$($MyInvocation.MyCommand.Name) -Buffer crash"
     }
     if ($Last) {
         Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 21 -FeatureName "$($MyInvocation.MyCommand.Name) -Last"
@@ -126,10 +126,10 @@ function Get-AdbLogcat {
         Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 26 -FeatureName "$($MyInvocation.MyCommand.Name) -FormatAdverd 'descriptive'"
     }
     if ('kernel' -in $Buffer) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 29 -FeatureName "$($MyInvocation.MyCommand.Name) -Buffer 'Kernel'"
+        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 29 -FeatureName "$($MyInvocation.MyCommand.Name) -Buffer kernel"
     }
     if ('security' -in $Buffer) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 29 -FeatureName "$($MyInvocation.MyCommand.Name) -Buffer 'Security'"
+        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 29 -FeatureName "$($MyInvocation.MyCommand.Name) -Buffer security"
     }
     if ($Proto) {
         Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 35 -FeatureName "$($MyInvocation.MyCommand.Name) -Proto"
