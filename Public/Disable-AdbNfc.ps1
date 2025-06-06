@@ -9,7 +9,7 @@ function Disable-AdbNfc {
 
     Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 24
 
-    if ($IgnoreNfcFeatureCheck -and -not (Test-AdbFeature -DeviceId $DeviceId -Feature 'android.hardware.nfc' -Verbose:$false)) {
+    if (-not $IgnoreNfcFeatureCheck -and -not (Test-AdbFeature -DeviceId $DeviceId -Feature 'android.hardware.nfc' -Verbose:$false)) {
         Write-Error -Message "Device with id '$DeviceId' does not support NFC." -Category InvalidOperation -ErrorAction Stop
     }
 

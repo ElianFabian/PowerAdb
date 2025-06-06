@@ -9,7 +9,7 @@ function Disable-AdbBluetooth {
 
     Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 33
 
-    if ($IgnoreBluetoothFeatureCheck -and -not (Test-AdbFeature -DeviceId $DeviceId -Feature 'android.hardware.bluetooth' -Verbose:$false)) {
+    if (-not $IgnoreBluetoothFeatureCheck -and -not (Test-AdbFeature -DeviceId $DeviceId -Feature 'android.hardware.bluetooth' -Verbose:$false)) {
         Write-Error -Message "Device with id '$DeviceId' does not support Bluetooth." -Category InvalidOperation -ErrorAction Stop
     }
 
