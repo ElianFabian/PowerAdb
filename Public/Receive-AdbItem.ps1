@@ -18,9 +18,8 @@ function Receive-AdbItem {
 
     if ($Force -or -not (Test-Path -Path $localPath)) {
         try {
-            $sanitizedLiteralRemotePath = ConvertTo-ValidAdbStringArgument $LiteralRemotePath
-            $sanitizedLiteralLocalPath = ConvertTo-ValidAdbStringArgument $LiteralLocalPath
-            Invoke-AdbExpression -DeviceId $DeviceId -Command "pull $sanitizedLiteralRemotePath $sanitizedLiteralLocalPath" -Verbose:$VerbosePreference
+            # Sanitizing does not work for these arguments.
+            Invoke-AdbExpression -DeviceId $DeviceId -Command "pull '$LiteralRemotePath' '$LiteralLocalPath'" -Verbose:$VerbosePreference
         }
         catch [AdbCommandException] {
             # For some reason when receiving the file it is treated as an error,

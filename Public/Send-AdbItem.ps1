@@ -12,9 +12,8 @@ function Send-AdbItem {
     )
 
     try {
-        $sanitizedLiteralLocalPath = ConvertTo-ValidAdbStringArgument $LiteralLocalPath
-        $sanitizedLiteralRemotePath = ConvertTo-ValidAdbStringArgument $LiteralRemotePath
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "push $sanitizedLiteralLocalPath $sanitizedLiteralRemotePath" -Verbose:$VerbosePreference
+        # Sanitizing does not work for these arguments.
+        Invoke-AdbExpression -DeviceId $DeviceId -Command "push '$LiteralLocalPath' '$LiteralRemotePath'" -Verbose:$VerbosePreference
     }
     catch [AdbCommandException] {
         # For some reason when sending the file it is treated as an error,
