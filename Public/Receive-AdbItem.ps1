@@ -22,6 +22,9 @@ function Receive-AdbItem {
             Invoke-AdbExpression -DeviceId $DeviceId -Command "pull '$LiteralRemotePath' '$LiteralLocalPath'" -Verbose:$VerbosePreference
         }
         catch [AdbCommandException] {
+            if ($_.Exception.Message.StartsWith('adb: error:')) {
+                throw $_
+            }
             # For some reason when receiving the file it is treated as an error,
             # to fix it we just ignore it.
         }
