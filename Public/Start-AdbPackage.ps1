@@ -11,7 +11,8 @@ function Start-AdbPackage {
 
     foreach ($package in $PackageName) {
         try {
-            Invoke-AdbExpression -DeviceId $DeviceId -Command "shell monkey -p '$package' -c android.intent.category.LAUNCHER 1" -Verbose:$VerbosePreference > $null
+            $sanitizedPackage = ConvertTo-ValidAdbStringArgument $package
+            Invoke-AdbExpression -DeviceId $DeviceId -Command "shell monkey -p $sanitizedPackage -c android.intent.category.LAUNCHER 1" -Verbose:$VerbosePreference > $null
         }
         catch [AdbCommandException] {
             if ($_.Exception.Message.EndsWith('No activities found to run, monkey aborted.')) {
