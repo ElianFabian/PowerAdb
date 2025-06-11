@@ -1,4 +1,4 @@
-# Starts an application or resumes it if it's already been open
+# Starts an application or resumes it if it's already open
 function Start-AdbPackage {
 
     [CmdletBinding(SupportsShouldProcess)]
@@ -10,6 +10,13 @@ function Start-AdbPackage {
     )
 
     foreach ($package in $PackageName) {
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell monkey -p '$package' -c android.intent.category.LAUNCHER 1" -Verbose:$VerbosePreference > $null
+        try {
+            Invoke-AdbExpression -DeviceId $DeviceId -Command "shell monkey -p '$package' -c android.intent.category.LAUNCHER 1" -Verbose:$VerbosePreference > $null
+        }
+        catch [AdbCommandException] {
+            if ($_.Exception.Message.EndsWith('No activities found to run, monkey aborted.')) {
+                throw $_
+            }
+        }
     }
 }
