@@ -7,16 +7,45 @@ function Get-AdbPackageInfo {
 
         [string[]] $PackageName,
 
-        [switch] $Raw
+        [switch] $Raw,
+
+        # Retrieves the packages to check if the current PackageName exist at the before processing the command.
+        [switch] $ExhaustivePackageExistenceCheck
     )
 
     if (-not $PackageName) {
         $noPackage = $true
         $PackageName = @('*') # Arbitrary value to ensure we enter the loop exactly once
     }
+    elseif (-not $ExhaustivePackageExistenceCheck) {
+        $allInitialPackages = Get-AdbPackage -DeviceId $DeviceId -Verbose:$false
+    }
 
     foreach ($package in $PackageName) {
-        $rawData = Get-AdbServiceDump -DeviceId $DeviceId -Name 'package' -ArgumentList $package -Verbose:$VerbosePreference
+        if (-not $noPackage) {
+            $allPackages = if ($ExhaustivePackageExistenceCheck) {
+                Get-AdbPackage -DeviceId $DeviceId -Verbose:$false
+            }
+            else {
+                $allInitialPackages
+            }
+
+            $foundPackage = $allPackages `
+            | Where-Object { $_ -eq $package } `
+            | Select-Object -First 1
+
+            if (-not $foundPackage) {
+                $null
+                continue
+            }
+        }
+
+        $rawData = if ($noPackage) {
+            Get-AdbServiceDump -DeviceId $DeviceId -Name 'package' -Verbose:$VerbosePreference
+        }
+        else {
+            Get-AdbServiceDump -DeviceId $DeviceId -Name 'package' -ArgumentList $package -Verbose:$VerbosePreference
+        }
 
         if ($Raw) {
             $rawData
@@ -256,7 +285,7 @@ function Get-AdbPackageInfo {
 
 
 
-$script:PackagePattern = '[a-zA-Z0-9\._\-]+'
+$script:PackagePattern = '[a-zA-Z0-9\._\-#]+'
 $HashPattern = '[a-f0-9]+'
 $ComponentClassNamePattern = '[a-zA-Z0-9\.\/_$]+'
 # It seems this is possible: 'text/directory; profile=vcard:'
@@ -320,7 +349,7 @@ $script:WildMimeTypeHeaderPattern = (
     $script:MimeTypeHeaderPattern
 )
 $script:SchemeHeaderPattern = (
-    '\s{6}[\w..\-+?]*:'
+    '\s{6}[\w..\-+?*]*:'
 )
 $script:PackageHeaderPattern = (
     "\s{2}Package \[(?<package>$PackagePattern)\] \((?<packageHash>$HashPattern)\):"
@@ -383,8 +412,63 @@ function SkipMiscellaneous {
     #         sdkVersion=29 databaseVersion=3
     #         fingerprint=realme/RMX2001EEA/RMX2001L1:10/QP1A.190711.020/1591587271:user/release-keys
 
+    #### This is another posibility of Database verions
+    # Database versions:
+    #   Internal:
+    #     sdkVersion=35 databaseVersion=3
+    #     buildFingerprint=google/husky/husky:15/BP1A.250505.005.B1/13277630:user/release-keys fingerprint=a18c8a2ab7519d77e1730574b264065914cc7b3f
+    #   External:
+    #     sdkVersion=34 databaseVersion=3
+    #     buildFingerprint=google/husky/husky:14/AP1A.240305.019.A1/11445699:user/release-keys fingerprint=b0b103cd79fffaa0d00f9f61a1e6901d4d564efa
+
+    # Known Packages:
+    #   System:
+    #     android
+    #   Setup Wizard:
+    #     com.google.android.setupwizard
+    #   Installer:
+    #     com.google.android.packageinstaller
+    #   Uninstaller:
+    #     com.google.android.packageinstaller
+    #   Verifier:
+    #     com.android.vending
+    #   Browser:
+    #     com.brave.browser
+    #   System Text Classifier:
+    #     com.google.android.ext.services
+    #     com.google.android.as
+    #   Permission Controller:
+    #     com.google.android.permissioncontroller
+    #   Wellbeing:
+    #     none
+    #   Documenter:
+    #     none
+    #   Configurator:
+    #     com.google.android.gms
+    #   Incident Report Approver:
+    #     com.google.android.permissioncontroller
+    #   App Predictor:
+    #     com.google.android.as
+    #   Overlay Config Signature:
+    #     none
+    #   Wi-Fi:
+    #     none
+    #   Companion:
+    #     com.android.companiondevicemanager
+    #   Retail Demo:
+    #     com.google.android.retaildemo
+    #   Recents:
+    #     com.google.android.apps.nexuslauncher
+    #   Ambient Context Detection:
+    #     com.google.android.as
+    #   Wearable sensing:
+    #     none
+
     # Verifiers:
     #   Required: com.android.vending (uid=10147)
+
+    # Domain Verifier:
+    #   Using: com.google.android.gms (uid=10140)
 
     # Intent Filter Verifier:
     #   Using: com.google.android.gms (uid=10143)
@@ -393,9 +477,21 @@ function SkipMiscellaneous {
         do {
             $LineEnumerator.MoveNextIgnoringBlank() > $null
         }
-        while ($LineEnumerator.Current[0] -ceq ' ' -or $LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':')
+        while ($LineEnumerator.Current[0] -ceq ' ')
+    }
+    if ($LineEnumerator.Current.Contains('Known Packages:')) {
+        do {
+            $LineEnumerator.MoveNextIgnoringBlank() > $null
+        }
+        while ($LineEnumerator.Current[0] -ceq ' ')
     }
     if ($LineEnumerator.Current.Contains('Verifiers:')) {
+        do {
+            $LineEnumerator.MoveNextIgnoringBlank() > $null
+        }
+        while ($LineEnumerator.Current[0] -ceq ' ' -or $LineEnumerator.Current[$LineEnumerator.Current.Length - 1] -cne ':')
+    }
+    if ($LineEnumerator.Current.Contains('Domain Verifier:')) {
         do {
             $LineEnumerator.MoveNextIgnoringBlank() > $null
         }
@@ -485,10 +581,15 @@ function ParseComponentContainer {
     )
 
     while ($LineEnumerator.Current -match $Pattern) {
+        $componentContainerName = $LineEnumerator.Current.Trim().Replace(':', '')
         $container = [PSCustomObject]@{
-            Name = $LineEnumerator.Current.Trim().Replace(':', '')
+            Name = if ($componentContainerName) {
+                $componentContainerName
+            }
+            else {
+                ""
+            }
         }
-
         $LineEnumerator.MoveNextIgnoringBlank() > $null
 
         ParseComponent -LineEnumerator $LineEnumerator -InputObject $container -ComponentType $ComponentType
