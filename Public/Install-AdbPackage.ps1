@@ -46,7 +46,7 @@ function Install-AdbPackage {
     }
     foreach ($item in $items) {
         # Sanitizing doesn't work for the path in here
-        $itemPath = $item.FullName
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "install $replaceArg$userArg$itemPath" -Verbose:$VerbosePreference
+        $itemPathArg = " '$($item.FullName)'"
+        Invoke-AdbExpression -DeviceId $DeviceId -Command "install $replaceArg$userArg$itemPathArg" -Verbose:$VerbosePreference
     }
 }
