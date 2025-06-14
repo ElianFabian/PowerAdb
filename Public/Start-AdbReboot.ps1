@@ -9,19 +9,11 @@ function Start-AdbReboot {
         [string] $Type
     )
 
-    Assert-AdbExecution -DeviceId $DeviceId
-
     $mode = switch ($Type) {
         "restart" { '' }
         "recovery" { ' recovery' }
         "rootloader" { '-bootloader' }
     }
 
-    if ($DeviceId) {
-        $deviceIdArg = " -s '$DeviceId'"
-    }
-
-    if ($PSCmdlet.ShouldProcess("adb$deviceIdArg reboot$mode", '', 'Start-AdbReboot')) {
-        adb -s $DeviceId reboot$mode
-    }
+    Invoke-AdbExpression -NoDevice -Command "reboot$mode" -Verbose:$VerbosePreference
 }

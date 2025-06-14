@@ -1,15 +1,21 @@
 function Invoke-AdbExpression {
 
     [OutputType([string])]
-    [CmdletBinding(SupportsShouldProcess)]
+    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'Default')]
     param (
+        [Parameter(ParameterSetName = 'Default')]
         [string] $DeviceId,
+
+         [Parameter(ParameterSetName = 'NoDevice')]
+         [switch] $NoDevice,
 
         [Parameter(Mandatory)]
         [string] $Command
     )
 
-    Assert-AdbExecution -DeviceId $DeviceId
+    if (-not $NoDevice) {
+        Assert-AdbExecution -DeviceId $DeviceId
+    }
 
     if ($DeviceId) {
         # FIXME: '-s' parameter does not support string sanitizing as we do for other string arguments.
