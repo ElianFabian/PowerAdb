@@ -12,5 +12,14 @@ function Wait-AdbDeviceState {
         [string] $Transport = "any"
     )
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command "wait-for-$Transport-$State" -Verbose:$VerbosePreference
+    if ($DeviceId) {
+        $currentState = Get-AdbDeviceState -DeviceId $DeviceId -PreventLock
+        if ($currentState -eq 'offline') {
+            return 'offline'
+        }
+
+        Invoke-AdbExpression -DeviceId $DeviceId -Command "wait-for-$Transport-$State" -Verbose:$VerbosePreference
+    }
+
+    Invoke-AdbExpression -NoDevice -Command "wait-for-$Transport-$State" -Verbose:$VerbosePreference
 }
