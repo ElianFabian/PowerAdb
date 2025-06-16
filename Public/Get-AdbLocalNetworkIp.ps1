@@ -17,7 +17,7 @@ function Get-AdbLocalNetworkIp {
         }
 
         $ipAddress = Invoke-AdbExpression -DeviceId $DeviceId -Command 'shell ip route' -Verbose:$VerbosePreference `
-        | Select-String -Pattern '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/\d+ dev\s+[\w\d]+\s+proto\s+kernel\s+scope\s+link\s+src\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)' `
+        | Select-String -Pattern '[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/\d+ dev\s+wlan0+\s+proto\s+kernel\s+scope\s+link\s+src\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)' `
         | ForEach-Object {
             $_.Matches.Groups[1].Value
         }

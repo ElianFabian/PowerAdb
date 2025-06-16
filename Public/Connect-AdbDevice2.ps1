@@ -7,6 +7,10 @@ function Connect-AdbDevice2 {
         [switch] $Force
     )
 
+    if (Test-AdbEmulator -DeviceId $DeviceId) {
+        Write-Error "Cannot connect to an emulator using this Connect-AdbDevice2" -Category InvalidOperation -ErrorAction Stop
+    }
+
     # The adb_wifi_enabled has the following values:
     # 0 - Wireless debugging is disabled
     # 1 - Wireless debugging is enabled

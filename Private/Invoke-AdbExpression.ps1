@@ -12,13 +12,14 @@ function Invoke-AdbExpression {
         [switch] $IgnoreExecutionCheck
     )
 
-    Assert-ValidAdbStringArgument $DeviceId -ArgumentName 'DeviceId'
 
     if (-not $IgnoreExecutionCheck) {
         Assert-AdbExecution -DeviceId $DeviceId
     }
 
     if ($DeviceId) {
+        Assert-ValidAdbStringArgument $DeviceId -ArgumentName 'DeviceId'
+
         # FIXME: '-s' parameter does not support string sanitizing as we do for other string arguments.
         # We should find a way to deal with this, maybe just checking for special characters or something.
         $deviceIdArg = " -s '$DeviceId'"

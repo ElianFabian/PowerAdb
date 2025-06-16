@@ -10,6 +10,10 @@ function Connect-AdbDevice {
         [int] $Port
     )
 
+    if (Test-AdbEmulator -DeviceId $DeviceId) {
+        Write-Error "Cannot connect to an emulator using this Connect-AdbDevice" -Category InvalidOperation -ErrorAction Stop
+    }
+
     try {
         $result = Invoke-AdbExpression -Command "connect ""$IpAddress`:$Port""" -IgnoreExecutionCheck -Verbose:$VerbosePreference
         Write-Verbose $result
