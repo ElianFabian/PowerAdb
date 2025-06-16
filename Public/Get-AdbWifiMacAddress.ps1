@@ -1,4 +1,4 @@
-function Get-AdbMacAddress {
+function Get-AdbWifiMacAddress {
 
     [OutputType([string])]
     [CmdletBinding()]
