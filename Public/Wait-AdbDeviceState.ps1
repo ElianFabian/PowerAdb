@@ -13,7 +13,7 @@ function Wait-AdbDeviceState {
     )
 
     if ($DeviceId) {
-        $currentState = Get-AdbDeviceState -DeviceId $DeviceId -PreventLock -Verbose:$false
+        $currentState = Get-AdbDeviceState -DeviceId $DeviceId -Verbose:$false # -PreventLock
         if ($currentState -eq 'offline') {
             return 'offline'
         }
