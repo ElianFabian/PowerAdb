@@ -6,14 +6,13 @@ function Invoke-AdbExpression {
         [Parameter(ParameterSetName = 'Default')]
         [string] $DeviceId,
 
-         [Parameter(ParameterSetName = 'NoDevice')]
-         [switch] $NoDevice,
-
         [Parameter(Mandatory)]
-        [string] $Command
+        [string] $Command,
+
+        [switch] $IgnoreExecutionCheck
     )
 
-    if (-not $NoDevice) {
+    if (-not $IgnoreExecutionCheck) {
         Assert-AdbExecution -DeviceId $DeviceId
     }
 

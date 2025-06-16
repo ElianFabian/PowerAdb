@@ -15,5 +15,5 @@ function Start-AdbReboot {
         "rootloader" { '-bootloader' }
     }
 
-    Invoke-AdbExpression -NoDevice -Command "reboot$mode" -Verbose:$VerbosePreference
+    Invoke-AdbExpression -Command "reboot$mode" -IgnoreExecutionCheck -Verbose:$VerbosePreference
 }

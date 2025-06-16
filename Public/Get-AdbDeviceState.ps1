@@ -7,7 +7,7 @@ function Get-AdbDeviceState {
     )
 
     try {
-        return Invoke-AdbExpression -DeviceId $DeviceId -Command "get-state" -Verbose:$VerbosePreference
+        return Invoke-AdbExpression -DeviceId $DeviceId -Command "get-state" -IgnoreExecutionCheck -Verbose:$VerbosePreference
     }
     catch [AdbCommandException] {
         if ($_.Exception.Message -eq 'error: device offline') {

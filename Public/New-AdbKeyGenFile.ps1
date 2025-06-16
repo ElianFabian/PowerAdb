@@ -9,7 +9,7 @@ function New-AdbKeyGenFile {
 
     $resolvedPath = Resolve-Path -Path $Destination
     if ($PSCmdlet.ShouldProcess("adb keygen ""$resolvedPath""", '', 'New-AdbKeyGenFile')) {
-        Invoke-AdbExpression -NoDevice -Command "adb keygen ""$resolvedPath""" -Verbose:$VerbosePreference
+        Invoke-AdbExpression -Command "adb keygen ""$resolvedPath""" -IgnoreExecutionCheck -Verbose:$VerbosePreference
 
         Get-Item -LiteralPath $resolvedPath
         Get-Item -LiteralPath "$resolvedPath.pub"

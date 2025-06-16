@@ -4,10 +4,14 @@ function Resolve-AdbDevice {
     param (
         [AllowEmptyString()]
         [Parameter(Mandatory)]
-        [string] $DeviceId
+        [string] $DeviceId,
+
+        [switch] $IgnoreExecutionCheck
     )
 
-    Assert-AdbExecution -DeviceId $DeviceId
+    if (-not $IgnoreExecutionCheck) {
+        Assert-AdbExecution -DeviceId $DeviceId
+    }
 
     $availableDevices = Get-AdbDevice -Verbose:$false
 

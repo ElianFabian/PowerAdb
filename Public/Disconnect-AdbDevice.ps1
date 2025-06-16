@@ -10,5 +10,5 @@ function Disconnect-AdbDevice {
         [int] $Port
     )
 
-    Invoke-AdbExpression -NoDevice -Command "disconnect ""$IpAddress`:$Port""" -Verbose:$VerbosePreference
+    Invoke-AdbExpression -Command "disconnect ""$IpAddress`:$Port""" -IgnoreExecutionCheck -Verbose:$VerbosePreference
 }

@@ -11,7 +11,8 @@ function Connect-AdbDevice {
     )
 
     try {
-        Invoke-AdbExpression -NoDevice -Command "connect ""$IpAddress`:$Port""" -Verbose:$VerbosePreference
+        $result = Invoke-AdbExpression -Command "connect ""$IpAddress`:$Port""" -IgnoreExecutionCheck -Verbose:$VerbosePreference
+        Write-Verbose $result
     }
     catch [AdbCommandException] {
         if ($_.Exception.Message.Contains('cannot connect to')) {
