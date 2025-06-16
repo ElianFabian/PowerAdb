@@ -18,6 +18,9 @@ function Receive-AdbItem {
 
     if ($Force -or -not (Test-Path -Path $localPath)) {
         try {
+            Assert-ValidAdbStringArgument $LiteralRemotePath -ArgumentName 'LiteralRemotePath'
+            Assert-ValidAdbStringArgument $LiteralLocalPath -ArgumentName 'LiteralLocalPath'
+
             # Sanitizing does not work for these arguments.
             Invoke-AdbExpression -DeviceId $DeviceId -Command "pull '$LiteralRemotePath' '$LiteralLocalPath'" -Verbose:$VerbosePreference
         }

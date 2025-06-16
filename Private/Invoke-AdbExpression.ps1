@@ -12,6 +12,8 @@ function Invoke-AdbExpression {
         [switch] $IgnoreExecutionCheck
     )
 
+    Assert-ValidAdbStringArgument $DeviceId -ArgumentName 'DeviceId'
+
     if (-not $IgnoreExecutionCheck) {
         Assert-AdbExecution -DeviceId $DeviceId
     }
@@ -20,6 +22,18 @@ function Invoke-AdbExpression {
         # FIXME: '-s' parameter does not support string sanitizing as we do for other string arguments.
         # We should find a way to deal with this, maybe just checking for special characters or something.
         $deviceIdArg = " -s '$DeviceId'"
+
+        ### It's hard to reproduce this issue, but we'll leave this commented out for now.
+        # Sometimes when you connect a device it suddenly disconnects.
+        # $deviceState = Get-AdbDeviceState -DeviceId $DeviceId -PreventLock -Verbose:$false
+        # if ($deviceState -eq 'offline') {
+        #     $device = Resolve-AdbDevice -DeviceId $DeviceId
+        #     $ipAddress, $port = $device.Split(':')
+        #     Write-Warning "Device '$device' is offline"
+        #     Write-Information "Connecting to device '$device'"
+        #     Connect-AdbDevice -IpAddress $ipAddress -Port $port -Verbose:$true
+        #     Write-Information "Connected to device '$device'"
+        # }
     }
 
     $adbCommand = "adb$deviceIdArg $Command"

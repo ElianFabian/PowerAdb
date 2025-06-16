@@ -9,6 +9,8 @@ function Resolve-AdbDevice {
         [switch] $IgnoreExecutionCheck
     )
 
+    Assert-ValidAdbStringArgument $DeviceId -ArgumentName 'DeviceId'
+
     if (-not $IgnoreExecutionCheck) {
         Assert-AdbExecution -DeviceId $DeviceId
     }

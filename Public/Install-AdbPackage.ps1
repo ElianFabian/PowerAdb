@@ -47,6 +47,7 @@ function Install-AdbPackage {
     foreach ($item in $items) {
         # Sanitizing doesn't work for the path in here
         $itemPathArg = " '$($item.FullName)'"
+        Assert-ValidAdbStringArgument $itemPathArg -ArgumentName 'LiteralPath'
         Invoke-AdbExpression -DeviceId $DeviceId -Command "install $replaceArg$userArg$itemPathArg" -Verbose:$VerbosePreference
     }
 }
