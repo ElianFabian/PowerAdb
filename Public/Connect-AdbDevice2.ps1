@@ -7,6 +7,10 @@ function Connect-AdbDevice2 {
         [switch] $Force
     )
 
+    # The adb_wifi_enabled has the following values:
+    # 0 - Wireless debugging is disabled
+    # 1 - Wireless debugging is enabled
+    # 'null' - Wireless debugging is enabled (at least)
     $isWirelessDebuggingEnabled = Get-AdbSetting -DeviceId $DeviceId -Namespace global -Name 'adb_wifi_enabled' -Verbose:$false
     if ($isWirelessDebuggingEnabled -eq 0 -and -not $Force) {
         Write-Error "Wireless debugging is not enabled on device $DeviceId. Use -Force to enable it."
@@ -30,7 +34,9 @@ function Connect-AdbDevice2 {
     #     continue
     # }
 
-    Set-AdbSetting -DeviceId $DeviceId -Namespace global -Name 'adb_wifi_enabled' -Value 1 -Verbose:$false
+    if ($Force -and $isWirelessDebuggingEnabled -ne 1 -and $isWirelessDebuggingEnabled -ne 'null') {
+        Set-AdbSetting -DeviceId $DeviceId -Namespace global -Name 'adb_wifi_enabled' -Value 1 -Verbose:$false
+    }
 
     $ipAdress = Get-AdbLocalNetworkIp -DeviceId $DeviceId -Wait -Verbose:$false
     Start-AdbTcpIp -DeviceId $DeviceId -Port 5555 -Verbose:$VerbosePreference
