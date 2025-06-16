@@ -108,7 +108,7 @@ function New-AdbIntent {
                 -not $this.IgnoredUnsupportedFeatures -or (-not $thresholds.ContainsKey($_.Type) -or ($thresholds.ContainsKey($_.Type) -and $apiLevel -ge $thresholds[$_.Type]))
             } `
             | ForEach-Object {
-                $adbArguments += "$($_.ToAdbArguments($DeviceId))"
+                $adbArguments += " $($_.ToAdbArguments($DeviceId))"
             }
         }
         if ($this.NamedFlags) {
