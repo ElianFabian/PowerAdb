@@ -8,7 +8,7 @@ function Get-IntentNamedFlag {
         return
     }
 
-    if ($ApiLevel -gt 15) {
+    if ($ApiLevel -ge 16) {
        'grant-read-uri-permission'
        'grant-write-uri-permission'
        'debug-log-resolution'
@@ -32,18 +32,18 @@ function Get-IntentNamedFlag {
        'receiver-registered-only'
        'receiver-replace-pending'
     }
-    if ($ApiLevel -gt 19) {
+    if ($ApiLevel -ge 21) {
         'grant-persistable-uri-permission'
         'grant-prefix-uri-permission'
     }
-    if ($ApiLevel -gt 23) {
+    if ($ApiLevel -ge 24) {
         'receiver-foreground'
     }
-    if ($ApiLevel -gt 25) {
+    if ($ApiLevel -ge 26) {
         'receiver-no-abort'
         'receiver-include-background'
     }
-    if ($ApiLevel -gt 27) {
+    if ($ApiLevel -ge 28) {
         'activity-match-external'
     }
 }
