@@ -82,3 +82,13 @@ function Invoke-AdbExpression {
         }
     }
 }
+
+
+
+# DeviceId format meaning, we might use this in the future:
+# - 47031FDJG000G1 (USB Physical Device)
+# - 4ae4faf6 (USB Physical Device)
+# - 192.168.1.122:5555 (Wireless Physical Device)
+# - adb-ZLCQGUPF7TDENZGM-PjhN0r._adb-tls-connect._tcp (Wireless Physical Device)
+# - emulator-5554 (Emulator)
+# - localhost:59608 (Remote Device)
