@@ -5,7 +5,5 @@ function Enable-AdbWifi {
         [string] $DeviceId
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 30
-
-    Invoke-AdbExpression -DeviceId $DeviceId -Command 'shell cmd -w wifi set-wifi-enabled enabled' -Verbose:$VerbosePreference
+    Invoke-AdbExpression -DeviceId $DeviceId -Command 'shell svc wifi enable' -Verbose:$VerbosePreference
 }
