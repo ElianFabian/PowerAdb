@@ -1,6 +1,6 @@
 function Show-AdbDevice {
 
-    $devices = Get-AdbDevice
+    $devices = Get-AdbDeviceDetail -Verbose:$false
 
     Write-Host
 
@@ -10,7 +10,7 @@ function Show-AdbDevice {
         return
     }
 
-    $names = [string[]] ($devices | ForEach-Object { Get-AdbDeviceName -DeviceId $_ -Verbose:$false -ErrorAction Ignore })
+    $names = $devices.Model
     if ($names) {
         $longestDeviceNameLength = $names | ForEach-Object { $_.Length } | Measure-Object -Maximum | Select-Object -ExpandProperty Maximum
     }
@@ -18,7 +18,7 @@ function Show-AdbDevice {
         $longestDeviceNameLength = 5
     }
 
-    $longestIdLength = $devices | ForEach-Object { $_.Length } | Measure-Object -Maximum | Select-Object -ExpandProperty Maximum
+    $longestIdLength = $devices.Id | ForEach-Object { $_.Length } | Measure-Object -Maximum | Select-Object -ExpandProperty Maximum
 
 
     $spaceSize = 5
@@ -28,25 +28,28 @@ function Show-AdbDevice {
 
     Write-Host $header -ForegroundColor Green
 
-    $namesEnumerator = $names.GetEnumerator()
-    $namesEnumerator.Reset()
-    foreach ($id in $devices) {
-        $namesEnumerator.MoveNext() > $null
-        $deviceName = $namesEnumerator.Current
+    foreach ($device in $devices) {
+        $deviceName = if (Test-AdbEmulator -DeviceId $device.Id) {
+            Get-AdbDeviceName -DeviceId $device.Id
+        }
+        else {
+            $device.Model
+        }
         if (-not $deviceName) {
             $deviceName = "-"
         }
 
-        Write-Host $id.PadRight($longestIdLength + $spaceSize, " ") -NoNewline -ForegroundColor Cyan
+        $apiLevel = Get-AdbApiLevel -DeviceId $device.Id -Verbose:$false -ErrorAction Ignore
+
+        Write-Host $device.Id.PadRight($longestIdLength + $spaceSize, " ") -NoNewline -ForegroundColor Cyan
         Write-Host $deviceName.PadRight($longestDeviceNameLength + $spaceSize, " ") -NoNewline -ForegroundColor DarkCyan
-        $apiLevel = Get-AdbApiLevel -DeviceId $id -Verbose:$false -ErrorAction Ignore
         if (-not $apiLevel) {
             Write-Host "-".PadRight($longestDeviceNameLength + $spaceSize, " ") -NoNewline -ForegroundColor DarkCyan
         }
         else {
             Write-Host $apiLevel.ToString().PadRight($longestDeviceNameLength + $spaceSize, " ") -NoNewline -ForegroundColor White
         }
-        Write-Host (Get-AdbDeviceState -DeviceId $id -ErrorAction Ignore).PadRight($longestDeviceNameLength + $spaceSize, " ") -ForegroundColor White
+        Write-Host ($device.State).PadRight($longestDeviceNameLength + $spaceSize, " ") -ForegroundColor White
     }
 
     Write-Host
