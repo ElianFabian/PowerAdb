@@ -8,7 +8,7 @@ function Get-AdbDiagonalScreenSize {
 
     Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 18
 
-    $realScreenDensity = Get-AdbRealPhysicalDensity -DeviceId $DeviceId
+    $realScreenDensity = Get-AdbRealDensity -DeviceId $DeviceId
     $screenSize = Get-AdbRealScreenSize -DeviceId $DeviceId
 
     $widthInInch = $screenSize.Width / $realScreenDensity
