@@ -32,7 +32,7 @@ Register-ArgumentCompleter `
 
     $WarningPreference = 'Ignore'
 
-    Get-AdbDevice -Verbose:$false | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+    Get-AdbDeviceDetail -Verbose:$false | Where-Object { $_.Id -like "$wordToComplete*" } | ForEach-Object {
 
         ### Sometimes this extra info makes the auto-completion so slow, sow we just comment it for now.
         # $deviceName = Get-AdbDeviceName -DeviceId $_ -Verbose:$false -ErrorAction Ignore
@@ -44,14 +44,19 @@ Register-ArgumentCompleter `
         #     $apiLevel = 'unknown'
         # }
 
-        # New-Object -Type System.Management.Automation.CompletionResult -ArgumentList @(
-        #     $_
-        #     "$_ ($deviceName, $apiLevel)"
-        #     'ParameterValue'
-        #     "Device: $deviceName`nAPI level: $apiLevel"
-        # )
+        $deviceName = if (Test-AdbEmulator -DeviceId $_.Id) {
+            Get-AdbDeviceName -DeviceId $_.Id -Verbose:$false
+        }
+        else {
+            $_.Model
+        }
 
-        $_
+        New-Object -Type System.Management.Automation.CompletionResult -ArgumentList @(
+            $_.Id
+            "$($_.Id) ($deviceName)"
+            'ParameterValue'
+            "Device: $($_.Id) - $deviceName"
+        )
     }
 }
 
