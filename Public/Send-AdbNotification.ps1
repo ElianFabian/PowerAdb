@@ -14,14 +14,14 @@ function Send-AdbNotification {
 
         # file:///data/local/tmp/<img.png> (e.g. 'file:///data/local/tmp/screenshot.png', 'file://' prefix is optional)
         # content://<provider>/<path> (e.g. 'content://media/external/images/media/123')
-        # @[<package>:]drawable/<img> (e.g. '@android:drawable/ic_media_play')
+        # @[<package>:]drawable/<img> (e.g. '@android:drawable/sym_action_chat', '@android:drawable/stat_notify_chat')
         # data:base64,<B64DATA==> (e.g. 'data:base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII')
         [string] $Icon,
 
-        # file:///data/local/tmp/<img.png> (e.g. 'file:///data/local/tmp/screenshot.png', 'file://' prefix is optional)
-        # content://<provider>/<path> (e.g. 'content://media/external/images/media/123')
-        # @[<package>:]drawable/<img> (e.g. '@android:drawable/ic_media_play')
-        # data:base64,<B64DATA==> (e.g. 'data:base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII')
+        # file:///data/local/tmp/<img.png>
+        # content://<provider>/<path>
+        # @[<package>:]drawable/<img>
+        # data:base64,<B64DATA==>
         [string] $LargeIcon,
 
         [Parameter(ParameterSetName = 'BigTextStyle')]
@@ -30,9 +30,9 @@ function Send-AdbNotification {
         [Parameter(ParameterSetName = 'MediaStyle')]
         [switch] $MediaStyle,
 
-        # File and content URIs aren't supported, only base64 and drawables.
-        # @[<package>:]drawable/<img> (e.g. '@android:drawable/ic_media_play')
-        # data:base64,<B64DATA==> (e.g. 'data:base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII')
+        # File and content URIs aren't supported, only drawables and base64 images.
+        # @[<package>:]drawable/<img>
+        # data:base64,<B64DATA==>
         [Parameter(ParameterSetName = 'BigPictureStyle')]
         [string] $BigPicture,
 
@@ -89,10 +89,10 @@ function Send-AdbNotification {
             $argsSb.Append(" --conversation $(ConvertTo-ValidAdbStringArgument $ConversationTitle)") > $null
             foreach ($message in $ConversationMessage.Invoke()) {
                 if (-not ($message -is [PSCustomObject])) {
-                    throw "Invalid message object: '$message'. Expected a PSCustomObject."
+                    Write-Error "Invalid message object: '$message'. Expected a PSCustomObject." -ErrorAction Stop
                 }
                 if (-not ($message.SenderName -and $message.Content)) {
-                    throw "Invalid message object: '$message'. Expected properties UserName and Text."
+                    Write-Error "Invalid message object: '$message'. Expected properties UserName and Text." -ErrorAction Stop
                 }
                 $argsSb.Append(" --message $(ConvertTo-ValidAdbStringArgument "$($message.SenderName):$($message.Content)")") > $null
             }
