@@ -37,7 +37,7 @@ function Install-AdbPackage {
     # In certain API levels the default behavior is to prevent installing
     # if the app is already installed
     if ($Replace) {
-        $replaceArg = "-r "
+        $replaceArg = " -r"
     }
 
     $items = switch ($PSCmdlet.ParameterSetName) {
@@ -48,6 +48,6 @@ function Install-AdbPackage {
         # Sanitizing doesn't work for the path in here
         $itemPathArg = " '$($item.FullName)'"
         Assert-ValidAdbStringArgument $itemPathArg -ArgumentName 'LiteralPath'
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "install $replaceArg$userArg$itemPathArg" -Verbose:$VerbosePreference
+        Invoke-AdbExpression -DeviceId $DeviceId -Command "install$replaceArg$userArg$itemPathArg" -Verbose:$VerbosePreference
     }
 }
