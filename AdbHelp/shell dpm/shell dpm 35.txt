@@ -1,0 +1,43 @@
+DevicePolicyManager Service (device_policy) commands:
+
+  help
+    Prints this help text.
+
+  is-operation-safe <OPERATION_ID>
+    Checks if the give operation is safe
+
+  is-operation-safe-by-reason <REASON_ID>
+    Checks if the operations are safe for the given reason
+
+  set-operation-safe <OPERATION_ID> <REASON_ID>
+    Emulates the result of the next call to check if the given operation is safe
+
+  list-owners
+    Lists the device / profile owners per user
+
+  list-policy-exempt-apps
+    Lists the apps that are exempt from policies
+
+  set-active-admin [ --user <USER_ID> | current ] [ --provisioning-context <PROVISIONING_CONTEXT>] <COMPONENT>
+    Sets the given component as active admin for an existing user.
+
+  set-device-owner [ --user <USER_ID> | current *EXPERIMENTAL* ] [ --device-owner-only ] [ --provisioning-context <PROVISIONING_CONTEXT>] <COMPONENT>
+    Sets the given component as active admin, and its package as device owner.
+
+  set-profile-owner [ --user <USER_ID> | current ] [ --provisioning-context <PROVISIONING_CONTEXT>] <COMPONENT>
+    Sets the given component as active admin and profile owner for an existing user.
+
+  remove-active-admin [ --user <USER_ID> | current ] <COMPONENT>
+    Disables an active admin, the admin must have declared android:testOnly in the application in its manifest. This will also remove device and profile owners.
+
+  clear-freeze-period-record
+    Clears framework-maintained record of past freeze periods that the device went through. For use during feature development to prevent triggering restriction on setting freeze periods.
+
+  force-network-logs
+    Makes all network logs available to the DPC and triggers DeviceAdminReceiver.onNetworkLogsAvailable() if needed.
+
+  force-security-logs
+    Makes all security logs available to the DPC and triggers DeviceAdminReceiver.onSecurityLogsAvailable() if needed.
+
+  mark-profile-owner-on-organization-owned-device [ --user <USER_ID> | current ] <COMPONENT>
+    Marks the profile owner of the given user as managing an organization-owneddevice. That will give it access to device identifiers (such as serial number, IMEI and MEID), as well as other privileges.

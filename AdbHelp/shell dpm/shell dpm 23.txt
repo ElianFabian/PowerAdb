@@ -1,0 +1,11 @@
+usage: dpm [subcommand] [options]
+usage: dpm set-active-admin [ --user <USER_ID> ] <COMPONENT>
+usage: dpm set-device-owner <COMPONENT>
+usage: dpm set-profile-owner [ --user <USER_ID> ] <COMPONENT>
+
+dpm set-active-admin: Sets the given component as active admin for an existing user.
+
+dpm set-device-owner: Sets the given component as active admin, and its
+  package as device owner.
+
+dpm set-profile-owner: Sets the given component as active admin and profile  owner for an existing user.
