@@ -1,7 +1,7 @@
 function Send-AndroidNavigationGesture {
 
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [ValidateSet(
             'Left',
@@ -12,7 +12,7 @@ function Send-AndroidNavigationGesture {
         [string] $GestureType
     )
 
-    $screenSize = Get-AdbScreenSize -DeviceId $DeviceId
+    $screenSize = Get-AdbScreenSize -SerialNumber $SerialNumber
 
     switch ($GestureType) {
         'Left' {
@@ -45,5 +45,5 @@ function Send-AndroidNavigationGesture {
         }
     }
 
-    Send-AdbSwipe -DeviceId $DeviceId -X1 $x1 -Y1 $y1 -X2 $x2 -Y2 $y2 -DurationInMilliseconds $time
+    Send-AdbSwipe -SerialNumber $SerialNumber -X1 $x1 -Y1 $y1 -X2 $x2 -Y2 $y2 -DurationInMilliseconds $time
 }

@@ -2,7 +2,7 @@ function Send-AdbLongTap {
 
     [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'Default')]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory, ParameterSetName = 'Default')]
         [float] $X,
@@ -36,17 +36,17 @@ function Send-AdbLongTap {
     }
 
     if ($EnableCoordinateCheck) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 18 -FeatureName "$($MyInvocation.MyCommand.Name) -EnableCoordinateCheck"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 18 -FeatureName "$($MyInvocation.MyCommand.Name) -EnableCoordinateCheck"
 
-        $size = Get-AdbScreenSize -DeviceId $DeviceId -Verbose:$false
+        $size = Get-AdbScreenSize -SerialNumber $SerialNumber -Verbose:$false
         $width = $size.Width
         $height = $size.Height
 
         if ($positionX -lt 0.0 -or $positionX -gt $width) {
-            Write-Error "X coordinate in device with id '$DeviceId' must be between 0 and $width, but was '$positionX'" -ErrorAction Stop
+            Write-Error "X coordinate in device with serial number '$SerialNumber' must be between 0 and $width, but was '$positionX'" -ErrorAction Stop
         }
         if ($positionY -lt 0.0 -or $positionY -gt $height) {
-            Write-Error "Y coordinate in device with id '$DeviceId' must be between 0 and $height, but was '$positionY'" -ErrorAction Stop
+            Write-Error "Y coordinate in device with serial number '$SerialNumber' must be between 0 and $height, but was '$positionY'" -ErrorAction Stop
         }
     }
 
@@ -54,11 +54,11 @@ function Send-AdbLongTap {
         $longPressTimeout = $Timeout
     }
     else {
-        $longPressTimeout = Get-AdbSetting -DeviceId $DeviceId -Namespace secure -Name 'long_press_timeout' -Verbose:$false
+        $longPressTimeout = Get-AdbSetting -SerialNumber $SerialNumber -Namespace secure -Name 'long_press_timeout' -Verbose:$false
         if (-not $longPressTimeout) {
             $longPressTimeout = 400
         }
     }
 
-    Send-AdbSwipe -DeviceId $DeviceId -X1 $positionX -Y1 $positionY -X2 $positionX -Y2 $positionY -DurationInMilliseconds $longPressTimeout -EnableCoordinateCheck:$EnableCoordinateCheck -Verbose:$VerbosePreference
+    Send-AdbSwipe -SerialNumber $SerialNumber -X1 $positionX -Y1 $positionY -X2 $positionX -Y2 $positionY -DurationInMilliseconds $longPressTimeout -EnableCoordinateCheck:$EnableCoordinateCheck -Verbose:$VerbosePreference
 }

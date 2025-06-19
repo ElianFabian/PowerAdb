@@ -3,12 +3,12 @@ function Get-AdbMaxRunningUsers {
     [OutputType([int])]
     [CmdletBinding()]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 28
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 28
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command 'shell pm get-max-running-users' | ForEach-Object {
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command 'shell pm get-max-running-users' | ForEach-Object {
         [int] $_.SubString('Maximum supported running users: '.Length)
     }
 }

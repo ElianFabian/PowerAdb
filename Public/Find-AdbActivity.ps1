@@ -3,7 +3,7 @@ function Find-AdbActivity {
     [OutputType([string[]])]
     [CmdletBinding()]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [AllowNull()]
         [object] $UserId,
@@ -14,18 +14,18 @@ function Find-AdbActivity {
         [switch] $Raw
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 24
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 24
 
-    Assert-ValidIntent -DeviceId $DeviceId -Intent $Intent
+    Assert-ValidIntent -SerialNumber $SerialNumber -Intent $Intent
 
-    $user = Resolve-AdbUser -DeviceId $DeviceId -UserId $UserId
+    $user = Resolve-AdbUser -SerialNumber $SerialNumber -UserId $UserId
     if ($null -ne $user) {
         $userArg = " --user $user"
     }
 
-    $intentArgs = $Intent.ToAdbArguments($DeviceId)
+    $intentArgs = $Intent.ToAdbArguments($SerialNumber)
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pm query-activities --brief --components$userArg$intentArgs" -Verbose:$VerbosePreference `
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell pm query-activities --brief --components$userArg$intentArgs" -Verbose:$VerbosePreference `
     | ForEach-Object {
         if ('No activities found' -eq $_) {
             return $null

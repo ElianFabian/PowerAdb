@@ -2,13 +2,13 @@ function Start-AdbPackageCrash {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string[]] $PackageName
     )
 
     foreach ($package in $PackageName) {
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell am crash '$package'" -Verbose:$VerbosePreference
+        Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell am crash '$package'" -Verbose:$VerbosePreference
     }
 }

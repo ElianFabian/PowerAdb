@@ -3,7 +3,7 @@ function Test-AdbFeature {
     [CmdletBinding()]
     [OutputType([bool])]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string[]] $Feature,
@@ -12,9 +12,9 @@ function Test-AdbFeature {
         [switch] $Fast
     )
 
-    $apiLevel = Get-AdbApiLevel -DeviceId $DeviceId -Verbose:$false
+    $apiLevel = Get-AdbApiLevel -SerialNumber $SerialNumber -Verbose:$false
     if ($Fast -or $apiLevel -lt 26) {
-        $supportedFeatures = Get-AdbFeature -DeviceId $DeviceId -Verbose:$VerbosePreference
+        $supportedFeatures = Get-AdbFeature -SerialNumber $SerialNumber -Verbose:$VerbosePreference
     }
 
     foreach ($featureName in $Feature) {
@@ -28,7 +28,7 @@ function Test-AdbFeature {
         }
         else {
             $sanitizedFeatureName = ConvertTo-ValidAdbStringArgument $featureName
-            $result = Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pm has-feature $sanitizedFeatureName" -Verbose:$VerbosePreference
+            $result = Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell pm has-feature $sanitizedFeatureName" -Verbose:$VerbosePreference
 
             [bool]::Parse($result)
         }

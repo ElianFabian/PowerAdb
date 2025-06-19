@@ -3,7 +3,7 @@ function Get-AdbServiceDump {
     [OutputType([string])]
     [CmdletBinding()]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory, ParameterSetName = 'Name')]
         [string] $Name,
@@ -27,7 +27,7 @@ function Get-AdbServiceDump {
         }) -join ' ')"
     }
 
-    $result = Invoke-AdbExpression -DeviceId $DeviceId -Command "shell dumpsys$nameArg$serviceArgList" -Verbose:$VerbosePreference
+    $result = Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell dumpsys$nameArg$serviceArgList" -Verbose:$VerbosePreference
 
     if ($result -match 'Bad \w+ command, or no \w+ match: \w+') {
         Write-Error -Message ($result -join "`n") -ErrorAction Stop

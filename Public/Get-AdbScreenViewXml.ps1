@@ -3,8 +3,8 @@ function Get-AdbScreenViewXml {
     [CmdletBinding()]
     [OutputType([xml])]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    [xml] (Get-AdbScreenViewContent -DeviceId $DeviceId -Verbose:$VerbosePreference)
+    [xml] (Get-AdbScreenViewContent -SerialNumber $SerialNumber -Verbose:$VerbosePreference)
 }

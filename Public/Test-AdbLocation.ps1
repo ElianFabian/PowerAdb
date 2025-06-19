@@ -1,22 +1,22 @@
 function Test-AdbLocation {
 
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 17
 
-    $apiLevel = Get-AdbApiLevel -DeviceId $DeviceId -Verbose:$false
+    $apiLevel = Get-AdbApiLevel -SerialNumber $SerialNumber -Verbose:$false
     if ($apiLevel -ge 29) {
-        $locationMode = Get-AdbSetting -DeviceId $DeviceId -Namespace secure -Name 'location_mode' -Verbose:$VerbosePreference
+        $locationMode = Get-AdbSetting -SerialNumber $SerialNumber -Namespace secure -Name 'location_mode' -Verbose:$VerbosePreference
         switch ($locationMode) {
             3 { $true }
             0 { $false }
         }
     }
     elseif ($apiLevel -ge 17) {
-        $locationProviders = Get-AdbSetting -DeviceId $DeviceId -Namespace secure -Name 'location_providers_allowed' -Verbose:$VerbosePreference `
         # TODO: add a more general way of suppressing the warning message
+        $locationProviders = Get-AdbSetting -SerialNumber $SerialNumber -Namespace secure -Name 'location_providers_allowed' -Verbose:$VerbosePreference `
         | Select-Object -Last 1 # To avoid including the message 'WARNING: linker: libdvm.so has text relocations. This is wasting memory and is a security risk. Please fix.'
 
         $locationProviders -ceq 'gps,network' -or $locationProviders -ceq 'gps' -or $locationProviders -ceq 'network'

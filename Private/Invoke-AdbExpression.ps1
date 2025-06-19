@@ -4,7 +4,7 @@ function Invoke-AdbExpression {
     [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'Default')]
     param (
         [Parameter(ParameterSetName = 'Default')]
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string] $Command,
@@ -14,30 +14,30 @@ function Invoke-AdbExpression {
 
 
     if (-not $IgnoreExecutionCheck) {
-        Assert-AdbExecution -DeviceId $DeviceId
+        Assert-AdbExecution -SerialNumber $SerialNumber
     }
 
-    if ($DeviceId) {
-        Assert-ValidAdbStringArgument $DeviceId -ArgumentName 'DeviceId'
+    if ($SerialNumber) {
+        Assert-ValidAdbStringArgument $SerialNumber -ArgumentName 'SerialNumber'
 
         # FIXME: '-s' parameter does not support string sanitizing as we do for other string arguments.
         # We should find a way to deal with this, maybe just checking for special characters or something.
-        $deviceIdArg = " -s '$DeviceId'"
+        $serialNumberArg = " -s '$SerialNumber'"
 
         ### It's hard to reproduce this issue, but we'll leave this commented out for now.
         # Sometimes when you connect a device it suddenly disconnects.
-        # $deviceState = Get-AdbDeviceState -DeviceId $DeviceId -PreventLock -Verbose:$false
+        # $deviceState = Get-AdbDeviceState -SerialNumber $SerialNumber -PreventLock -Verbose:$false
         # if ($deviceState -eq 'offline') {
-        #     $device = Resolve-AdbDevice -DeviceId $DeviceId
-        #     $ipAddress, $port = $device.Split(':')
-        #     Write-Warning "Device '$device' is offline"
-        #     Write-Information "Connecting to device '$device'"
+        #     $serial = Resolve-AdbDevice -SerialNumber $SerialNumber
+        #     $ipAddress, $port = $serial.Split(':')
+        #     Write-Warning "Device '$serial' is offline"
+        #     Write-Information "Connecting to device '$serial'"
         #     Connect-AdbDevice -IpAddress $ipAddress -Port $port -Verbose:$true
-        #     Write-Information "Connected to device '$device'"
+        #     Write-Information "Connected to device '$serial'"
         # }
     }
 
-    $adbCommand = "adb$deviceIdArg $Command"
+    $adbCommand = "adb$serialNumberArg $Command"
 
     if ($PSCmdlet.ShouldProcess($adbCommand, '', 'Invoke-AdbExpression')) {
         try {
@@ -85,7 +85,7 @@ function Invoke-AdbExpression {
 
 
 
-# DeviceId format meaning, we might use this in the future:
+# Serial number format meaning, we might use this in the future:
 # - 47031FDJG000G1 (USB Physical Device)
 # - 4ae4faf6 (USB Physical Device)
 # - 192.168.1.122:5555 (Wireless Physical Device)

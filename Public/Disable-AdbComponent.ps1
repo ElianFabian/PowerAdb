@@ -2,7 +2,7 @@ function Disable-AdbComponent {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string] $PackageName,
@@ -13,7 +13,7 @@ function Disable-AdbComponent {
         [object] $UserId
     )
 
-    $user = Resolve-AdbUser -DeviceId $DeviceId -UserId $UserId
+    $user = Resolve-AdbUser -SerialNumber $SerialNumber -UserId $UserId
     if ($null -ne $user) {
         $userArg = " --user $user"
     }
@@ -25,5 +25,5 @@ function Disable-AdbComponent {
        " '$PackageName'"
     }
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pm disable$componentArg$userArg" -Verbose:$VerbosePreference > $null
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell pm disable$componentArg$userArg" -Verbose:$VerbosePreference > $null
 }

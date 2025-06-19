@@ -3,14 +3,14 @@ function Test-AdbKeyboardOpen {
     [CmdletBinding()]
     [OutputType([bool])]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    if (Test-AdbScreenLocked -DeviceId $DeviceId) {
+    if (Test-AdbScreenLocked -SerialNumber $SerialNumber) {
         return $false
     }
 
-    Get-AdbServiceDump -DeviceId $DeviceId -Name 'input_method' -Verbose:$VerbosePreference `
+    Get-AdbServiceDump -SerialNumber $SerialNumber -Name 'input_method' -Verbose:$VerbosePreference `
     | Where-Object { $_.Contains('mInputShown=') } `
     | Select-Object -First 1 `
     | Select-String -Pattern "mInputShown=(true|false)" `

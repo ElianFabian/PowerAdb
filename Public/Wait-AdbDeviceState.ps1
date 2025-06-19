@@ -2,7 +2,7 @@ function Wait-AdbDeviceState {
 
     [CmdletBinding(SupportsShouldProcess)]
     param(
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [ValidateSet("device", "recovery", "rescue", "sideload", "bootloader", "disconnect")]
@@ -12,13 +12,13 @@ function Wait-AdbDeviceState {
         [string] $Transport = "any"
     )
 
-    if ($DeviceId) {
-        $currentState = Get-AdbDeviceState -DeviceId $DeviceId -Verbose:$false # -PreventLock
+    if ($SerialNumber) {
+        $currentState = Get-AdbDeviceState -SerialNumber $SerialNumber -Verbose:$false # -PreventLock
         if ($currentState -eq 'offline') {
             return 'offline'
         }
 
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "wait-for-$Transport-$State" -IgnoreExecutionCheck -Verbose:$VerbosePreference
+        Invoke-AdbExpression -SerialNumber $SerialNumber -Command "wait-for-$Transport-$State" -IgnoreExecutionCheck -Verbose:$VerbosePreference
         return
     }
 

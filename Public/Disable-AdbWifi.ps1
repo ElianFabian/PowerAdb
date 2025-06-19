@@ -2,8 +2,8 @@ function Disable-AdbWifi {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command 'shell svc wifi disable' -Verbose:$VerbosePreference
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command 'shell svc wifi disable' -Verbose:$VerbosePreference
 }

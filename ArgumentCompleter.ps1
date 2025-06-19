@@ -20,7 +20,7 @@ function AssertFunctionExists {
 
 Register-ArgumentCompleter `
     -CommandName (Get-Command -Name $functionNames) `
-    -ParameterName DeviceId -ScriptBlock {
+    -ParameterName 'SerialNumber' -ScriptBlock {
 
     param(
         $commandName,
@@ -32,30 +32,30 @@ Register-ArgumentCompleter `
 
     $WarningPreference = 'Ignore'
 
-    Get-AdbDeviceDetail -Verbose:$false | Where-Object { $_.Id -like "$wordToComplete*" } | ForEach-Object {
+    Get-AdbDeviceDetail -Verbose:$false | Where-Object { $_.SerialNumber -like "$wordToComplete*" } | ForEach-Object {
 
         ### Sometimes this extra info makes the auto-completion so slow, sow we just comment it for now.
-        # $deviceName = Get-AdbDeviceName -DeviceId $_ -Verbose:$false -ErrorAction Ignore
+        # $deviceName = Get-AdbDeviceName -SerialNumber $_ -Verbose:$false -ErrorAction Ignore
         # if (-not $deviceName) {
         #     $deviceName = 'unknown'
         # }
-        # $apiLevel = Get-AdbApiLevel -DeviceId $_ -Verbose:$false -ErrorAction Ignore
+        # $apiLevel = Get-AdbApiLevel -SerialNumber $_ -Verbose:$false -ErrorAction Ignore
         # if (-not $apiLevel) {
         #     $apiLevel = 'unknown'
         # }
 
-        $deviceName = if (Test-AdbEmulator -DeviceId $_.Id) {
-            Get-AdbDeviceName -DeviceId $_.Id -Verbose:$false
+        $deviceName = if (Test-AdbEmulator -SerialNumber $_.SerialNumber) {
+            Get-AdbDeviceName -SerialNumber $_.SerialNumber -Verbose:$false
         }
         else {
             $_.Model
         }
 
         New-Object -Type System.Management.Automation.CompletionResult -ArgumentList @(
-            $_.Id
-            "$($_.Id) ($deviceName)"
+            $_.SerialNumber
+            "$($_.SerialNumber) ($deviceName)"
             'ParameterValue'
-            "Device: $($_.Id) - $deviceName"
+            "Device: $($_.SerialNumber) - $deviceName"
         )
     }
 }
@@ -70,11 +70,11 @@ $packageCompletion = {
         $fakeBoundParameters
     )
 
-    $deviceId = $fakeBoundParameters['DeviceId']
+    $serialNumber = $fakeBoundParameters['SerialNumber']
 
     $WarningPreference = 'Ignore'
 
-    $packageNames = Get-AdbPackage -DeviceId $deviceId -Verbose:$false
+    $packageNames = Get-AdbPackage -SerialNumber $serialNumber -Verbose:$false
 
     $startMatches = $packageNames | Where-Object { $_ -like "$wordToComplete*" }
     $containMatches = $packageNames | Where-Object { $_ -like "*$wordToComplete*" -and $_ -notlike "$wordToComplete*" }
@@ -137,11 +137,11 @@ Register-ArgumentCompleter -CommandName $propertyFunctions -ParameterName Name -
         $fakeBoundParameters
     )
 
-    $deviceId = $fakeBoundParameters['DeviceId']
+    $serialNumber = $fakeBoundParameters['SerialNumber']
 
     $WarningPreference = 'Ignore'
 
-    $deviceProperties = Get-AdbProperty -DeviceId $deviceId -List -Verbose:$false | Select-Object -ExpandProperty Name
+    $deviceProperties = Get-AdbProperty -SerialNumber $serialNumber -List -Verbose:$false | Select-Object -ExpandProperty Name
 
     $startMatches = $deviceProperties | Where-Object { $_ -like "$wordToComplete*" }
     $containMatches = $deviceProperties | Where-Object { $_ -like "*$wordToComplete*" -and $_ -notlike "$wordToComplete*" }
@@ -167,7 +167,7 @@ Register-ArgumentCompleter -CommandName $settingFunctions -ParameterName Name -S
         $fakeBoundParameters
     )
 
-    $deviceId = $fakeBoundParameters['DeviceId']
+    $serialNumber = $fakeBoundParameters['SerialNumber']
     $namespace = $fakeBoundParameters['Namespace']
 
     # There doesn't seem to be a way to get the default value of a parameter
@@ -177,7 +177,7 @@ Register-ArgumentCompleter -CommandName $settingFunctions -ParameterName Name -S
 
     $WarningPreference = 'Ignore'
 
-    $keys = [string[]] (Get-AdbSetting -DeviceId $deviceId -Namespace $namespace -List -Verbose:$false | Select-Object -ExpandProperty Name)
+    $keys = [string[]] (Get-AdbSetting -SerialNumber $serialNumber -Namespace $namespace -List -Verbose:$false | Select-Object -ExpandProperty Name)
     $startMatches = [string[]] ($keys | Where-Object { $_ -like "$wordToComplete*" })
     $containMatches = [string[]] ($keys | Where-Object { $_ -like "*$wordToComplete*" })
 
@@ -381,8 +381,8 @@ $remotePathCompletion = {
     # If you think the code looks weird or it's duplicated it's because we needed it to do it
     # in order to make the autocompletion work propertly, it can't stop working by just adding a few lines
     # of code or some simple small changes.
-    if ($fakeBoundParameters['DeviceId']) {
-        adb -s $fakeBoundParameters['DeviceId'] shell$runAsCommand "ls $quotedParentPath" 2> $null `
+    if ($fakeBoundParameters['SerialNumber']) {
+        adb -s $fakeBoundParameters['SerialNumber'] shell$runAsCommand "ls $quotedParentPath" 2> $null `
         | ForEach-Object { $_.Trim() } `
         | Where-Object {
             $_ -like "$childPath*"
@@ -478,7 +478,7 @@ $userIdCompletion = {
         $fakeBoundParameters
     )
 
-    $deviceId = $fakeBoundParameters['DeviceId']
+    $serialNumber = $fakeBoundParameters['SerialNumber']
 
     $WarningPreference = 'Ignore'
 
@@ -486,7 +486,7 @@ $userIdCompletion = {
         Write-Output 'current'
     }
 
-    Get-AdbUser -DeviceId $deviceId -Verbose:$false | Where-Object { $_.Name -like "$wordToComplete*" } | ForEach-Object {
+    Get-AdbUser -SerialNumber $serialNumber -Verbose:$false | Where-Object { $_.Name -like "$wordToComplete*" } | ForEach-Object {
         New-Object -Type System.Management.Automation.CompletionResult -ArgumentList @(
             $_.Id
             "$($_.Id) ($($_.Name))"
@@ -552,9 +552,9 @@ Register-ArgumentCompleter -CommandName $permissionFunctions -ParameterName Perm
         $fakeBoundParameters
     )
 
-    $deviceId = $fakeBoundParameters['DeviceId']
+    $serialNumber = $fakeBoundParameters['SerialNumber']
 
-    Get-AdbPermission -DeviceId $deviceId -Verbose:$false `
+    Get-AdbPermission -SerialNumber $serialNumber -Verbose:$false `
     | Where-Object { $_ -like "$wordToComplete*" } `
     | ForEach-Object {
         New-Object -Type System.Management.Automation.CompletionResult -ArgumentList @(
@@ -609,9 +609,9 @@ Register-ArgumentCompleter -CommandName $serviceNameFunctions -ParameterName Nam
         $fakeBoundParameters
     )
 
-    $deviceId = $fakeBoundParameters['DeviceId']
+    $serialNumber = $fakeBoundParameters['SerialNumber']
 
-    $values = Get-AdbRunningService -DeviceId $deviceId
+    $values = Get-AdbRunningService -SerialNumber $serialNumber
 
     $startMatches = [string[]] ($values | Where-Object { $_ -like "$wordToComplete*" })
     $containMatches = [string[]] ($values | Where-Object { $_ -like "*$wordToComplete*" })

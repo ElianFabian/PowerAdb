@@ -2,7 +2,7 @@ function Add-AdbContent {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string] $RemotePath,
@@ -24,5 +24,5 @@ function Add-AdbContent {
 
     $sanitizedContent = ConvertTo-ValidAdbStringArgument $Content
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell$runAsCommand echo$noNewLineArg $sanitizedContent ``>>`` '$RemotePath'" -Verbose:$VerbosePreference
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell$runAsCommand echo$noNewLineArg $sanitizedContent ``>>`` '$RemotePath'" -Verbose:$VerbosePreference
 }

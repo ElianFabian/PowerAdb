@@ -2,7 +2,7 @@ function Remove-AdbSetting {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [ValidateSet("global", "system", "secure")]
@@ -12,7 +12,7 @@ function Remove-AdbSetting {
         [string[]] $Name
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 21
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 21
 
     foreach ($settingName in $Name) {
         if ($settingName.Contains(" ")) {
@@ -22,6 +22,6 @@ function Remove-AdbSetting {
 
     foreach ($settingName in $Name) {
         $sanitizedSettingName = ConvertTo-ValidAdbStringArgument $settingName
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell settings delete $Namespace $sanitizedSettingName" -Verbose:$VerbosePreference
+        Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell settings delete $Namespace $sanitizedSettingName" -Verbose:$VerbosePreference
     }
 }

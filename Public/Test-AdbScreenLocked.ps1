@@ -3,13 +3,13 @@ function Test-AdbScreenLocked {
     [OutputType([bool])]
     [CmdletBinding()]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 23
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 24
 
     # https://android.stackexchange.com/a/245699
-    $rawData = Get-AdbServiceDump -DeviceId $DeviceId -Name 'deviceidle' -Verbose:$VerbosePreference
+    $rawData = Get-AdbServiceDump -SerialNumber $SerialNumber -Name 'deviceidle' -Verbose:$VerbosePreference
 
     $rawData `
     | Where-Object { $_.Contains('mScreenLocked=') } `

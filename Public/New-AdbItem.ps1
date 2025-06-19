@@ -3,7 +3,7 @@ function New-AdbItem {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string] $LiteralRemotePath,
@@ -24,30 +24,20 @@ function New-AdbItem {
 
     switch ($Type) {
         'File' {
-            if (($Force -or -not (TestItem -DeviceId $DeviceId -LiteralRemotePath $LiteralRemotePath))) {
-                Invoke-AdbExpression -DeviceId $DeviceId -Command "shell$runAsCommand echo $sanitizedValue ``>`` '$LiteralRemotePath'" -Verbose:$VerbosePreference
+            if (($Force -or -not (Test-AdbPath -SerialNumber $SerialNumber -LiteralRemotePath $LiteralRemotePath))) {
+                Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell$runAsCommand echo $sanitizedValue ``>`` '$LiteralRemotePath'" -Verbose:$VerbosePreference
             }
             else {
-                Write-Error "File '$LiteralRemotePath' already exists on device with id '$DeviceId'." -Category ResourceExists
+                Write-Error "File '$LiteralRemotePath' already exists on device with serial number '$SerialNumber'." -Category ResourceExists
             }
         }
         'Directory' {
-            if ($Force -or -not (TestItem -DeviceId $DeviceId -LiteralRemotePath $LiteralRemotePath)) {
-                Invoke-AdbExpression -DeviceId $DeviceId -Command "shell$runAsCommand mkdir '$LiteralRemotePath'" -Verbose:$VerbosePreference
+            if ($Force -or -not (Test-AdbPath -SerialNumber $SerialNumber -LiteralRemotePath $LiteralRemotePath)) {
+                Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell$runAsCommand mkdir '$LiteralRemotePath'" -Verbose:$VerbosePreference
             }
             else {
-                Write-Error "Directory '$LiteralRemotePath' already exists on device with id '$DeviceId'." -Category ResourceExists
+                Write-Error "Directory '$LiteralRemotePath' already exists on device with serial number '$SerialNumber'." -Category ResourceExists
             }
         }
     }
-}
-
-function TestItem {
-
-    param (
-        [string] $DeviceId,
-        [string] $LiteralRemotePath
-    )
-
-    return (adb -s $DeviceId "shell" "[ -e '$LiteralRemotePath' ] && echo '1' || echo '0'") -eq '1'
 }

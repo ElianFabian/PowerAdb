@@ -2,15 +2,15 @@ function Remove-AdbUser {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [int[]] $Id
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 17
 
     foreach ($userId in $Id) {
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pm remove-user $userId" -Verbose:$VerbosePreference > $null
+        Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell pm remove-user $userId" -Verbose:$VerbosePreference > $null
     }
 }

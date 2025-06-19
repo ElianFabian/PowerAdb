@@ -2,10 +2,10 @@ function Enable-AdbMobileData {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 17
 
-    Set-AdbSetting -DeviceId $DeviceId -Namespace global -Name 'mobile_data' -Value '1' -Verbose:$VerbosePreference
+    Set-AdbSetting -SerialNumber $SerialNumber -Namespace global -Name 'mobile_data' -Value '1' -Verbose:$VerbosePreference
 }

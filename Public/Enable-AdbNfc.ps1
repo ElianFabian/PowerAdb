@@ -2,16 +2,16 @@ function Enable-AdbNfc {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [switch] $IgnoreNfcFeatureCheck
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 24
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 24
 
-    if (-not $IgnoreNfcFeatureCheck -and -not (Test-AdbFeature -DeviceId $DeviceId -Feature 'android.hardware.nfc' -Verbose:$false)) {
-        Write-Error -Message "Device with id '$DeviceId' does not support NFC." -Category InvalidOperation -ErrorAction Stop
+    if (-not $IgnoreNfcFeatureCheck -and -not (Test-AdbFeature -SerialNumber $SerialNumber -Feature 'android.hardware.nfc' -Verbose:$false)) {
+        Write-Error -Message "Device with serial number '$SerialNumber' does not support NFC." -Category InvalidOperation -ErrorAction Stop
     }
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command 'shell svc nfc enable' -Verbose:$VerbosePreference
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command 'shell svc nfc enable' -Verbose:$VerbosePreference
 }

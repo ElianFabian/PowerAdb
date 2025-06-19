@@ -3,10 +3,10 @@ function Test-AdbWifi {
     [OutputType([bool])]
     [CmdletBinding()]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    Get-AdbServiceDump -DeviceId $DeviceId -Name 'wifi' -Verbose:$VerbosePreference `
+    Get-AdbServiceDump -SerialNumber $SerialNumber -Name 'wifi' -Verbose:$VerbosePreference `
     | Select-String -Pattern 'Wi-Fi is (enabled|disabled)' `
     | Select-Object -First 1 `
     | ForEach-Object {
@@ -14,7 +14,7 @@ function Test-AdbWifi {
         switch ($rawWifiEnabled) {
             'enabled' { $true }
             'disabled' { $false }
-            default { Write-Error "Unexpected Wi-Fi status of '$rawWifiEnabled' in device with id '$id'" -ErrorAction Stop }
+            default { Write-Error "Unexpected Wi-Fi status of '$rawWifiEnabled' in device with serial number '$SerialNumber'" -ErrorAction Stop }
         }
     }
 }

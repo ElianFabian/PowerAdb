@@ -2,11 +2,11 @@ function Start-AdbTcpIp {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [int] $Port
     )
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command "tcpip $Port" -Verbose:$VerbosePreference
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command "tcpip $Port" -Verbose:$VerbosePreference
 }

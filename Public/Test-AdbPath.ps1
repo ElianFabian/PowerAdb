@@ -3,7 +3,7 @@ function Test-AdbPath {
     [OutputType([bool[]])]
     [CmdletBinding()]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string[]] $LiteralRemotePath,
@@ -25,7 +25,7 @@ function Test-AdbPath {
 
     foreach ($path in $LiteralRemotePath) {
         $sanitizedLiteralRemotePath = ConvertTo-ValidAdbStringArgument $path
-        $result = Invoke-AdbExpression -DeviceId $DeviceId -Command "shell$runAsCommand [ $pathTypeArg $sanitizedLiteralRemotePath ] && echo 1 || echo 0" -Verbose:$VerbosePreference
+        $result = Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell$runAsCommand [ $pathTypeArg $sanitizedLiteralRemotePath ] && echo 1 || echo 0" -Verbose:$VerbosePreference
         switch ($result) {
             '1' { $true }
             '0' { $false }

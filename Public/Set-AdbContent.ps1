@@ -2,7 +2,7 @@ function Set-AdbContent {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string] $RemotePath,
@@ -30,5 +30,5 @@ function Set-AdbContent {
     $sanitizedValue = ConvertTo-ValidAdbStringArgument $Value
     $sanitizedRemotePath = ConvertTo-ValidAdbStringArgument $RemotePath
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell$runAsCommand echo$noNewLineArg $sanitizedValue ``>`` $sanitizedRemotePath" -Verbose:$VerbosePreference
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell$runAsCommand echo$noNewLineArg $sanitizedValue ``>`` $sanitizedRemotePath" -Verbose:$VerbosePreference
 }

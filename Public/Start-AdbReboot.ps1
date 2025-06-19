@@ -2,7 +2,7 @@ function Start-AdbReboot {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [ValidateSet("restart", "recovery", "bootloader")]

@@ -3,7 +3,7 @@ function Set-AdbRotation {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [ValidateSet(
             'Portrait',
@@ -18,13 +18,13 @@ function Set-AdbRotation {
         [switch] $Force
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 17
 
     if ($Force) {
-        Disable-AdbAutoRotate -DeviceId $DeviceId
+        Disable-AdbAutoRotate -SerialNumber $SerialNumber
     }
     else {
-        if (Test-AdbAutoRotate -DeviceId $DeviceId -Verbose:$false) {
+        if (Test-AdbAutoRotate -SerialNumber $SerialNumber -Verbose:$false) {
             Write-Warning "Can't set rotation if 'Auto-rotate' is enabled. Use -Force or disable it yourself."
         }
     }
@@ -37,5 +37,5 @@ function Set-AdbRotation {
         default { $Rotation }
     }
 
-    Set-AdbSetting -DeviceId $DeviceId -Namespace system -Name 'user_rotation' -Value $rotationCode -Verbose:$VerbosePreference
+    Set-AdbSetting -SerialNumber $SerialNumber -Namespace system -Name 'user_rotation' -Value $rotationCode -Verbose:$VerbosePreference
 }

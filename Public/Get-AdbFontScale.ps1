@@ -3,12 +3,12 @@ function Get-AdbFontScale {
     [OutputType([double])]
     [CmdletBinding()]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 17
 
-    $result = Get-AdbSetting -DeviceId $DeviceId -Namespace system -Name 'font_scale' -Verbose:$VerbosePreference
+    $result = Get-AdbSetting -SerialNumber $SerialNumber -Namespace system -Name 'font_scale' -Verbose:$VerbosePreference
     if ($result) {
         return [double] $result
     }

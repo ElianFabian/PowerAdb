@@ -2,7 +2,7 @@ function Wait-AdbBluetoothState {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [ValidateSet('On', 'Off')]
         [Parameter(Mandatory)]
@@ -13,10 +13,10 @@ function Wait-AdbBluetoothState {
         [switch] $IgnoreBluetoothFeatureCheck
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 34
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 34
 
-    if (-not $IgnoreBluetoothFeatureCheck -and -not (Test-AdbFeature -DeviceId $DeviceId -Feature 'android.hardware.bluetooth' -Verbose:$false)) {
-        Write-Error -Message "Device with id '$DeviceId' does not support Bluetooth." -Category InvalidOperation -ErrorAction Stop
+    if (-not $IgnoreBluetoothFeatureCheck -and -not (Test-AdbFeature -SerialNumber $SerialNumber -Feature 'android.hardware.bluetooth' -Verbose:$false)) {
+        Write-Error -Message "Device with serial number '$SerialNumber' does not support Bluetooth." -Category InvalidOperation -ErrorAction Stop
     }
 
     $stateCode = switch ($State) {
@@ -26,7 +26,7 @@ function Wait-AdbBluetoothState {
 
     do {
         try {
-            $result = Invoke-AdbExpression -DeviceId $DeviceId -Command "shell cmd bluetooth_manager wait-for-state:$stateCode" -Verbose:$VerbosePreference | Select-Object -Last 1
+            $result = Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell cmd bluetooth_manager wait-for-state:$stateCode" -Verbose:$VerbosePreference | Select-Object -Last 1
         }
         catch {
             if (-not $ForceWait) {

@@ -3,19 +3,19 @@ function Test-AdbBluetooth {
     [OutputType([bool])]
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [switch] $IgnoreBluetoothFeatureCheck
     )
 
-    if (-not $IgnoreBluetoothFeatureCheck -and -not (Test-AdbFeature -DeviceId $DeviceId -Feature 'android.hardware.bluetooth' -Verbose:$false)) {
-        Write-Error -Message "Device with id '$DeviceId' does not support Bluetooth." -Category InvalidOperation -ErrorAction Stop
+    if (-not $IgnoreBluetoothFeatureCheck -and -not (Test-AdbFeature -SerialNumber $SerialNumber -Feature 'android.hardware.bluetooth' -Verbose:$false)) {
+        Write-Error -Message "Device with serial number '$SerialNumber' does not support Bluetooth." -Category InvalidOperation -ErrorAction Stop
     }
 
     do {
         # TODO: There is also the state of BLE_TURNING_ON and BLE_TURNING_OFF, so maybe we could create a differente function
         # that returns the code for all the states.
-        $result = Get-AdbServiceDump -DeviceId $DeviceId -Name bluetooth_manager | Select-Object -Skip 2 -First 1
+        $result = Get-AdbServiceDump -SerialNumber $SerialNumber -Name bluetooth_manager | Select-Object -Skip 2 -First 1
     }
     while ($result.Contains('TURNING_OFF') -or $result.Contains('TURNING_ON'))
 

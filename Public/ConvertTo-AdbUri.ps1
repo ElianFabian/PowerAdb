@@ -3,13 +3,13 @@ function ConvertTo-AdbUri {
     [OutputType([string])]
     [CmdletBinding()]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [PSCustomObject] $Intent
     )
 
-    $intentArgs = $element.ToAdbArguments($DeviceId)
+    $intentArgs = $element.ToAdbArguments($SerialNumber)
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell am to-uri $intentArgs" -Verbose:$VerbosePreference
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell am to-uri $intentArgs" -Verbose:$VerbosePreference
 }

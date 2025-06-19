@@ -3,7 +3,7 @@ function Start-AdbPackage {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string[]] $PackageName
@@ -12,7 +12,7 @@ function Start-AdbPackage {
     foreach ($package in $PackageName) {
         try {
             $sanitizedPackage = ConvertTo-ValidAdbStringArgument $package
-            Invoke-AdbExpression -DeviceId $DeviceId -Command "shell monkey -p $sanitizedPackage -c android.intent.category.LAUNCHER 1" -Verbose:$VerbosePreference > $null
+            Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell monkey -p $sanitizedPackage -c android.intent.category.LAUNCHER 1" -Verbose:$VerbosePreference > $null
         }
         catch [AdbCommandException] {
             if ($_.Exception.Message.EndsWith('No activities found to run, monkey aborted.')) {

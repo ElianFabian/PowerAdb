@@ -2,7 +2,7 @@ function Send-AdbTap {
 
     [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'Default')]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory, ParameterSetName = 'Default')]
         [float] $X,
@@ -33,20 +33,20 @@ function Send-AdbTap {
     }
 
     if ($EnableCoordinateCheck) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThan 17 -FeatureName "$($MyInvocation.MyCommand.Name) -EnableCoordinateCheck"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThan 17 -FeatureName "$($MyInvocation.MyCommand.Name) -EnableCoordinateCheck"
 
-        $size = Get-AdbScreenSize -DeviceId $DeviceId -Verbose:$false
+        $size = Get-AdbScreenSize -SerialNumber $SerialNumber -Verbose:$false
         $width = $size.Width
         $height = $size.Height
 
         if ($positionX -lt 0.0 -or $positionX -gt $width) {
-            Write-Error "X coordinate in device with id '$DeviceId' must be between '0' and '$width', but was '$positionX'" -ErrorAction Stop
+            Write-Error "X coordinate in device with serial number '$SerialNumber' must be between '0' and '$width', but was '$positionX'" -ErrorAction Stop
         }
         if ($positionY -lt 0.0 -or $positionY -gt $height) {
-            Write-Error "Y coordinate in device with id '$DeviceId' must be between '0' and '$height', but was '$positionY'" -ErrorAction Stop
+            Write-Error "Y coordinate in device with serial number '$SerialNumber' must be between '0' and '$height', but was '$positionY'" -ErrorAction Stop
             continue
         }
     }
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell input tap $positionX $positionY" -Verbose:$VerbosePreference > $null
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell input tap $positionX $positionY" -Verbose:$VerbosePreference > $null
 }

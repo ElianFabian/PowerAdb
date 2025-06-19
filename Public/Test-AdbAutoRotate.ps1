@@ -4,12 +4,12 @@ function Test-AdbAutoRotate {
     [OutputType([bool])]
     [CmdletBinding()]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 17
 
-    $result = Get-AdbSetting -DeviceId $DeviceId -Namespace system -Name 'accelerometer_rotation' -Verbose:$VerbosePreference
+    $result = Get-AdbSetting -SerialNumber $SerialNumber -Namespace system -Name 'accelerometer_rotation' -Verbose:$VerbosePreference
     if ($result) {
         return $result -eq '1'
     }

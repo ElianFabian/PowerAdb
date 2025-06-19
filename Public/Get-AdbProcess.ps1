@@ -2,7 +2,7 @@ function Get-AdbProcess {
 
     [CmdletBinding()]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [int[]] $Id
     )
@@ -11,7 +11,7 @@ function Get-AdbProcess {
         $idArg = " -p $($Id -join ',')"
     }
 
-    $rawProcesses = Invoke-AdbExpression -DeviceId $DeviceId -Command "shell ps$idArg" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
+    $rawProcesses = Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell ps$idArg" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
     | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
 
     $header = $rawProcesses | Select-Object -First 1

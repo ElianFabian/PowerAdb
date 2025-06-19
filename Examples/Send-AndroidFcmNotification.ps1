@@ -2,7 +2,7 @@ function Send-AndroidFcmNotification {
 
     param (
         [Parameter(Mandatory)]
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string] $PackageName,
@@ -52,7 +52,7 @@ function Send-AndroidFcmNotification {
         New-AdbBundlePair -Key 'custom' -String $Data
     }
 
-    Send-AdbBroadcast -DeviceId $DeviceId -Intent $intent
+    Send-AdbBroadcast -SerialNumber $SerialNumber -Intent $intent
 }
 
 

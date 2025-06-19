@@ -3,12 +3,12 @@ function Get-AdbBarFrame {
     [OutputType([PSCustomObject])]
     [CmdletBinding()]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    $rawData = Get-AdbServiceDump -DeviceId $DeviceId -Name 'window' -ArgumentList 'd' -Verbose:$VerbosePreference
+    $rawData = Get-AdbServiceDump -SerialNumber $SerialNumber -Name 'window' -ArgumentList 'd' -Verbose:$VerbosePreference
     if (-not ($rawData | Select-String -Pattern $script:NavigationBarFramePattern)) {
-        $rawData = Get-AdbServiceDump -DeviceId $DeviceId -Name 'window' -ArgumentList 'w' -Verbose:$VerbosePreference
+        $rawData = Get-AdbServiceDump -SerialNumber $SerialNumber -Name 'window' -ArgumentList 'w' -Verbose:$VerbosePreference
     }
 
     $rawData | Select-String -Pattern $script:StatusBarFramePattern `

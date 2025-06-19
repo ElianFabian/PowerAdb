@@ -3,12 +3,12 @@ function Get-AdbBatteryInfo {
     [OutputType([PSCustomObject])]
     [CmdletBinding()]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
     $output = [PSCustomObject]@{}
 
-    Get-AdbServiceDump -DeviceId $DeviceId -Name 'battery' -Verbose:$VerbosePreference `
+    Get-AdbServiceDump -SerialNumber $SerialNumber -Name 'battery' -Verbose:$VerbosePreference `
     | Select-Object -Skip 1 `
     | Where-Object { $_ } `
     | ForEach-Object {

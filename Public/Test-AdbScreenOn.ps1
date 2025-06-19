@@ -5,10 +5,10 @@ function Test-AdbScreenOn {
     [CmdletBinding()]
     [OutputType([bool])]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    Get-AdbServiceDump -DeviceId $DeviceId -Name 'input_method' -Verbose:$VerbosePreference `
+    Get-AdbServiceDump -SerialNumber $SerialNumber -Name 'input_method' -Verbose:$VerbosePreference `
     | Out-String | Select-String -Pattern "(mScreenOn|screenOn = |mInteractive=)(true|false)" -AllMatches `
     | Select-Object -ExpandProperty Matches `
     | Select-Object -ExpandProperty Groups `

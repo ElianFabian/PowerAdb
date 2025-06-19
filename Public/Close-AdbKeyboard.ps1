@@ -2,8 +2,8 @@ function Close-AdbKeyboard {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    Send-AdbKeyEvent -DeviceId DeviceId -KeyCode ESCAPE -Verbose:$VerbosePreference
+    Send-AdbKeyEvent -SerialNumber $SerialNumber -KeyCode ESCAPE -Verbose:$VerbosePreference
 }

@@ -4,8 +4,8 @@ function Get-AdbSerialNumber {
     [CmdletBinding()]
     param (
         [Parameter()]
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command "get-serialno" -Verbose:$VerbosePreference
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command "get-serialno" -Verbose:$VerbosePreference
 }

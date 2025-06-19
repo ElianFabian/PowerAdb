@@ -2,10 +2,10 @@ function Get-AdbUser {
 
     [CmdletBinding()]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command 'shell pm list users' -Verbose:$VerbosePreference `
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command 'shell pm list users' -Verbose:$VerbosePreference `
     | Select-Object -Skip 1 `
     | Where-Object { $_ } `
     | ForEach-Object {

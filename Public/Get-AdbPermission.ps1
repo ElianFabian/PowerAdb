@@ -3,7 +3,7 @@ function Get-AdbPermission {
     [CmdletBinding(DefaultParameterSetName = "Default")]
     [OutputType([string[]], [PSCustomObject])]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(ParameterSetName = "ByGroup")]
         [switch] $ByGroup,
@@ -24,7 +24,7 @@ function Get-AdbPermission {
         $permissionsByGroup = @{}
         $currentGroup = $null
 
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pm list permissions -g$dangerousOnlyParam$visibleToUserParam" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
+        Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell pm list permissions -g$dangerousOnlyParam$visibleToUserParam" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
         | Select-Object -Skip 1 `
         | Where-Object { $_ } `
         | ForEach-Object {
@@ -43,7 +43,7 @@ function Get-AdbPermission {
         [PSCustomObject] $permissionsByGroup
     }
     else {
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pm list permissions $dangerousOnlyParam $visibleToUserParam" -Verbose:$VerbosePreference `
+        Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell pm list permissions $dangerousOnlyParam $visibleToUserParam" -Verbose:$VerbosePreference `
         | Where-Object { $_ } `
         | Select-Object -Skip 1 `
         | ForEach-Object { $_.Replace("permission:", "") }

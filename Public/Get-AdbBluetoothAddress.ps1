@@ -3,8 +3,8 @@ function Get-AdbBluetoothAddress {
     [OutputType([string])]
     [CmdletBinding()]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    Get-AdbSetting -DeviceId $DeviceId -Namespace secure -Name 'bluetooth_address' -Verbose:$VerbosePreference
+    Get-AdbSetting -SerialNumber $SerialNumber -Namespace secure -Name 'bluetooth_address' -Verbose:$VerbosePreference
 }

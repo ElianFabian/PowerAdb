@@ -19,12 +19,12 @@ function Get-AdbDeviceDetail {
         }
 
         return [PSCustomObject]@{
-            Id          = $parts[0]
-            State       = $parts[1]
-            Product     = $parts[2].Replace('product:', '')
-            Model       = $parts[3].Replace('model:', '')
-            Device      = $parts[4].Replace('device:', '')
-            TransportId = $parts[5].Replace('transport_id:', '')
+            SerialNumber = $parts[0]
+            State        = $parts[1]
+            Product      = $parts[2].Replace('product:', '')
+            Model        = $parts[3].Replace('model:', '')
+            Device       = $parts[4].Replace('device:', '')
+            TransportId  = $parts[5].Replace('transport_id:', '')
         }
     }
 }

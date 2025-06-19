@@ -2,7 +2,7 @@ function Remove-AdbItem {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string] $LiteralRemotePath,
@@ -31,11 +31,11 @@ function Remove-AdbItem {
         $runAsCommand = " run-as '$RunAs'"
     }
 
-    $isDirectory = (Invoke-AdbExpression -DeviceId $DeviceId -Command "shell$runAsCommand [ -e '$LiteralRemotePath' ] && echo '1' || echo '0'" 2> $null) -eq '1'
+    $isDirectory = (Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell$runAsCommand [ -e '$LiteralRemotePath' ] && echo '1' || echo '0'" 2> $null) -eq '1'
     if ($isDirectory -and -not $Force -and -not $Recurse) {
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell$runAsCommand ""rmdir '$LiteralRemotePath'""" -Verbose:$VerbosePreference
+        Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell$runAsCommand ""rmdir '$LiteralRemotePath'""" -Verbose:$VerbosePreference
     }
     else {
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell$runAsCommand ""rm $params '$LiteralRemotePath'""" -Verbose:$VerbosePreference
+        Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell$runAsCommand ""rm $params '$LiteralRemotePath'""" -Verbose:$VerbosePreference
     }
 }

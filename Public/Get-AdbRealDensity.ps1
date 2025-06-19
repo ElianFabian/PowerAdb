@@ -3,12 +3,12 @@ function Get-AdbRealDensity {
     [OutputType([string])]
     [CmdletBinding()]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 17
 
-    $apiLevel = Get-AdbApiLevel -DeviceId $DeviceId -Verbose:$false
+    $apiLevel = Get-AdbApiLevel -SerialNumber $SerialNumber -Verbose:$false
 
     $pattern = if ($apiLevel -ge 30) {
         'xDpi=(-?\d+(\.\d+)?)'
@@ -17,7 +17,7 @@ function Get-AdbRealDensity {
         '(-?\d+(\.\d+)?) dpi'
     }
 
-    return Get-AdbServiceDump -DeviceId $DeviceId -Name 'display' -Verbose:$VerbosePreference `
+    return Get-AdbServiceDump -SerialNumber $SerialNumber -Name 'display' -Verbose:$VerbosePreference `
     | Select-String -Pattern $pattern `
     | ForEach-Object { $_.Matches } `
     | Select-Object -First 1 `

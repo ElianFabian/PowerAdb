@@ -2,7 +2,7 @@ function Send-AdbKeyEvent {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [ValidateCount(1, [int]::MaxValue)]
         [Parameter(Mandatory)]
@@ -10,6 +10,6 @@ function Send-AdbKeyEvent {
     )
 
     foreach ($code in $KeyCode) {
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell input keyevent KEYCODE_$code" -Verbose:$VerbosePreference | Out-Null
+        Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell input keyevent KEYCODE_$code" -Verbose:$VerbosePreference | Out-Null
     }
 }

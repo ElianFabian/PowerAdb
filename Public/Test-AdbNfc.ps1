@@ -3,16 +3,16 @@ function Test-AdbNfc {
     [OutputType([bool])]
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [switch] $IgnoreNfcFeatureCheck
     )
 
-    if (-not $IgnoreNfcFeatureCheck -and -not (Test-AdbFeature -DeviceId $DeviceId -Feature 'android.hardware.nfc' -Verbose:$false)) {
-        Write-Error -Message "Device with id '$DeviceId' does not support NFC." -Category InvalidOperation -ErrorAction Stop
+    if (-not $IgnoreNfcFeatureCheck -and -not (Test-AdbFeature -SerialNumber $SerialNumber -Feature 'android.hardware.nfc' -Verbose:$false)) {
+        Write-Error -Message "Device with serial number '$SerialNumber' does not support NFC." -Category InvalidOperation -ErrorAction Stop
     }
 
-    $result = Get-AdbServiceDump -DeviceId $DeviceId -Name 'nfc' | Select-Object -First 1
+    $result = Get-AdbServiceDump -SerialNumber $SerialNumber -Name 'nfc' | Select-Object -First 1
 
     switch ($result) {
         'mState=on' { $true }

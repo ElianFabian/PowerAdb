@@ -2,7 +2,7 @@ function Start-AdbService {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [AllowNull()]
         [object] $UserId,
@@ -11,14 +11,14 @@ function Start-AdbService {
         [PSCustomObject] $Intent
     )
 
-    $user = Resolve-AdbUser -DeviceId $DeviceId -UserId $UserId
+    $user = Resolve-AdbUser -SerialNumber $SerialNumber -UserId $UserId
     if ($null -ne $user) {
         $userArg = " --user $user"
     }
 
-    Assert-ValidIntent -DeviceId $DeviceId -Intent $Intent
+    Assert-ValidIntent -SerialNumber $SerialNumber -Intent $Intent
 
-    $intentArgs = $Intent.ToAdbArguments($DeviceId)
+    $intentArgs = $Intent.ToAdbArguments($SerialNumber)
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell am startservice$userArg$intentArgs" -Verbose:$VerbosePreference
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell am startservice$userArg$intentArgs" -Verbose:$VerbosePreference
 }

@@ -2,7 +2,7 @@ function Uninstall-AdbPackage {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string[]] $PackageName,
@@ -19,7 +19,7 @@ function Uninstall-AdbPackage {
     if ($KeepDataAndCache) {
         $keepArg = " -k"
     }
-    $user = Resolve-AdbUser -DeviceId $DeviceId -UserId $UserId -CurrentUserAsNull -RequireApiLevel 21
+    $user = Resolve-AdbUser -SerialNumber $SerialNumber -UserId $UserId -CurrentUserAsNull -RequireApiLevel 21
     if ($null -ne $user) {
         $userArg = " --user $user"
     }
@@ -32,6 +32,6 @@ function Uninstall-AdbPackage {
 
     foreach ($package in $PackageName) {
         $sanitizedPackage = ConvertTo-ValidAdbStringArgument $package
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "uninstall $sanitizedPackage$keepArg$userArg$versionCodeArg" -Verbose:$VerbosePreference
+        Invoke-AdbExpression -SerialNumber $SerialNumber -Command "uninstall $sanitizedPackage$keepArg$userArg$versionCodeArg" -Verbose:$VerbosePreference
     }
 }

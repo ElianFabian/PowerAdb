@@ -4,7 +4,7 @@ function Set-CacheValue {
     param (
         [AllowEmptyString()]
         [Parameter(Mandatory)]
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [string] $FunctionName =  (Get-PSCallStack | Select-Object -First 1 -ExpandProperty Command),
 
@@ -19,12 +19,12 @@ function Set-CacheValue {
         return
     }
 
-    $device = $DeviceId
-    if (-not $device) {
-        $device = Get-AdbDevice -Verbose:$false
+    $serial = $SerialNumber
+    if (-not $serial) {
+        $serial = Get-AdbDevice -Verbose:$false
     }
 
-    $cacheKey = "$device`:$FunctionName"
+    $cacheKey = "$serial`:$FunctionName"
     if ($Key) {
         $cacheKey = "$cacheKey`:$Key"
     }
@@ -32,20 +32,20 @@ function Set-CacheValue {
     if (-not $PowerAdbCache.ContainsKey($cacheKey)) {
         $PowerAdbCache[$cacheKey] = $Value
 
-        $jobName = New-PowerAdbJobName -Tag "RemoveCacheFor.$device"
+        $jobName = New-PowerAdbJobName -Tag "RemoveCacheFor.$serial"
         $job = Get-Job -Name $jobName -ErrorAction Ignore
         if ($job -and $job.State -eq 'Running') {
             return
         }
 
         $removeCachedValuesJob = Start-ThreadJob -Name $jobName -ScriptBlock {
-            $id, $PowerAdbCache, $scriptRoot = $args
+            $serial, $PowerAdbCache, $scriptRoot = $args
 
             . "$scriptRoot/Remove-CacheValue.ps1"
 
-            & 'adb' '-s' "$id" 'wait-for-any-disconnect'
-            Remove-CacheValue -DeviceId $id -All
-        } -ArgumentList $device, $PowerAdbCache, $PSScriptRoot
+            & 'adb' '-s' "$serial" 'wait-for-any-disconnect'
+            Remove-CacheValue -SerialNumber $serial -All
+        } -ArgumentList $serial, $PowerAdbCache, $PSScriptRoot
 
         # Cleanup the job automatically after completion
         Register-ObjectEvent -InputObject $removeCachedValuesJob -EventName 'StateChanged' -Action {
@@ -65,6 +65,6 @@ function Set-CacheValue {
         } | Out-Null
     }
     else {
-        Write-Error "Value for key '$Key' for device with id '$device' is already cached with value '$cachedValue'"
+        Write-Error "Value for key '$Key' for device with serial number '$serial' is already cached with value '$cachedValue'"
     }
 }

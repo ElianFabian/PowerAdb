@@ -4,7 +4,7 @@ function Assert-ApiLevel {
     param (
         [AllowEmptyString()]
         [Parameter(Mandatory)]
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory, ParameterSetName = 'LessThanOrEqualTo')]
         [int] $LessThanOrEqualTo,
@@ -29,9 +29,9 @@ function Assert-ApiLevel {
         [string] $ExtraInfo
     )
 
-    $device = Resolve-AdbDevice -DeviceId $DeviceId
+    $serial = Resolve-AdbDevice -SerialNumber $SerialNumber
 
-    $apiLevel = Get-AdbApiLevel -DeviceId $device -Verbose:$false
+    $apiLevel = Get-AdbApiLevel -SerialNumber $serial -Verbose:$false
 
     if ($ExtraInfo) {
         $extraInfoMessage = " $ExtraInfo"
@@ -40,27 +40,27 @@ function Assert-ApiLevel {
     switch ($PSCmdlet.ParameterSetName) {
         'LessThanOrEqualTo' {
             if (-not ($apiLevel -le $LessThanOrEqualTo)) {
-                throw [ApiLevelException]::new("Device with id $device and API level $apiLevel is not supported. '$FeatureName' requires API level less than $LessThanOrEqualTo.$extraInfoMessage")
+                throw [ApiLevelException]::new("Device with serial number '$serial' and API level $apiLevel is not supported. '$FeatureName' requires API level less than $LessThanOrEqualTo.$extraInfoMessage")
             }
         }
         'GreaterThanOrEqualTo' {
             if (-not ($apiLevel -ge $GreaterThanOrEqualTo)) {
-                throw [ApiLevelException]::new("Device with id $device and API level $apiLevel is not supported. '$FeatureName' requires API level greater than $GreaterThanOrEqualTo or above.$extraInfoMessage")
+                throw [ApiLevelException]::new("Device with serial number '$serial' and API level $apiLevel is not supported. '$FeatureName' requires API level greater than $GreaterThanOrEqualTo or above.$extraInfoMessage")
             }
         }
         'EqualTo' {
             if (-not ($apiLevel -eq $EqualTo)) {
-                throw [ApiLevelException]::new("Device with id $device and API level $apiLevel is not supported. '$FeatureName' requires API level equal to $EqualTo.$extraInfoMessage")
+                throw [ApiLevelException]::new("Device with serial number '$serial' and API level $apiLevel is not supported. '$FeatureName' requires API level equal to $EqualTo.$extraInfoMessage")
             }
         }
         'NotEqualTo' {
             if (-not ($apiLevel -ne $NotEqualTo)) {
-                throw [ApiLevelException]::new("Device with id $device and API level $apiLevel is not supported. '$FeatureName' requires API level not equal to $EqualTo.$extraInfoMessage")
+                throw [ApiLevelException]::new("Device with serial number '$serial' and API level $apiLevel is not supported. '$FeatureName' requires API level not equal to $EqualTo.$extraInfoMessage")
             }
         }
         'Between' {
             if (-not ($From -le $apiLevel -and $apiLevel -le $To)) {
-                throw [ApiLevelException]::new("Device with id $device and API level $apiLevel is not supported. '$FeatureName' requires API level between $From and $To.$extraInfoMessage")
+                throw [ApiLevelException]::new("Device with serial number '$serial' and API level $apiLevel is not supported. '$FeatureName' requires API level between $From and $To.$extraInfoMessage")
             }
         }
     }

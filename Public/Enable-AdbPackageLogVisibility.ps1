@@ -2,15 +2,15 @@ function Enable-AdbPackageLogVisibility {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string[]] $PackageName
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 30
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 30
 
     foreach ($package in $PackageName) {
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pm log-visibility --enable '$package'" -Verbose:$VerbosePreference
+        Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell pm log-visibility --enable '$package'" -Verbose:$VerbosePreference
     }
 }

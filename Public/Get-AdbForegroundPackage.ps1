@@ -3,11 +3,11 @@ function Get-AdbForegroundPackage {
     [OutputType([string])]
     [CmdletBinding()]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    # Invoke-AdbExpression -DeviceId $DeviceId -Command 'shell dumpsys window windows' -Verbose:$VerbosePreference `
-    Get-AdbServiceDump -DeviceId $DeviceId -Name 'window' -ArgumentList 'windows' -Verbose:$VerbosePreference `
+    # Invoke-AdbExpression -SerialNumber $SerialNumber -Command 'shell dumpsys window windows' -Verbose:$VerbosePreference `
+    Get-AdbServiceDump -SerialNumber $SerialNumber -Name 'window' -ArgumentList 'windows' -Verbose:$VerbosePreference `
     | Out-String `
     | Select-String -Pattern ".+mSurface=Surface\(name=(.+)/.+\).+" -AllMatches `
     | Select-Object -ExpandProperty Matches `

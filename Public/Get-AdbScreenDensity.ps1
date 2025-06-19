@@ -3,16 +3,16 @@ function Get-AdbScreenDensity {
     [CmdletBinding()]
     [OutputType([PSCustomObject])]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         # This is the value that appears in developer settings.
         # Using this parameter makes the function call slower.
         [switch] $IncludeWidthInDp
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 18
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 18
 
-    $rawResult = Invoke-AdbExpression -DeviceId $DeviceId -Command "shell wm density" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
+    $rawResult = Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell wm density" -Verbose:$VerbosePreference -WhatIf:$false -Confirm:$false `
     | Out-String -Stream
 
     $rawPhysicalDensity = $rawResult | Select-Object -First 1
@@ -39,7 +39,7 @@ function Get-AdbScreenDensity {
     }
 
     if ($IncludeWidthInDp) {
-        $screenSize = Get-AdbScreenSize -DeviceId $DeviceId
+        $screenSize = Get-AdbScreenSize -SerialNumber $SerialNumber
         $output | Add-Member -MemberType NoteProperty -Name PhysicalWidthInDp -Value ($screenSize.Width / ($physicalDensity / 160))
 
         if ($overrideDensity) {

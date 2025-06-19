@@ -5,7 +5,7 @@ function Send-AdbText {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string] $Text,
@@ -19,7 +19,7 @@ function Send-AdbText {
 
     $sanitizedText = ConvertTo-ValidAdbStringArgument $Text
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell input text $sanitizedText" -Verbose:$VerbosePreference
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell input text $sanitizedText" -Verbose:$VerbosePreference
 }
 
 

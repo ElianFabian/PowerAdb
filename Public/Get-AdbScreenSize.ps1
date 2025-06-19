@@ -3,7 +3,7 @@ function Get-AdbScreenSize {
     [CmdletBinding(DefaultParameterSetName = 'Default')]
     [OutputType([PSCustomObject], [string])]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(ParameterSetName = 'AsString')]
         [switch] $AsString,
@@ -12,9 +12,9 @@ function Get-AdbScreenSize {
         [switch] $SizeInDp
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 18
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 18
 
-    $rawResult = Invoke-AdbExpression -DeviceId $DeviceId -Command "shell wm size" -Verbose:$VerbosePreference `
+    $rawResult = Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell wm size" -Verbose:$VerbosePreference `
     | Out-String -Stream
 
     $rawPhysicalSize = $rawResult | Select-Object -First 1
@@ -38,7 +38,7 @@ function Get-AdbScreenSize {
     $scaleFactor = 1
 
     if ($SizeInDp) {
-        $density = Get-AdbScreenDensity -DeviceId $DeviceId | Select-Object -ExpandProperty Density
+        $density = Get-AdbScreenDensity -SerialNumber $SerialNumber | Select-Object -ExpandProperty Density
         $scaleFactor = 160 / $density
     }
 

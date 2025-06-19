@@ -3,12 +3,12 @@ function Test-AdbMobileData {
     [OutputType([bool])]
     [CmdletBinding()]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 17
 
-    $result = Get-AdbSetting -DeviceId $DeviceId -Namespace global -Name 'mobile_data' -Verbose:$VerbosePreference
+    $result = Get-AdbSetting -SerialNumber $SerialNumber -Namespace global -Name 'mobile_data' -Verbose:$VerbosePreference
 
     switch ($result) {
         '1' { $true }

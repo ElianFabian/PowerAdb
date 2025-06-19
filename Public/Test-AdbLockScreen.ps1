@@ -2,10 +2,10 @@ function Test-AdbLockScreen {
 
     [CmdletBinding()]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    $topActivity = Get-AdbTopActivity -DeviceId $DeviceId -Verbose:$false
+    $topActivity = Get-AdbTopActivity -SerialNumber $SerialNumber -Verbose:$false
 
     -not $topActivity
 }

@@ -2,7 +2,7 @@ function Get-AdbLogcat {
 
     [CmdletBinding(DefaultParameterSetName = 'Default')]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [ValidateSet(
             'main',
@@ -93,50 +93,50 @@ function Get-AdbLogcat {
     )
 
     if ('crash' -in $Buffer) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 21 -FeatureName "$($MyInvocation.MyCommand.Name) -Buffer crash"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 21 -FeatureName "$($MyInvocation.MyCommand.Name) -Buffer crash"
     }
     if ($Last) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 21 -FeatureName "$($MyInvocation.MyCommand.Name) -Last"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 21 -FeatureName "$($MyInvocation.MyCommand.Name) -Last"
     }
     if ($LastAt) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 21 -FeatureName "$($MyInvocation.MyCommand.Name) -LastAt"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 21 -FeatureName "$($MyInvocation.MyCommand.Name) -LastAt"
     }
     if ($IgnoreOld) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 21 -FeatureName "$($MyInvocation.MyCommand.Name) -IgnoreOld"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 21 -FeatureName "$($MyInvocation.MyCommand.Name) -IgnoreOld"
     }
     if ($StopAtMatchCount) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 21 -FeatureName "$($MyInvocation.MyCommand.Name) -StopAtMatchCount"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 21 -FeatureName "$($MyInvocation.MyCommand.Name) -StopAtMatchCount"
     }
     if ($FormatAdverd) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 23 -FeatureName "$($MyInvocation.MyCommand.Name) -FormatAdverd"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 23 -FeatureName "$($MyInvocation.MyCommand.Name) -FormatAdverd"
     }
     if ($Dividers) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 23 -FeatureName "$($MyInvocation.MyCommand.Name) -Dividers"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 23 -FeatureName "$($MyInvocation.MyCommand.Name) -Dividers"
     }
     if ($Pattern) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 23 -FeatureName "$($MyInvocation.MyCommand.Name) -Pattern"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 23 -FeatureName "$($MyInvocation.MyCommand.Name) -Pattern"
     }
     if ($LogsBeforeLastReboot) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 23 -FeatureName "$($MyInvocation.MyCommand.Name) -LogsBeforeLastReboot"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 23 -FeatureName "$($MyInvocation.MyCommand.Name) -LogsBeforeLastReboot"
     }
     if ($ParentProcessId) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 23 -FeatureName "$($MyInvocation.MyCommand.Name) -ParentProcessId"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 23 -FeatureName "$($MyInvocation.MyCommand.Name) -ParentProcessId"
     }
     if ('descriptive' -in $FormatVerb) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 26 -FeatureName "$($MyInvocation.MyCommand.Name) -FormatAdverd 'descriptive'"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 26 -FeatureName "$($MyInvocation.MyCommand.Name) -FormatAdverd 'descriptive'"
     }
     if ('kernel' -in $Buffer) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 29 -FeatureName "$($MyInvocation.MyCommand.Name) -Buffer kernel"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 29 -FeatureName "$($MyInvocation.MyCommand.Name) -Buffer kernel"
     }
     if ('security' -in $Buffer) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 29 -FeatureName "$($MyInvocation.MyCommand.Name) -Buffer security"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 29 -FeatureName "$($MyInvocation.MyCommand.Name) -Buffer security"
     }
     if ($Proto) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 35 -FeatureName "$($MyInvocation.MyCommand.Name) -Proto"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 35 -FeatureName "$($MyInvocation.MyCommand.Name) -Proto"
     }
 
     if ('all' -in $Buffer) {
-        $apiLevel = Get-AdbApiLevel -DeviceId $DeviceId -Verbose:$false
+        $apiLevel = Get-AdbApiLevel -SerialNumber $SerialNumber -Verbose:$false
 
         $bufferInternal = @('main', 'system', 'radio', 'events')
 
@@ -213,5 +213,5 @@ function Get-AdbLogcat {
         $adbArgSb.Append(" $($FilteredTag -join ' ') *:S") > $null
     }
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command "logcat$adbArgSb" -Verbose:$VerbosePreference
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command "logcat$adbArgSb" -Verbose:$VerbosePreference
 }

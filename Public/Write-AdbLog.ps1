@@ -2,7 +2,7 @@ function Write-AdbLog {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string] $Message,
@@ -22,7 +22,7 @@ function Write-AdbLog {
     )
 
     if ($Priority -eq 'Silent') {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 26 -FeatureName "$($MyInvocation.MyCommand.Name) -Priority Silent"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 26 -FeatureName "$($MyInvocation.MyCommand.Name) -Priority Silent"
     }
 
     $priorityArgValue = switch ($Priority) {
@@ -44,5 +44,5 @@ function Write-AdbLog {
 
     $sanitizedMessage = ConvertTo-ValidAdbStringArgument $Message
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell log$priorityArg$tagArg $sanitizedMessage" -Verbose:$VerbosePreference > $null
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell log$priorityArg$tagArg $sanitizedMessage" -Verbose:$VerbosePreference > $null
 }

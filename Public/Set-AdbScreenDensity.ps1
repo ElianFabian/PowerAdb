@@ -5,7 +5,7 @@ function Set-AdbScreenDensity {
         DefaultParameterSetName = "Default"
     )]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory, ParameterSetName = "Default")]
         [uint32] $Density,
@@ -19,15 +19,15 @@ function Set-AdbScreenDensity {
         [switch] $Reset
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 18
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 18
 
     if ($Reset) {
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell wm density reset" -Verbose:$VerbosePreference
+        Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell wm density reset" -Verbose:$VerbosePreference
         continue
     }
 
     $densityToSet = if ($PSCmdlet.ParameterSetName -eq "WidthInDp") {
-        $screenSize = Get-AdbScreenSize -DeviceId $DeviceId
+        $screenSize = Get-AdbScreenSize -SerialNumber $SerialNumber
         [uint32] ($screenSize.Width / ($WidthInDp / 160))
     }
     else {
@@ -38,7 +38,7 @@ function Set-AdbScreenDensity {
         if ($PSCmdlet.ParameterSetName -eq "WidthInDp") {
             $widthInDpMessage = " (width in dp: $WidthInDp)"
         }
-        Write-Error "Density cannot be less than 72 for device with id '$DeviceId'. The value provided was '$densityToSet'$widthInDpMessage." -ErrorAction Stop
+        Write-Error "Density cannot be less than 72 for device with serial number '$SerialNumber'. The value provided was '$densityToSet'$widthInDpMessage." -ErrorAction Stop
     }
 
     # Limit to 10,000 to avoid crashing the emulator
@@ -46,8 +46,8 @@ function Set-AdbScreenDensity {
         if ($PSCmdlet.ParameterSetName -eq "WidthInDp") {
             $widthInDpMessage = " (width in dp: $WidthInDp)"
         }
-        Write-Error "Density cannot be greater than 10,000 for device with id '$DeviceId'. The value provided was '$densityToSet'$widthInDpMessage." -ErrorAction Stop
+        Write-Error "Density cannot be greater than 10,000 for device with serial number '$SerialNumber'. The value provided was '$densityToSet'$widthInDpMessage." -ErrorAction Stop
     }
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell wm density $densityToSet" -Verbose:$VerbosePreference
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell wm density $densityToSet" -Verbose:$VerbosePreference
 }

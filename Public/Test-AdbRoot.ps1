@@ -4,7 +4,7 @@ function Test-AdbRoot {
     [OutputType([bool])]
     [CmdletBinding()]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
     # No reliable way to determine if an android phone is rooted, since a rooted phone could
@@ -12,13 +12,13 @@ function Test-AdbRoot {
     # - http://stackoverflow.com/questions/1101380/determine-if-running-on-a-rooted-device
     # - http://stackoverflow.com/questions/3576989/how-can-you-detect-if-the-device-is-rooted-in-the-app
     # - http://stackoverflow.com/questions/7727021/how-can-androids-copy-protection-check-if-the-device-is-rooted
-    $buildTags = Get-AdbProperty -DeviceId $DeviceId -Name 'ro.build.tags' -Verbose:$false
+    $buildTags = Get-AdbProperty -SerialNumber $SerialNumber -Name 'ro.build.tags' -Verbose:$false
     if ($buildTags -and $buildTags.Contains('test-keys')) {
         return $true
     }
 
     # Superuser.apk would only exist on a rooted device:
-    if (Test-AdbPath -DeviceId $DeviceId -LiteralRemotePath 'system/app/Superuser.apk') {
+    if (Test-AdbPath -SerialNumber $SerialNumber -LiteralRemotePath 'system/app/Superuser.apk') {
         return $true
     }
 
@@ -26,7 +26,7 @@ function Test-AdbRoot {
     # The user could rename or move to a non-standard location, but in that case they
     # probably don't want us to know they're root and they can pretty much subvert
     # any check anyway.
-    if (Test-AdbPath -DeviceId $DeviceId -LiteralRemotePath 'system/xbin/su') {
+    if (Test-AdbPath -SerialNumber $SerialNumber -LiteralRemotePath 'system/xbin/su') {
         return $true
     }
 

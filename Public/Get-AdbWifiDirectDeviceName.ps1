@@ -3,10 +3,10 @@ function Get-AdbWifiDirectDeviceName {
     [OutputType([string])]
     [CmdletBinding()]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    return Invoke-AdbExpression -DeviceId $DeviceId -Command 'shell dumpsys wifi' -Verbose:$VerbosePreference `
+    return Invoke-AdbExpression -SerialNumber $SerialNumber -Command 'shell dumpsys wifi' -Verbose:$VerbosePreference `
     | Where-Object { $_.StartsWith('wifi_p2p_device_name=')} `
     | Select-Object -First 1 `
     | ForEach-Object {

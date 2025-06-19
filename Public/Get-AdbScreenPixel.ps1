@@ -5,23 +5,23 @@ function Get-AdbScreenPixel {
     [OutputType(ParameterSetName = 'AsByteArray', [byte[]])]
     [CmdletBinding(DefaultParameterSetName = 'AsPixel')]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(ParameterSetName = 'AsByteArray')]
         [switch] $AsByteArray
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 18
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 18
 
     $tempFilename = (New-Guid).Guid
     $remoteTempFilePath = "/data/local/tmp/$tempFilename"
     $localTempFilePath = "$env:TEMP/$tempFilename"
 
     try {
-        $screenSize = Get-AdbScreenSize -DeviceId $DeviceId -Verbose:$false
+        $screenSize = Get-AdbScreenSize -SerialNumber $SerialNumber -Verbose:$false
 
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell screencap '$remoteTempFilePath'" -Verbose:$VerbosePreference
-        Receive-AdbItem -DeviceId $DeviceId -LiteralRemotePath $remoteTempFilePath -LiteralLocalPath $localTempFilePath -Force -Verbose:$VerbosePreference
+        Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell screencap '$remoteTempFilePath'" -Verbose:$VerbosePreference
+        Receive-AdbItem -SerialNumber $SerialNumber -LiteralRemotePath $remoteTempFilePath -LiteralLocalPath $localTempFilePath -Force -Verbose:$VerbosePreference
 
         $imageBytesCount = (Get-Item $localTempFilePath).Length
 

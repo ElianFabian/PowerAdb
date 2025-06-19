@@ -2,7 +2,7 @@ function Revoke-AdbPermission {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string[]] $PackageName,
@@ -16,7 +16,7 @@ function Revoke-AdbPermission {
             # For some permissions this closes the app without throwing an exception. I don't know why.
             $sanitizedPackage = ConvertTo-ValidAdbStringArgument $package
             $sanitizedPermission = ConvertTo-ValidAdbStringArgument $permission
-            Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pm revoke $sanitizedPackage $sanitizedPermission" -Verbose:$VerbosePreference
+            Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell pm revoke $sanitizedPackage $sanitizedPermission" -Verbose:$VerbosePreference
         }
     }
 }

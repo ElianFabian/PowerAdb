@@ -4,7 +4,7 @@ function Get-AdbProperty {
     [OutputType([string[]], ParameterSetName = "Default")]
     [OutputType([PSCustomObject[]], ParameterSetName = "List")]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory, ParameterSetName = "Default")]
         [string[]] $Name,
@@ -18,7 +18,7 @@ function Get-AdbProperty {
     )
 
     if ($List) {
-        return Invoke-AdbExpression -DeviceId $DeviceId -Command 'shell getprop' -Verbose:$VerbosePreference `
+        return Invoke-AdbExpression -SerialNumber $SerialNumber -Command 'shell getprop' -Verbose:$VerbosePreference `
         | Select-String -Pattern "\[(.+)\]: \[(.*)\]" -AllMatches `
         | Select-Object -ExpandProperty Matches `
         | ForEach-Object {
@@ -30,7 +30,7 @@ function Get-AdbProperty {
     }
 
     if ($QueryFromList) {
-        $properties = Get-AdbProperty -DeviceId $DeviceId -List -Verbose:$VerbosePreference
+        $properties = Get-AdbProperty -SerialNumber $SerialNumber -List -Verbose:$VerbosePreference
         $targetProperties = foreach ($propName in $Name) {
             $properties | Where-Object {
                 $_.Name -ceq $propName
@@ -50,19 +50,19 @@ function Get-AdbProperty {
 
             $isImmutable = Test-ImmutableProperty $_
             if ($isImmutable) {
-                if (Test-CacheValue -DeviceId $DeviceId -Key $_) {
-                    Get-CacheValue -DeviceId $DeviceId -Key $_ -Verbose:$VerbosePreference
+                if (Test-CacheValue -SerialNumber $SerialNumber -Key $_) {
+                    Get-CacheValue -SerialNumber $SerialNumber -Key $_ -Verbose:$VerbosePreference
                 }
                 else {
                     $sanitizedPropertyName = ConvertTo-ValidAdbStringArgument $_
-                    $value = Invoke-AdbExpression -DeviceId $DeviceId -Command "shell getprop $sanitizedPropertyName" -Verbose:$VerbosePreference | Out-String -NoNewline
-                    Set-CacheValue -DeviceId $DeviceId -Key $_ -Value $value
+                    $value = Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell getprop $sanitizedPropertyName" -Verbose:$VerbosePreference | Out-String -NoNewline
+                    Set-CacheValue -SerialNumber $SerialNumber -Key $_ -Value $value
                     $value
                 }
             }
             else {
                 $sanitizedPropertyName = ConvertTo-ValidAdbStringArgument $_
-                Invoke-AdbExpression -DeviceId $DeviceId -Command "shell getprop $sanitizedPropertyName" -Verbose:$VerbosePreference | Out-String -NoNewline
+                Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell getprop $sanitizedPropertyName" -Verbose:$VerbosePreference | Out-String -NoNewline
             }
         }
     }

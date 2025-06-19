@@ -4,7 +4,7 @@ function Send-AdbNotification {
 
     [CmdletBinding(DefaultParameterSetName = 'Default')]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [string] $Tag,
 
@@ -49,7 +49,7 @@ function Send-AdbNotification {
         # --content-intent doesn't seem to work: 'Error occurred. Check logcat for details. Permission Denial: getIntentSender() from pid=26724, uid=2000 is not allowed to send as package android'
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqual 29
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqual 29
 
     $argsSb = [System.Text.StringBuilder]::new()
 
@@ -102,7 +102,7 @@ function Send-AdbNotification {
     $argsSb.Append(" $(ConvertTo-ValidAdbStringArgument $Tag)") > $null
     $argsSb.Append(" $(ConvertTo-ValidAdbStringArgument $Content)") > $null
 
-    $result = Invoke-AdbExpression -DeviceId $DeviceId -Command "shell cmd notification post$argsSb" -Verbose:$VerbosePreference
+    $result = Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell cmd notification post$argsSb" -Verbose:$VerbosePreference
     if ($VerbosePreference -eq 'Continue') {
         foreach ($line in $result) {
             Write-Verbose $line

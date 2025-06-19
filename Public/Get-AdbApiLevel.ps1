@@ -3,10 +3,10 @@ function Get-AdbApiLevel {
     [CmdletBinding()]
     [OutputType([int])]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    $result = Get-AdbProperty -DeviceId $DeviceId -Name 'ro.build.version.sdk' -Verbose:$VerbosePreference
+    $result = Get-AdbProperty -SerialNumber $SerialNumber -Name 'ro.build.version.sdk' -Verbose:$VerbosePreference
     if ([string]::IsNullOrEmpty($result.Trim())) {
         return $null
     }

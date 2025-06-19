@@ -3,13 +3,13 @@ function Get-AdbDiagonalScreenSize {
     [OutputType([double])]
     [CmdletBinding()]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 18
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 18
 
-    $realScreenDensity = Get-AdbRealDensity -DeviceId $DeviceId
-    $screenSize = Get-AdbRealScreenSize -DeviceId $DeviceId
+    $realScreenDensity = Get-AdbRealDensity -SerialNumber $SerialNumber
+    $screenSize = Get-AdbRealScreenSize -SerialNumber $SerialNumber
 
     $widthInInch = $screenSize.Width / $realScreenDensity
     $heightInInch = $screenSize.Height / $realScreenDensity

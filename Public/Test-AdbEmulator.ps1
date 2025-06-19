@@ -4,8 +4,8 @@ function Test-AdbEmulator {
     [OutputType([bool])]
     param (
         [Parameter(Mandatory)]
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    $DeviceId.StartsWith("emulator-")
+    $SerialNumber.StartsWith("emulator-")
 }

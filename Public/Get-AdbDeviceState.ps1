@@ -3,11 +3,11 @@ function Get-AdbDeviceState {
     [CmdletBinding()]
     [OutputType([string])]
     param(
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
     try {
-        return Invoke-AdbExpression -DeviceId $DeviceId -Command "get-state" -IgnoreExecutionCheck -Verbose:$VerbosePreference
+        return Invoke-AdbExpression -SerialNumber $SerialNumber -Command "get-state" -IgnoreExecutionCheck -Verbose:$VerbosePreference
     }
     catch [AdbCommandException] {
         if ($_.Exception.Message -eq 'error: device offline') {
@@ -24,7 +24,7 @@ function Get-AdbDeviceState {
 #     [CmdletBinding(DefaultParameterSetName = 'Default')]
 #     [OutputType([string])]
 #     param(
-#         [string] $DeviceId,
+#         [string] $SerialNumber,
 
 #         # When the device is offline the command blocks for some time and returns an error,
 #         # with this we prevent that behavior and return 'offline'
@@ -35,11 +35,11 @@ function Get-AdbDeviceState {
 #         [int] $Timeout = 1
 #     )
 
-#     $device = Resolve-AdbDevice -DeviceId $DeviceId -IgnoreExecutionCheck
+#     $serial = Resolve-AdbDevice -SerialNumber $SerialNumber -IgnoreExecutionCheck
 
 #     if (-not $PreventLock) {
 
-#         $result = adb -s "$device" get-state 2>&1
+#         $result = adb -s "$serial" get-state 2>&1
 
 #         if ($result -is [System.Management.Automation.ErrorRecord] -and
 #             $result.Exception.Message.Contains('error: device offline')
@@ -51,12 +51,12 @@ function Get-AdbDeviceState {
 #     }
 
 #     $job = Start-ThreadJob {
-#         param($device, $verbose)
+#         param($serial, $verbose)
 
-#         Write-Verbose "adb -s $device get-state" -Verbose:$verbose
-#         adb -s "$device" get-state 2>&1
+#         Write-Verbose "adb -s $serial get-state" -Verbose:$verbose
+#         adb -s "$serial" get-state 2>&1
 
-#     } -ArgumentList $device, $VerbosePreference
+#     } -ArgumentList $serial, $VerbosePreference
 
 #     if (Wait-Job -Job $job -Timeout $Timeout) {
 #         $result = Receive-Job $job

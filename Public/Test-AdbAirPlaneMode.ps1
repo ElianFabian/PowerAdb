@@ -3,12 +3,12 @@ function Test-AdbAirPlaneMode {
     [OutputType([bool])]
     [CmdletBinding()]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 28
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 28
 
-    $result = Invoke-AdbExpression -DeviceId $DeviceId -Command 'shell cmd connectivity airplane-mode' -Verbose:$VerbosePreference
+    $result = Invoke-AdbExpression -SerialNumber $SerialNumber -Command 'shell cmd connectivity airplane-mode' -Verbose:$VerbosePreference
     switch ($result) {
         'enabled' { $true }
         'disabled' { $false }

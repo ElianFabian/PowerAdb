@@ -2,7 +2,7 @@ function Start-AdbActivity {
 
     [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'Default')]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [switch] $EnableDebugging,
 
@@ -57,25 +57,25 @@ function Start-AdbActivity {
         [PSCustomObject] $Intent
     )
 
-    Assert-ValidIntent -DeviceId $DeviceId -Intent $Intent
+    Assert-ValidIntent -SerialNumber $SerialNumber -Intent $Intent
 
     if ($StartProfiler) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17 -FeatureName "$($MyInvocation.MyCommand.Name) -StartProfiler"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 17 -FeatureName "$($MyInvocation.MyCommand.Name) -StartProfiler"
     }
     if ($SamplingIntervalInMicroseconds) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 21 -FeatureName "$($MyInvocation.MyCommand.Name) -SamplingIntervalInMicroseconds"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 21 -FeatureName "$($MyInvocation.MyCommand.Name) -SamplingIntervalInMicroseconds"
     }
     if ($TrackAllocation) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 24 -FeatureName "$($MyInvocation.MyCommand.Name) -TrackAllocation"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 24 -FeatureName "$($MyInvocation.MyCommand.Name) -TrackAllocation"
     }
     if ($Streaming) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 26 -FeatureName "$($MyInvocation.MyCommand.Name) -Streaming"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 26 -FeatureName "$($MyInvocation.MyCommand.Name) -Streaming"
     }
     if ($WindowingMode) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 28 -FeatureName "$($MyInvocation.MyCommand.Name) -WindowingMode"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 28 -FeatureName "$($MyInvocation.MyCommand.Name) -WindowingMode"
     }
     if ($ActivityType) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 28 -FeatureName "$($MyInvocation.MyCommand.Name) -ActivityType"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 28 -FeatureName "$($MyInvocation.MyCommand.Name) -ActivityType"
     }
 
     $windowingModeCode = switch ($WindowingMode) {
@@ -93,7 +93,7 @@ function Start-AdbActivity {
         'Dream' { 5 }
         default { 0 }
     }
-    $intentArgs = $Intent.ToAdbArguments($DeviceId)
+    $intentArgs = $Intent.ToAdbArguments($SerialNumber)
 
     $argumentsSb = [System.Text.StringBuilder]::new()
 
@@ -127,7 +127,7 @@ function Start-AdbActivity {
     if ($ForceStopBeforeStartingActivity) {
         $argumentsSb.Append(' -S') > $null
     }
-    $user = Resolve-AdbUser -DeviceId $DeviceId -UserId $UserId
+    $user = Resolve-AdbUser -SerialNumber $SerialNumber -UserId $UserId
     if ($null -ne $user) {
         $argumentsSb.Append(" --user $user") > $null
     }
@@ -140,7 +140,7 @@ function Start-AdbActivity {
     $argumentsSb.Append($intentArgs) > $null
 
     try {
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell am start$($argumentsSb.ToString())" -Verbose:$VerbosePreference
+        Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell am start$($argumentsSb.ToString())" -Verbose:$VerbosePreference
     }
     catch {
         if ($_.Exception.Message.StartsWith('Warning:')) {

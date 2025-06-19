@@ -3,7 +3,7 @@ function Get-AdbPackage {
     [CmdletBinding()]
     [OutputType([string[]])]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [ValidateSet('All', 'Disabled', 'Enabled', 'System', 'ThirdParty', 'Apex')]
         [string] $FilterBy = 'All',
@@ -21,12 +21,12 @@ function Get-AdbPackage {
         'Apex' { ' --apex-only' }
     }
     if ($null -ne $UserId) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17 -FeatureName "$($MyInvocation.MyCommand.Name) -UserId"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 17 -FeatureName "$($MyInvocation.MyCommand.Name) -UserId"
 
         $userArg = " --user $UserId"
     }
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pm list packages$paramFilterBy$userArg" -Verbose:$VerbosePreference `
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell pm list packages$paramFilterBy$userArg" -Verbose:$VerbosePreference `
     | Out-String -Stream `
     | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } `
     | ForEach-Object { $_.Replace('package:', '') }

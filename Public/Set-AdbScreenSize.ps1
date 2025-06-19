@@ -5,7 +5,7 @@ function Set-AdbScreenSize {
         DefaultParameterSetName = "Default"
     )]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory, ParameterSetName = "Default")]
         [uint32] $Width,
@@ -17,11 +17,11 @@ function Set-AdbScreenSize {
         [switch] $Reset
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 18
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 18
 
     if ($Reset) {
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell wm size reset" -Verbose:$VerbosePreference
+        Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell wm size reset" -Verbose:$VerbosePreference
         return
     }
-    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell wm size $($Width)x$($Height)" -Verbose:$VerbosePreference
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell wm size $($Width)x$($Height)" -Verbose:$VerbosePreference
 }

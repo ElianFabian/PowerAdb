@@ -2,7 +2,7 @@ function Move-AdbItem {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string] $LiteralRemotePath,
@@ -11,5 +11,5 @@ function Move-AdbItem {
         [string] $RemoteDestination
     )
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell ""mv '$LiteralRemotePath' '$RemoteDestination'""" -Verbose:$VerbosePreference
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell ""mv '$LiteralRemotePath' '$RemoteDestination'""" -Verbose:$VerbosePreference
 }

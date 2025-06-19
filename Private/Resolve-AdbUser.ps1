@@ -5,7 +5,7 @@ function Resolve-AdbUser {
     param (
         [AllowEmptyString()]
         [Parameter(Mandatory)]
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [AllowNull()]
         [object] $UserId,
@@ -15,11 +15,11 @@ function Resolve-AdbUser {
         [int] $RequireApiLevel = 17
     )
 
-    $apiLevel = Get-AdbApiLevel -DeviceId $DeviceId -Verbose:$false
+    $apiLevel = Get-AdbApiLevel -SerialNumber $SerialNumber -Verbose:$false
     if ($apiLevel -lt $RequireApiLevel) {
         if ($UserId -match '^\d+$' -and $UserId -ne 0) {
             $callingFunctionName = Get-PSCallStack | Select-Object -SkipLast 1 -ExpandProperty Command | Select-Object -Last 1
-            Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17 -FeatureName "$callingFunctionName -UserId"
+            Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 17 -FeatureName "$callingFunctionName -UserId"
         }
         return
     }

@@ -3,11 +3,11 @@ function Test-AdbInternetConnection {
     [OutputType([bool])]
     [CmdletBinding()]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
     try {
-        $result = Invoke-AdbExpression -DeviceId $DeviceId -Command 'shell ping -c1 www.google.com' -Verbose:$VerbosePreference
+        $result = Invoke-AdbExpression -SerialNumber $SerialNumber -Command 'shell ping -c1 www.google.com' -Verbose:$VerbosePreference
 
         if ($result) {
             return $true

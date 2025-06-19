@@ -3,12 +3,12 @@ function Get-AdbDiskInfo {
     [OutputType([PSCustomObject])]
     [CmdletBinding()]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
     $output = [PSCustomObject]@{}
 
-    Get-AdbServiceDump -DeviceId $DeviceId -Name 'diskstats' -Verbose:$VerbosePreference `
+    Get-AdbServiceDump -SerialNumber $SerialNumber -Name 'diskstats' -Verbose:$VerbosePreference `
     | Select-String -Pattern $script:RowPattern `
     | ForEach-Object {
         $groups = $_.Matches[0].Groups

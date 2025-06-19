@@ -3,7 +3,7 @@ function Get-AdbPackageInfo {
     [OutputType([PSCustomObject])]
     [CmdletBinding()]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [string[]] $PackageName,
 
@@ -18,13 +18,13 @@ function Get-AdbPackageInfo {
         $PackageName = @('*') # Arbitrary value to ensure we enter the loop exactly once
     }
     elseif (-not $ExhaustivePackageExistenceCheck) {
-        $allInitialPackages = Get-AdbPackage -DeviceId $DeviceId -Verbose:$false
+        $allInitialPackages = Get-AdbPackage -SerialNumber $SerialNumber -Verbose:$false
     }
 
     foreach ($package in $PackageName) {
         if (-not $noPackage) {
             $allPackages = if ($ExhaustivePackageExistenceCheck) {
-                Get-AdbPackage -DeviceId $DeviceId -Verbose:$false
+                Get-AdbPackage -SerialNumber $SerialNumber -Verbose:$false
             }
             else {
                 $allInitialPackages
@@ -41,10 +41,10 @@ function Get-AdbPackageInfo {
         }
 
         $rawData = if ($noPackage) {
-            Get-AdbServiceDump -DeviceId $DeviceId -Name 'package' -Verbose:$VerbosePreference
+            Get-AdbServiceDump -SerialNumber $SerialNumber -Name 'package' -Verbose:$VerbosePreference
         }
         else {
-            Get-AdbServiceDump -DeviceId $DeviceId -Name 'package' -ArgumentList $package -Verbose:$VerbosePreference
+            Get-AdbServiceDump -SerialNumber $SerialNumber -Name 'package' -ArgumentList $package -Verbose:$VerbosePreference
         }
 
         if ($Raw) {

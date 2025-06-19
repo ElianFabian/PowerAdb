@@ -3,10 +3,10 @@ function Get-AdbPermissionGroup {
     [CmdletBinding()]
     [OutputType([string[]])]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command 'shell pm list permission-groups' -Verbose:$VerbosePreference `
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command 'shell pm list permission-groups' -Verbose:$VerbosePreference `
     | Where-Object { $_ } `
     | ForEach-Object { $_.Replace('permission group:', '') }
 }

@@ -2,7 +2,7 @@ function Invoke-NewAndroidContact {
 
     param (
         [Parameter(Mandatory)]
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [string] $Name,
 
@@ -29,5 +29,5 @@ function Invoke-NewAndroidContact {
         New-AdbBundlePair -Key 'notes' -String $Notes
     }
 
-    Start-AdbActivity -DeviceId $DeviceId -Intent $intent
+    Start-AdbActivity -SerialNumber $SerialNumber -Intent $intent
 }

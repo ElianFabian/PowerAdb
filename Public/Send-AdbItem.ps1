@@ -2,7 +2,7 @@ function Send-AdbItem {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string] $LiteralLocalPath,
@@ -13,7 +13,7 @@ function Send-AdbItem {
 
     try {
         # Sanitizing does not work for these arguments.
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "push '$LiteralLocalPath' '$LiteralRemotePath'" -Verbose:$VerbosePreference
+        Invoke-AdbExpression -SerialNumber $SerialNumber -Command "push '$LiteralLocalPath' '$LiteralRemotePath'" -Verbose:$VerbosePreference
     }
     catch [AdbCommandException] {
         if ($_.Exception.Message.StartsWith('adb: error:')) {

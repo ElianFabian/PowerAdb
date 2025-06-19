@@ -2,7 +2,7 @@ function Grant-AdbPermission {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string[]] $PackageName,
@@ -15,7 +15,7 @@ function Grant-AdbPermission {
         foreach ($permission in $PermissionName) {
             $sanitizedPackage = ConvertTo-ValidAdbStringArgument $package
             $sanitizedPermission = ConvertTo-ValidAdbStringArgument $permission
-            Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pm grant $sanitizedPackage $sanitizedPermission" -Verbose:$VerbosePreference
+            Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell pm grant $sanitizedPackage $sanitizedPermission" -Verbose:$VerbosePreference
         }
     }
 }

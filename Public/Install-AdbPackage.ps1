@@ -2,7 +2,7 @@ function Install-AdbPackage {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory, ParameterSetName = 'Path')]
         [string[]] $Path,
@@ -29,7 +29,7 @@ function Install-AdbPackage {
         # [switch] $GrantAllRantimePermissions
     )
 
-    $user = Resolve-AdbUser -DeviceId $DeviceId -UserId $UserId -CurrentUserAsNull -RequireApiLevel 21
+    $user = Resolve-AdbUser -SerialNumber $SerialNumber -UserId $UserId -CurrentUserAsNull -RequireApiLevel 21
     if ($null -ne $user) {
         $userArg = " --user $user"
     }
@@ -48,6 +48,6 @@ function Install-AdbPackage {
         # Sanitizing doesn't work for the path in here
         $itemPathArg = " '$($item.FullName)'"
         Assert-ValidAdbStringArgument $itemPathArg -ArgumentName 'LiteralPath'
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "install$replaceArg$userArg$itemPathArg" -Verbose:$VerbosePreference
+        Invoke-AdbExpression -SerialNumber $SerialNumber -Command "install$replaceArg$userArg$itemPathArg" -Verbose:$VerbosePreference
     }
 }

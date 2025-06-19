@@ -3,7 +3,7 @@ function Get-AdbSetting {
     [CmdletBinding()]
     [OutputType([string[]])]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [ValidateSet("global", "system", "secure")]
@@ -26,13 +26,13 @@ function Get-AdbSetting {
     )
 
     if ($List) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 23 -FeatureName "$($MyInvocation.MyCommand.Name) -List"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 23 -FeatureName "$($MyInvocation.MyCommand.Name) -List"
     }
     elseif ($QueryFromList) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 23 -FeatureName "$($MyInvocation.MyCommand.Name) -QueryFromList"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 23 -FeatureName "$($MyInvocation.MyCommand.Name) -QueryFromList"
     }
     else {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 17
     }
 
     if ($List) {
@@ -40,7 +40,7 @@ function Get-AdbSetting {
         # This will when:
         # - The setting name contains an equals symbol
         # - The setting value contains newline characters
-        return Invoke-AdbExpression -DeviceId $DeviceId -Command "shell settings list $Namespace" -Verbose:$VerbosePreference `
+        return Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell settings list $Namespace" -Verbose:$VerbosePreference `
         | ForEach-Object {
             $indexOfEqualsSymbol = $_.IndexOf('=')
             if ($indexOfEqualsSymbol -eq -1) {
@@ -57,7 +57,7 @@ function Get-AdbSetting {
     }
 
     if ($QueryFromList) {
-        $properties = Get-AdbSetting -DeviceId $DeviceId -Namespace $Namespace -List -Verbose:$VerbosePreference | Out-String
+        $properties = Get-AdbSetting -SerialNumber $SerialNumber -Namespace $Namespace -List -Verbose:$VerbosePreference | Out-String
         $targetProperties = foreach ($propertyName in $Name) {
             $properties | Where-Object {
                 $_.Name -ceq $propertyName
@@ -71,7 +71,7 @@ function Get-AdbSetting {
     else {
         $Name | ForEach-Object {
             $sanitizedName = ConvertTo-ValidAdbStringArgument $_
-            Invoke-AdbExpression -DeviceId $DeviceId -Command "shell settings get $Namespace $sanitizedName" -Verbose:$VerbosePreference | Out-String -NoNewline
+            Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell settings get $Namespace $sanitizedName" -Verbose:$VerbosePreference | Out-String -NoNewline
         }
     }
 }

@@ -2,7 +2,7 @@ function Invoke-AdbScreenShot {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string] $Destination,
@@ -10,11 +10,11 @@ function Invoke-AdbScreenShot {
         [switch] $Force
     )
 
-    Assert-AdbExecution -DeviceId $DeviceId
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 20
+    Assert-AdbExecution -SerialNumber $SerialNumber
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 20
 
     # This might seem weird, but at least on emulators 'screencap' is not available for API level 25.
-    Assert-ApiLevel -DeviceId $DeviceId -NotEqualTo 25
+    Assert-ApiLevel -SerialNumber $SerialNumber -NotEqualTo 25
 
     $actualDestination = "$Destination.png"
 
@@ -25,11 +25,11 @@ function Invoke-AdbScreenShot {
         Write-Error "The file '$actualDestination' already exists. Use -Force to overwrite." -ErrorAction Stop
     }
 
-    if ($DeviceId) {
-        $deviceIdArg = " -s '$DeviceId'"
+    if ($SerialNumber) {
+        $serialNumberArg = " -s '$SerialNumber'"
     }
 
-    $adbCommand = "adb$deviceIdArg exec-out screencap -p > ""$actualDestination"""
+    $adbCommand = "adb$serialNumberArg exec-out screencap -p > ""$actualDestination"""
 
     # https://stackoverflow.com/a/59118502/18418162
     if ($IsWindows -or -not $IsCoreCLR) {

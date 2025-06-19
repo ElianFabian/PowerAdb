@@ -2,8 +2,8 @@ function Enable-AdbWifi {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command 'shell svc wifi enable' -Verbose:$VerbosePreference
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command 'shell svc wifi enable' -Verbose:$VerbosePreference
 }

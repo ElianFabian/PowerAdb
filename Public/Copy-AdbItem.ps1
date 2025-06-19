@@ -2,7 +2,7 @@ function Copy-AdbItem {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string] $RemotePath,
@@ -14,5 +14,5 @@ function Copy-AdbItem {
     $sanitizedRemotePath = ConvertTo-ValidAdbStringArgument $RemotePath
     $sanitizedRemoteDestination = ConvertTo-ValidAdbStringArgument $RemoteDestination
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell cp $sanitizedRemotePath $sanitizedRemoteDestination" -Verbose:$VerbosePreference
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell cp $sanitizedRemotePath $sanitizedRemoteDestination" -Verbose:$VerbosePreference
 }

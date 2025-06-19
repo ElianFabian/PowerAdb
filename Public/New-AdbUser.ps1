@@ -3,16 +3,16 @@ function New-AdbUser {
     [OutputType([int])]
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string] $UserName
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 17
 
     $sanitizedUserName = ConvertTo-ValidAdbStringArgument $UserName
-    $rawResult = Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pm create-user $sanitizedUserName" -Verbose:$VerbosePreference
+    $rawResult = Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell pm create-user $sanitizedUserName" -Verbose:$VerbosePreference
 
     $userSucessText = 'Success: created user id '
     if ($rawResult -and $rawResult.StartsWith($userSucessText)) {

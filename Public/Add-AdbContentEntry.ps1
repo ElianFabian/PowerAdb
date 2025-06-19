@@ -2,7 +2,7 @@ function Add-AdbContentEntry {
 
     [CmdletBinding()]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string] $Uri,
@@ -14,7 +14,7 @@ function Add-AdbContentEntry {
         [object] $Values
     )
 
-    $user = Resolve-AdbUser -DeviceId $DeviceId -UserId $UserId -CurrentUserAsNull
+    $user = Resolve-AdbUser -SerialNumber $SerialNumber -UserId $UserId -CurrentUserAsNull
     if ($null -ne $user) {
         $userArg = " --user $user"
     }
@@ -23,5 +23,5 @@ function Add-AdbContentEntry {
     Assert-ValidContentEntryValue $valueAsPsCustomObject
     $bindingArgs = ConvertTo-ContentBindingArg $valueAsPsCustomObject
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell content insert --uri '$Uri'$userArg$bindingArgs" -Verbose:$VerbosePreference
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell content insert --uri '$Uri'$userArg$bindingArgs" -Verbose:$VerbosePreference
 }

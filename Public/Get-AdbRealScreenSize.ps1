@@ -3,10 +3,10 @@ function Get-AdbRealScreenSize {
     [OutputType([PSCustomObject])]
     [CmdletBinding()]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    Get-AdbServiceDump -DeviceId $DeviceId -Name 'display' -Verbose:$VerbosePreference `
+    Get-AdbServiceDump -SerialNumber $SerialNumber -Name 'display' -Verbose:$VerbosePreference `
     | Select-String -Pattern "mStableDisplaySize=Point\((?<width>\d+), (?<height>\d+)\)" `
     | ForEach-Object { $_.Matches } `
     | Select-Object -First 1 `

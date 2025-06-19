@@ -3,7 +3,7 @@ function Test-AdbTextFieldFocused {
     [OutputType([bool])]
     [CmdletBinding()]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
     if (Get-AdbScreenViewContent | Select-Xml -XPath '//node[@focused="true"]') {

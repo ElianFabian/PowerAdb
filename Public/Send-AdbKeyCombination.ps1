@@ -2,7 +2,7 @@ function Send-AdbKeyCombination {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [ValidateCount(2, [int]::MaxValue)]
         [Parameter(Mandatory)]
@@ -11,12 +11,12 @@ function Send-AdbKeyCombination {
         [uint32] $DurationInMilliseconds
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 31
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 31
     if ($DurationInMilliseconds -gt 0) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 33
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 33
 
         $durationArg = " -t $DurationInMilliseconds"
     }
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell input keycombination$durationArg $($KeyCodes | ForEach-Object { "KEYCODE_$_" })" -Verbose:$VerbosePreference | Out-Null
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell input keycombination$durationArg $($KeyCodes | ForEach-Object { "KEYCODE_$_" })" -Verbose:$VerbosePreference | Out-Null
 }

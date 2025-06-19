@@ -2,10 +2,10 @@ function Disable-AdbAirPlaneMode {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 28
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 28
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command 'shell cmd connectivity airplane-mode disable' -Verbose:$VerbosePreference
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command 'shell cmd connectivity airplane-mode disable' -Verbose:$VerbosePreference
 }

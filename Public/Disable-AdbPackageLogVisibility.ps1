@@ -2,13 +2,13 @@ function Disable-AdbPackageLogVisibility {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string[]] $PackageName
     )
 
     foreach ($package in $PackageName) {
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pm log-visibility --disable '$package'" -Verbose:$VerbosePreference
+        Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell pm log-visibility --disable '$package'" -Verbose:$VerbosePreference
     }
 }

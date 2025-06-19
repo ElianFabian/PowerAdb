@@ -3,7 +3,7 @@ function Send-AdbBroadcast {
     [OutputType([PSCustomObject])]
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [AllowNull()]
         [object] $UserId,
@@ -14,13 +14,13 @@ function Send-AdbBroadcast {
         [string] $PermissionName
     )
 
-    Assert-ValidIntent -DeviceId $DeviceId -Intent $Intent
+    Assert-ValidIntent -SerialNumber $SerialNumber -Intent $Intent
 
-    $apiLevel = Get-AdbApiLevel -DeviceId $DeviceId -Verbose:$false
+    $apiLevel = Get-AdbApiLevel -SerialNumber $SerialNumber -Verbose:$false
 
-    $intentArgs = $Intent.ToAdbArguments($DeviceId)
+    $intentArgs = $Intent.ToAdbArguments($SerialNumber)
 
-    $user = Resolve-AdbUser -DeviceId $DeviceId -UserId $UserId
+    $user = Resolve-AdbUser -SerialNumber $SerialNumber -UserId $UserId
     if ($null -ne $user) {
         $userArg = " --user $user"
     }
@@ -28,7 +28,7 @@ function Send-AdbBroadcast {
         $permissionArg = " --receiver-permission $PermissionName"
     }
 
-    $rawResult = Invoke-AdbExpression -DeviceId $DeviceId -Command "shell am broadcast$userArg$permissionArg$intentArgs" -Verbose:$VerbosePreference `
+    $rawResult = Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell am broadcast$userArg$permissionArg$intentArgs" -Verbose:$VerbosePreference `
     | Out-String
 
     $broadcastingIntentLine = $rawResult -split '\r?\n' | Select-Object -First 1

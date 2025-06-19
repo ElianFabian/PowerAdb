@@ -2,7 +2,7 @@ function Start-AdbForegroundService {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [AllowNull()]
         [object] $UserId,
@@ -11,20 +11,20 @@ function Start-AdbForegroundService {
         [PSCustomObject] $Intent
     )
 
-    Assert-ValidIntent -DeviceId $DeviceId -Intent $Intent
+    Assert-ValidIntent -SerialNumber $SerialNumber -Intent $Intent
 
-    $apiLevel = Get-AdbApiLevel -DeviceId $DeviceId -Verbose:$false
+    $apiLevel = Get-AdbApiLevel -SerialNumber $SerialNumber -Verbose:$false
     if ($apiLevel -ge 26) {
-        $intentArgs = $Intent.ToAdbArguments($DeviceId)
+        $intentArgs = $Intent.ToAdbArguments($SerialNumber)
 
-        $user = Resolve-AdbUser -DeviceId $DeviceId -UserId $UserId
+        $user = Resolve-AdbUser -SerialNumber $SerialNumber -UserId $UserId
         if ($null -ne $user) {
             $userArg = " --user $user"
         }
 
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell am start-foreground-service$userArg$intentArgs" -Verbose:$VerbosePreference
+        Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell am start-foreground-service$userArg$intentArgs" -Verbose:$VerbosePreference
     }
     else {
-        Start-AdbService -DeviceId $DeviceId -Intent $Intent -UserId $UserId -Verbose:$VerbosePreference
+        Start-AdbService -SerialNumber $SerialNumber -Intent $Intent -UserId $UserId -Verbose:$VerbosePreference
     }
 }

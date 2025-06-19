@@ -2,7 +2,7 @@ function Invoke-AdbItem {
 
     [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'Default')]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [string] $LiteralRemotePath,
 
@@ -14,7 +14,7 @@ function Invoke-AdbItem {
     )
 
     $defaultBrowserComponent = if ($PSCmdlet.ParameterSetName -eq 'Default') {
-        Resolve-AdbActivity -DeviceId $DeviceId -Intent (New-AdbIntent -Action 'android.intent.action.VIEW' -Data 'http://www.google.com') -Verbose:$false
+        Resolve-AdbActivity -SerialNumber $SerialNumber -Intent (New-AdbIntent -Action 'android.intent.action.VIEW' -Data 'http://www.google.com') -Verbose:$false
     }
     else {
         [PSCustomObject]@{
@@ -24,5 +24,5 @@ function Invoke-AdbItem {
     }
 
     $intent = New-AdbIntent -Action 'android.intent.action.VIEW' -Data "file://$LiteralRemotePath" -ComponentClassName $defaultBrowserComponent.ComponentClassName -PackageName $defaultBrowserComponent.PackageName
-    Start-AdbActivity -DeviceId $DeviceId -Intent $intent -Verbose:$VerbosePreference
+    Start-AdbActivity -SerialNumber $SerialNumber -Intent $intent -Verbose:$VerbosePreference
 }

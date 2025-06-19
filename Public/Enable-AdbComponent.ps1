@@ -1,7 +1,7 @@
 function Enable-AdbComponent {
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string] $PackageName,
@@ -12,7 +12,7 @@ function Enable-AdbComponent {
         [object] $UserId
     )
 
-    $user = Resolve-AdbUser -DeviceId $DeviceId -UserId $UserId
+    $user = Resolve-AdbUser -SerialNumber $SerialNumber -UserId $UserId
     if ($null -ne $user) {
         $userArg = " --user $user"
     }
@@ -24,5 +24,5 @@ function Enable-AdbComponent {
        " '$PackageName'"
     }
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pm enable$componentArg$userArg" -Verbose:$VerbosePreference > $null
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell pm enable$componentArg$userArg" -Verbose:$VerbosePreference > $null
 }

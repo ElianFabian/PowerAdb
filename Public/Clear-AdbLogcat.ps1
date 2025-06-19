@@ -2,7 +2,7 @@ function Clear-AdbLogcat {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [ValidateSet(
             "main",
@@ -21,20 +21,20 @@ function Clear-AdbLogcat {
     )
 
     if ('crash' -in $Buffer) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 21 -FeatureName "$($MyInvocation.MyCommand.Name) -Buffer 'Crash'"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 21 -FeatureName "$($MyInvocation.MyCommand.Name) -Buffer 'Crash'"
     }
     if ($Pattern) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 23 -FeatureName "$($MyInvocation.MyCommand.Name) -Pattern"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 23 -FeatureName "$($MyInvocation.MyCommand.Name) -Pattern"
     }
     if ('kernel' -in $Buffer) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 29 -FeatureName "$($MyInvocation.MyCommand.Name) -Buffer 'Kernel'"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 29 -FeatureName "$($MyInvocation.MyCommand.Name) -Buffer 'Kernel'"
     }
     if ('security' -in $Buffer) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 29 -FeatureName "$($MyInvocation.MyCommand.Name) -Buffer 'Security'"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 29 -FeatureName "$($MyInvocation.MyCommand.Name) -Buffer 'Security'"
     }
 
     if ('all' -in $Buffer) {
-        $apiLevel = Get-AdbApiLevel -DeviceId $DeviceId -Verbose:$false
+        $apiLevel = Get-AdbApiLevel -SerialNumber $SerialNumber -Verbose:$false
 
         $bufferInternal = @('main', 'system', 'radio', 'events')
 
@@ -65,7 +65,7 @@ function Clear-AdbLogcat {
 
     do {
         try {
-            Invoke-AdbExpression -DeviceId $DeviceId -Command "logcat -c$adbArgs" -Verbose:$VerbosePreference
+            Invoke-AdbExpression -SerialNumber $SerialNumber -Command "logcat -c$adbArgs" -Verbose:$VerbosePreference
         }
         catch {
             if ($_.ErrorDetails -isnot [AdbCommandException] -and "logcat: failed to clear the '\w+' log." -notmatch $_.Exception.Message) {

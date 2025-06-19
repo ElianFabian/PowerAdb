@@ -3,18 +3,18 @@ function Get-AdbScreenViewContent {
     [CmdletBinding()]
     [OutputType([string])]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    $apiLevel = Get-AdbApiLevel -DeviceId $DeviceId -Verbose:$false
+    $apiLevel = Get-AdbApiLevel -SerialNumber $SerialNumber -Verbose:$false
 
     $result = if ($apiLevel -ge 23) {
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "exec-out uiautomator dump /dev/tty" -Verbose:$VerbosePreference
+        Invoke-AdbExpression -SerialNumber $SerialNumber -Command "exec-out uiautomator dump /dev/tty" -Verbose:$VerbosePreference
     }
     else {
         # Skips warning 'WARNING: linker: libdvm.so has text relocations. This is wasting memory and is a security risk. Please fix.'
         $skip = if ($apiLevel -eq 19) { 1 } else { 0 }
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell uiautomator dump /dev/tty" -Verbose:$VerbosePreference | Select-Object -Skip $skip | Out-String
+        Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell uiautomator dump /dev/tty" -Verbose:$VerbosePreference | Select-Object -Skip $skip | Out-String
     }
 
     if ('ERROR: could not get idle state.' -eq $result) {

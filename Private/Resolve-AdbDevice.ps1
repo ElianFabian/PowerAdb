@@ -4,23 +4,23 @@ function Resolve-AdbDevice {
     param (
         [AllowEmptyString()]
         [Parameter(Mandatory)]
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [switch] $IgnoreExecutionCheck
     )
 
-    if ($DeviceId) {
-        Assert-ValidAdbStringArgument $DeviceId -ArgumentName 'DeviceId'
+    if ($SerialNumber) {
+        Assert-ValidAdbStringArgument $SerialNumber -ArgumentName 'SerialNumber'
     }
 
     if (-not $IgnoreExecutionCheck) {
-        Assert-AdbExecution -DeviceId $DeviceId
+        Assert-AdbExecution -SerialNumber $SerialNumber
     }
 
     $availableDevices = Get-AdbDevice -Verbose:$false
 
-    if ($DeviceId -and $DeviceId -in $availableDevices) {
-        return $DeviceId
+    if ($SerialNumber -and $SerialNumber -in $availableDevices) {
+        return $SerialNumber
     }
 
     return $availableDevices | Select-Object -First 1

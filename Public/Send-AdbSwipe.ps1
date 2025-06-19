@@ -2,7 +2,7 @@ function Send-AdbSwipe {
 
     [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'Default')]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory, ParameterSetName = 'Default')]
         [float] $X1,
@@ -52,25 +52,25 @@ function Send-AdbSwipe {
     }
 
     if ($EnableCoordinateCheck) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 18 -FeatureName "$($MyInvocation.MyCommand.Name) -EnableCoordinateCheck"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 18 -FeatureName "$($MyInvocation.MyCommand.Name) -EnableCoordinateCheck"
 
-        $size = Get-AdbScreenSize -DeviceId $DeviceId -Verbose:$false
+        $size = Get-AdbScreenSize -SerialNumber $SerialNumber -Verbose:$false
         $width = $size.Width
         $height = $size.Height
 
         if ($positionX1 -lt 0.0 -or $positionX1 -gt $width) {
-            Write-Error "X1 coordinate in device with id '$DeviceId' must be between 0 and $width, but was '$positionX1'" -ErrorAction Stop
+            Write-Error "X1 coordinate in device with serial number '$SerialNumber' must be between 0 and $width, but was '$positionX1'" -ErrorAction Stop
         }
         if ($positionY1 -lt 0.0 -or $positionY1 -gt $height) {
-            Write-Error "Y1 coordinate in device with id '$DeviceId' must be between 0 and $height, but was '$positionY1'" -ErrorAction Stop
+            Write-Error "Y1 coordinate in device with serial number '$SerialNumber' must be between 0 and $height, but was '$positionY1'" -ErrorAction Stop
         }
         if ($positionX2 -lt 0.0 -or $positionX2 -gt $width) {
-            Write-Error "X2 coordinate in device with id '$DeviceId' must be between 0 and $width, but was '$positionX2'" -ErrorAction Stop
+            Write-Error "X2 coordinate in device with serial number '$SerialNumber' must be between 0 and $width, but was '$positionX2'" -ErrorAction Stop
         }
         if ($positionY2 -lt 0.0 -or $positionY2 -gt $height) {
-            Write-Error "Y2 coordinate in device with id '$DeviceId' must be between 0 and $height, but was '$positionY2'" -ErrorAction Stop
+            Write-Error "Y2 coordinate in device with serial number '$SerialNumber' must be between 0 and $height, but was '$positionY2'" -ErrorAction Stop
         }
     }
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell input swipe $positionX1 $positionY1 $positionX2 $positionY2 $DurationInMilliseconds" -Verbose:$VerbosePreference > $null
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell input swipe $positionX1 $positionY1 $positionX2 $positionY2 $DurationInMilliseconds" -Verbose:$VerbosePreference > $null
 }

@@ -2,7 +2,7 @@ function Remove-CacheValue {
 
     [CmdletBinding(DefaultParameterSetName = 'Default')]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory, ParameterSetName = 'Default')]
         [string] $Key,
@@ -15,20 +15,20 @@ function Remove-CacheValue {
         return
     }
 
-    $device = $DeviceId
-    if (-not $device) {
-        $device = Get-AdbDevice -Verbose:$false
+    $serial = $SerialNumber
+    if (-not $serial) {
+        $serial = Get-AdbDevice -Verbose:$false
     }
 
     if ($All) {
-        $targetKeys = $PowerAdbCache.Keys | Where-Object { $_.StartsWith("$device`:") }
+        $targetKeys = $PowerAdbCache.Keys | Where-Object { $_.StartsWith("$serial`:") }
 
         foreach ($keyName in $targetKeys) {
             $PowerAdbCache.Remove($keyName)
         }
     }
     else {
-        $cacheKey = "$device.$Key"
+        $cacheKey = "$serial.$Key"
 
         $PowerAdbCache.Remove($cacheKey)
     }

@@ -3,7 +3,7 @@ function Get-AdbContent {
     [CmdletBinding()]
     [OutputType([string[]])]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string] $RemotePath,
@@ -21,6 +21,6 @@ function Get-AdbContent {
     foreach ($path in $RemotePath) {
         $sanitizedRemotePath = ConvertTo-ValidAdbStringArgument $path
 
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell$runCommand cat $sanitizedRemotePath" -Verbose:$VerbosePreference | Out-String -Stream:(-not $Raw)
+        Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell$runCommand cat $sanitizedRemotePath" -Verbose:$VerbosePreference | Out-String -Stream:(-not $Raw)
     }
 }

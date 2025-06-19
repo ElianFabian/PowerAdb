@@ -2,7 +2,7 @@ function New-AndroidAlarm {
 
     param (
         [Parameter(Mandatory)]
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [uint32] $Hour,
@@ -25,5 +25,5 @@ function New-AndroidAlarm {
         New-AdbBundlePair -Key 'android.intent.extra.alarm.SKIP_UI' -Boolean $SkipUi
     }
 
-    Start-AdbActivity -DeviceId $DeviceId -Intent $intent
+    Start-AdbActivity -SerialNumber $SerialNumber -Intent $intent
 }

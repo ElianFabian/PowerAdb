@@ -3,7 +3,7 @@ function Find-AdbService {
     [OutputType([string[]])]
     [CmdletBinding()]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [AllowNull()]
         [object] $UserId,
@@ -14,18 +14,18 @@ function Find-AdbService {
         [switch] $Raw
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 28
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 28
 
-    Assert-ValidIntent -DeviceId $DeviceId -Intent $Intent
+    Assert-ValidIntent -SerialNumber $SerialNumber -Intent $Intent
 
-    $user = Resolve-AdbUser -DeviceId $DeviceId -UserId $UserId
+    $user = Resolve-AdbUser -SerialNumber $SerialNumber -UserId $UserId
     if ($null -ne $user) {
         $userArg = " --user $user"
     }
 
-    $intentArgs = $Intent.ToAdbArguments($DeviceId)
+    $intentArgs = $Intent.ToAdbArguments($SerialNumber)
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell pm query-services --brief --components$userArg$intentArgs" -Verbose:$VerbosePreference `
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell pm query-services --brief --components$userArg$intentArgs" -Verbose:$VerbosePreference `
     | ForEach-Object {
         if ('No services found' -eq $_) {
             return $null

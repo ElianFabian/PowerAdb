@@ -1,8 +1,8 @@
 function Test-BlueStacksEmulator {
 
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    Test-AdbPath -DeviceId $DeviceId -LiteralRemotePath '/mnt/windows/BstSharedFolder'
+    Test-AdbPath -SerialNumber $SerialNumber -LiteralRemotePath '/mnt/windows/BstSharedFolder'
 }

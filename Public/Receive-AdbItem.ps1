@@ -2,7 +2,7 @@ function Receive-AdbItem {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string] $LiteralRemotePath,
@@ -22,7 +22,7 @@ function Receive-AdbItem {
             Assert-ValidAdbStringArgument $LiteralLocalPath -ArgumentName 'LiteralLocalPath'
 
             # Sanitizing does not work for these arguments.
-            Invoke-AdbExpression -DeviceId $DeviceId -Command "pull '$LiteralRemotePath' '$LiteralLocalPath'" -Verbose:$VerbosePreference
+            Invoke-AdbExpression -SerialNumber $SerialNumber -Command "pull '$LiteralRemotePath' '$LiteralLocalPath'" -Verbose:$VerbosePreference
         }
         catch [AdbCommandException] {
             if ($_.Exception.Message.StartsWith('adb: error:')) {

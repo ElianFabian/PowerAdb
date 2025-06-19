@@ -2,8 +2,8 @@ function Open-AdbKeyboard {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId
+        [string] $SerialNumber
     )
 
-    Send-AdbKeyEvent -DeviceId $DeviceId -KeyCode BUTTON_START -Verbose:$VerbosePreference
+    Send-AdbKeyEvent -SerialNumber $SerialNumber -KeyCode BUTTON_START -Verbose:$VerbosePreference
 }

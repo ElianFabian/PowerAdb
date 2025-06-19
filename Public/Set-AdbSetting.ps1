@@ -2,7 +2,7 @@ function Set-AdbSetting {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [ValidateSet('global', 'system', 'secure')]
@@ -17,7 +17,7 @@ function Set-AdbSetting {
         [string] $Value
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 17
 
     if ($Name.Contains(' ')) {
         Write-Error "Name '$Name' can't contain space characters"
@@ -35,7 +35,7 @@ function Set-AdbSetting {
     foreach ($settingName in $Name) {
         try {
             $sanitizedSettingName = ConvertTo-ValidAdbStringArgument $settingName
-            Invoke-AdbExpression -DeviceId $DeviceId -Command "shell settings put $Namespace $sanitizedSettingName $sanitizedValue" -Verbose:$VerbosePreference
+            Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell settings put $Namespace $sanitizedSettingName $sanitizedValue" -Verbose:$VerbosePreference
         }
         catch { [AdbCommandException]
             if ($_.Exception.Message.Contains('java.lang.SecurityException: com.android.shell was not granted  this permission: android.permission.WRITE_SETTINGS')) {

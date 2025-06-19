@@ -5,7 +5,7 @@ function Get-CacheValue {
     param (
         [AllowEmptyString()]
         [Parameter(Mandatory)]
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [string] $FunctionName = (Get-PSCallStack | Select-Object -First 1 -ExpandProperty Command),
 
@@ -16,12 +16,12 @@ function Get-CacheValue {
         return
     }
 
-    $device = $DeviceId
-    if (-not $device) {
-        $device = Get-AdbDevice -Verbose:$false
+    $serial = $SerialNumber
+    if (-not $serial) {
+        $serial = Get-AdbDevice -Verbose:$false
     }
 
-    $cacheKey = "$device`:$FunctionName"
+    $cacheKey = "$serial`:$FunctionName"
     if ($Key) {
         $cacheKey = "$cacheKey`:$Key"
     }

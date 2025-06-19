@@ -3,7 +3,7 @@ function Get-AdbChildItem {
     [OutputType([string[]])]
     [CmdletBinding()]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [string] $RemotePath,
 
@@ -24,7 +24,7 @@ function Get-AdbChildItem {
             $sanitizedRemotePathArg = " $(ConvertTo-ValidAdbStringArgument $path)"
         }
 
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell$runAsCommand ls$recurseArg$sanitizedRemotePathArg" -Verbose:$VerbosePreference `
+        Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell$runAsCommand ls$recurseArg$sanitizedRemotePathArg" -Verbose:$VerbosePreference `
         | Out-String -Stream `
         | Where-Object { -not $_.Contains(':') -and -not [string]::IsNullOrWhiteSpace($_) }
     }

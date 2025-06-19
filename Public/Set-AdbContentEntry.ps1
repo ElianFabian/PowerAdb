@@ -2,7 +2,7 @@ function Set-AdbContentEntry {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string] $Uri,
@@ -17,7 +17,7 @@ function Set-AdbContentEntry {
         [string] $Where
     )
 
-    $user = Resolve-AdbUser -DeviceId $DeviceId -UserId $UserId -CurrentUserAsNull
+    $user = Resolve-AdbUser -SerialNumber $SerialNumber -UserId $UserId -CurrentUserAsNull
     if ($null -ne $user) {
         $userArg = " --user $user"
     }
@@ -28,5 +28,5 @@ function Set-AdbContentEntry {
     Assert-ValidContentEntryValue $valueAsPsCustomObject
     $bindingArgs = ConvertTo-ContentBindingArg $valueAsPsCustomObject
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell content update --uri '$Uri'$userArg$bindingArgs$whereArg" -Verbose:$VerbosePreference
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell content update --uri '$Uri'$userArg$bindingArgs$whereArg" -Verbose:$VerbosePreference
 }

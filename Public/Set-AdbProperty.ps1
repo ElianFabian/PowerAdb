@@ -2,7 +2,7 @@ function Set-AdbProperty {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string[]] $Name,
@@ -24,6 +24,6 @@ function Set-AdbProperty {
 
     foreach ($propertyName in $Name) {
         $sanitizedPropertyName = ConvertTo-ValidAdbStringArgument $propertyName
-        Invoke-AdbExpression -DeviceId $DeviceId -Command "shell setprop $sanitizedPropertyName $sanitizedValue" -Verbose:$VerbosePreference
+        Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell setprop $sanitizedPropertyName $sanitizedValue" -Verbose:$VerbosePreference
     }
 }

@@ -3,7 +3,7 @@ function Send-AdbDoubleTap {
 
     [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'Default')]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory, ParameterSetName = 'Default')]
         [float] $X,
@@ -24,12 +24,12 @@ function Send-AdbDoubleTap {
     )
 
     if ($EnableCoordinateCheck) {
-        Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 18 -FeatureName "$($MyInvocation.MyCommand.Name) -EnableCoordinateCheck"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 18 -FeatureName "$($MyInvocation.MyCommand.Name) -EnableCoordinateCheck"
     }
 
     if (-not $ForceDoubleTapInSlowDevices) {
         $boundParametersCopy = [hashtable] $PSBoundParameters
-        $boundParametersCopy['DeviceId'] = $DeviceId
+        $boundParametersCopy['SerialNumber'] = $SerialNumber
 
         Send-AdbTap @boundParametersCopy
         Send-AdbTap @boundParametersCopy
@@ -41,8 +41,8 @@ function Send-AdbDoubleTap {
 
     1..3 | ForEach-Object {
         $boundParametersCopy = [hashtable] $PSBoundParameters
-        $boundParametersCopy['DeviceId'] = $DeviceId
-        $jobName = New-PowerAdbJobName -Tag "SendAdbDoubleTap.$DeviceId.$_"
+        $boundParametersCopy['SerialNumber'] = $SerialNumber
+        $jobName = New-PowerAdbJobName -Tag "SendAdbDoubleTap.$SerialNumber.$_"
 
         $job = ForEach-Object {
             # It seems that in other to work we have to execute the code

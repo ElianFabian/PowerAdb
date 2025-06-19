@@ -9,7 +9,7 @@ function Get-AdbContentEntry {
     [OutputType([PSCustomObject[]])]
     [CmdletBinding(DefaultParameterSetName = 'Default')]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string] $Uri,
@@ -24,7 +24,7 @@ function Get-AdbContentEntry {
         [scriptblock] $SortBy
     )
 
-    $user = Resolve-AdbUser -DeviceId $DeviceId -UserId $UserId -CurrentUserAsNull
+    $user = Resolve-AdbUser -SerialNumber $SerialNumber -UserId $UserId -CurrentUserAsNull
     if ($null -ne $user) {
         $userArg = " --user $user"
     }
@@ -51,7 +51,7 @@ function Get-AdbContentEntry {
     $lineGroupList = New-Object System.Collections.Generic.List[string]
     $lastRowIndex = 0
 
-    InvokeAdbExpressionInternal -DeviceId $DeviceId -Command "shell content query --uri '$Uri'$userArg$projectionArg$whereArg$sortArg" -Verbose:$VerbosePreference `
+    InvokeAdbExpressionInternal -SerialNumber $SerialNumber -Command "shell content query --uri '$Uri'$userArg$projectionArg$whereArg$sortArg" -Verbose:$VerbosePreference `
     | Where-Object { -not [string]::IsNullOrWhiteSpace($_) -and $_ -notlike '*No result found.*' } `
     | ForEach-Object {
         # Sometimes a row is split into multiple lines because a value contains a new line character.
@@ -164,13 +164,13 @@ function InvokeAdbExpressionInternal {
     [OutputType([string[]])]
     [CmdletBinding()]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [string] $Command
     )
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command $Command -Verbose:$VerbosePreference
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command $Command -Verbose:$VerbosePreference
 
     Write-Output $script:EndObject
 }

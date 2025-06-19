@@ -2,13 +2,13 @@ function Switch-AdbUser {
 
     [CmdletBinding(SupportsShouldProcess)]
     param (
-        [string] $DeviceId,
+        [string] $SerialNumber,
 
         [Parameter(Mandatory)]
         [int] $Id
     )
 
-    Assert-ApiLevel -DeviceId $DeviceId -GreaterThanOrEqualTo 17
+    Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 17
 
-    Invoke-AdbExpression -DeviceId $DeviceId -Command "shell am switch-user $Id" -Verbose:$VerbosePreference > $null
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell am switch-user $Id" -Verbose:$VerbosePreference > $null
 }
