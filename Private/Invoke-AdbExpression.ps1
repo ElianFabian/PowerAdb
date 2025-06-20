@@ -13,6 +13,11 @@ function Invoke-AdbExpression {
     )
 
 
+    # NOTES: In some devices (e.g. Pixel 8 Pro API 35) when they're connected via Wi-Fi, even they're in the 'device' state,
+    # the commands freeze until the screen is turned on.
+    # It would be cool to find a way to detect this and turn the screen on automatically
+    # or at least warn the user about it.
+
     if (-not $IgnoreExecutionCheck) {
         Assert-AdbExecution -SerialNumber $SerialNumber
     }
