@@ -11,7 +11,7 @@ function Connect-AdbDevice {
 
     try {
         $result = Invoke-AdbExpression -Command "connect ""$IpAddress`:$Port""" -IgnoreExecutionCheck -Verbose:$VerbosePreference
-        if ($result.StartsWith('cannot resolve host')) {
+        if ($result.StartsWith('cannot resolve host') -or $result.StartsWith('cannot connect to')) {
             Write-Error $result -ErrorAction Stop
         }
         Write-Verbose $result
