@@ -6,13 +6,11 @@ function Get-AdbDeviceName {
         [string] $SerialNumber
     )
 
-    $serial = Resolve-AdbDevice -SerialNumber $SerialNumber
-
-    $deviceName = if ((Test-AdbEmulator -SerialNumber $serial)) {
-        [string] (Invoke-AdbExpression -SerialNumber $serial -Command 'emu avd name' -Verbose:$VerbosePreference | Select-Object -First 1)
+    $deviceName = if ((Test-AdbEmulator -SerialNumber $SerialNumber)) {
+        Get-AdbEmulatorName -SerialNumber $SerialNumber -Verbose:$VerbosePreference
     }
     else {
-        Get-AdbProperty -SerialNumber $serial -Name 'ro.product.model' -Verbose:$VerbosePreference
+        Get-AdbProperty -SerialNumber $SerialNumber -Name 'ro.product.model' -Verbose:$VerbosePreference
     }
 
     return $deviceName

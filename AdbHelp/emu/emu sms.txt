@@ -1,0 +1,5 @@
+allows you to simulate an inbound SMS
+
+available sub-commands:
+    send             send inbound SMS text message
+    pdu              send inbound SMS PDU
