@@ -12,9 +12,9 @@ function Get-AdbDeviceDetail {
 
         if ($parts.Count -eq 3) {
             return [PSCustomObject]@{
-                Id          = $parts[0]
-                State       = $parts[1]
-                TransportId = $parts[2].Replace('transport_id:', '')
+                SerialNumber = $parts[0]
+                State        = $parts[1]
+                TransportId  = $parts[2].Replace('transport_id:', '')
             }
         }
 
