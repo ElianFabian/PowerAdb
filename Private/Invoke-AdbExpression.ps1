@@ -17,6 +17,7 @@ function Invoke-AdbExpression {
     # the commands freeze until the screen is turned on.
     # It would be cool to find a way to detect this and turn the screen on automatically
     # or at least warn the user about it.
+    # Sometimes even turning on the screen the commands block.
 
     if (-not $IgnoreExecutionCheck) {
         Assert-AdbExecution -SerialNumber $SerialNumber
