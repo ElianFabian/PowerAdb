@@ -1,9 +1,8 @@
 function Invoke-AdbExpression {
 
     [OutputType([string])]
-    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'Default')]
+    [CmdletBinding(SupportsShouldProcess)]
     param (
-        [Parameter(ParameterSetName = 'Default')]
         [string] $SerialNumber,
 
         [Parameter(Mandatory)]
