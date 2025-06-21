@@ -55,14 +55,14 @@ function Get-AdbProperty {
                 }
                 else {
                     $sanitizedPropertyName = ConvertTo-ValidAdbStringArgument $_
-                    $value = Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell getprop $sanitizedPropertyName" -Verbose:$VerbosePreference | Out-String -NoNewline
+                    $value = Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell getprop $sanitizedPropertyName" -Verbose:$VerbosePreference -ErrorAction Ignore | Out-String -NoNewline
                     Set-CacheValue -SerialNumber $SerialNumber -Key $_ -Value $value
                     $value
                 }
             }
             else {
                 $sanitizedPropertyName = ConvertTo-ValidAdbStringArgument $_
-                Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell getprop $sanitizedPropertyName" -Verbose:$VerbosePreference | Out-String -NoNewline
+                Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell getprop $sanitizedPropertyName" -Verbose:$VerbosePreference -ErrorAction Ignore | Out-String -NoNewline
             }
         }
     }
