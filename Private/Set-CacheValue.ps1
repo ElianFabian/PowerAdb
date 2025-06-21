@@ -6,7 +6,7 @@ function Set-CacheValue {
         [Parameter(Mandatory)]
         [string] $SerialNumber,
 
-        [string] $FunctionName =  (Get-PSCallStack | Select-Object -First 1 -ExpandProperty Command),
+        [string] $FunctionName = (Get-PSCallStack | Select-Object -First 1 -ExpandProperty Command),
 
         [string] $Key,
 
@@ -23,6 +23,11 @@ function Set-CacheValue {
     if (-not $serial) {
         Write-Error "No device is connected or available to set cache value." -ErrorAction Stop
     }
+    $deviceState = Get-AdbDeviceState -SerialNumber $serial -Verbose:$false
+    if ($deviceState -eq 'offline') {
+        return
+    }
+
 
     $cacheKey = "$serial`:$FunctionName"
     if ($Key) {

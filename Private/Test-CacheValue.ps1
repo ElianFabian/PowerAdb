@@ -16,9 +16,9 @@ function Test-CacheValue {
         return
     }
 
-    $serial = $SerialNumber
+    $serial = Resolve-AdbDevice -SerialNumber $SerialNumber
     if (-not $serial) {
-        $serial = Get-AdbDevice -Verbose:$false
+        Write-Error "No device is connected or available to set cache value." -ErrorAction Stop
     }
 
     $cacheKey = "$serial`:$FunctionName"
