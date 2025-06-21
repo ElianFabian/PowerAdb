@@ -6,10 +6,10 @@ function Get-AdbDeviceName {
         [string] $SerialNumber
     )
 
-    $serial = $SerialNumber
-    $availableDevices = Get-AdbDevice
-    if ($availableDevices.Count -eq 1 -and -not $serial) {
-        $serial = $availableDevices
+    $serial = Resolve-AdbDevice -SerialNumber $SerialNumber
+    $deviceState = Get-AdbDeviceState -SerialNumber $serial
+    if ($deviceState -eq 'offline') {
+        return '-'
     }
 
     $deviceName = if ((Test-AdbEmulator -SerialNumber $serial)) {
@@ -19,5 +19,5 @@ function Get-AdbDeviceName {
         Get-AdbProperty -SerialNumber $serial -Name 'ro.product.model' -Verbose:$VerbosePreference
     }
 
-    $deviceName
+    return $deviceName
 }

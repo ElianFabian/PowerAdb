@@ -23,8 +23,8 @@ function Show-AdbDevice {
 
     $spaceSize = 5
 
-    $header = "$("Serial Number".PadRight($longestIdLength + $spaceSize, " "))$("Name".PadRight($longestDeviceNameLength + $spaceSize, " "))$("API Level".PadRight($longestDeviceNameLength + $spaceSize, " "))State"
-    $header += "`n$("-------------".PadRight($longestIdLength + $spaceSize, " "))$("----".PadRight($longestDeviceNameLength + $spaceSize, " "))$("---------".PadRight($longestDeviceNameLength + $spaceSize, " "))-----"
+    $header = "$("Serial Number".PadRight($longestIdLength + $spaceSize, ' '))$("Name".PadRight($longestDeviceNameLength + $spaceSize, ' '))$("API Level".PadRight($longestDeviceNameLength + 0, ' '))State"
+    $header += "`n$("-------------".PadRight($longestIdLength + $spaceSize, ' '))$("----".PadRight($longestDeviceNameLength + $spaceSize, ' '))$("---------".PadRight($longestDeviceNameLength + 0, ' '))-----"
 
     Write-Host $header -ForegroundColor Green
 
@@ -36,20 +36,18 @@ function Show-AdbDevice {
             $device.Model
         }
         if (-not $deviceName) {
-            $deviceName = "-"
+            $deviceName = '-'
         }
 
         $apiLevel = Get-AdbApiLevel -SerialNumber $device.SerialNumber -Verbose:$false -ErrorAction Ignore
-
-        Write-Host $device.SerialNumber.PadRight($longestIdLength + $spaceSize, " ") -NoNewline -ForegroundColor Cyan
-        Write-Host $deviceName.PadRight($longestDeviceNameLength + $spaceSize, " ") -NoNewline -ForegroundColor DarkCyan
         if (-not $apiLevel) {
-            Write-Host "-".PadRight($longestDeviceNameLength + $spaceSize, " ") -NoNewline -ForegroundColor DarkCyan
+            $apiLevel = '-'
         }
-        else {
-            Write-Host $apiLevel.ToString().PadRight($longestDeviceNameLength + $spaceSize, " ") -NoNewline -ForegroundColor White
-        }
-        Write-Host ($device.State).PadRight($longestDeviceNameLength + $spaceSize, " ") -ForegroundColor White
+
+        Write-Host $device.SerialNumber.PadRight($longestIdLength + $spaceSize, ' ') -NoNewline -ForegroundColor Cyan
+        Write-Host $deviceName.PadRight($longestDeviceNameLength + $spaceSize, ' ') -NoNewline -ForegroundColor DarkCyan
+        Write-Host $apiLevel.ToString().PadRight($longestDeviceNameLength + 0, ' ') -NoNewline -ForegroundColor White
+        Write-Host $device.State -ForegroundColor White
     }
 
     Write-Host

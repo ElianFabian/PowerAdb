@@ -14,6 +14,9 @@ function Get-AdbDeviceDetail {
             return [PSCustomObject]@{
                 SerialNumber = $parts[0]
                 State        = $parts[1]
+                Product      = '-'
+                Model        = '-'
+                Device       = '-'
                 TransportId  = $parts[2].Replace('transport_id:', '')
             }
         }
