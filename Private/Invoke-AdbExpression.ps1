@@ -96,4 +96,4 @@ function Invoke-AdbExpression {
 # - 192.168.1.122:5555 (Wireless Physical Device)
 # - adb-ZLCQGUPF7TDENZGM-PjhN0r._adb-tls-connect._tcp (Wireless Physical Device)
 # - emulator-5554 (Emulator)
-# - localhost:59608 (Remote Device)
+# - localhost:59608 (Remote Device, BlueStacks (or similar))
