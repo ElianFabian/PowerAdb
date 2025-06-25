@@ -10,7 +10,7 @@ function Show-AdbDevice {
         return
     }
 
-    $names = $devices.Model
+    $names = $devices.Model | ForEach-Object { if ($_ -eq '-') { '' } else { $_ } }
     if ($names) {
         $longestDeviceNameLength = $names | ForEach-Object { $_.Length } | Measure-Object -Maximum | Select-Object -ExpandProperty Maximum
     }
@@ -21,10 +21,10 @@ function Show-AdbDevice {
     $longestIdLength = $devices.SerialNumber | ForEach-Object { $_.Length } | Measure-Object -Maximum | Select-Object -ExpandProperty Maximum
 
 
-    $spaceSize = 5
+    $spaceSize = 2
 
-    $header = "$("Serial Number".PadRight($longestIdLength + $spaceSize, ' '))$("Name".PadRight($longestDeviceNameLength + $spaceSize, ' '))$("API Level".PadRight($longestDeviceNameLength + 0, ' '))State"
-    $header += "`n$("-------------".PadRight($longestIdLength + $spaceSize, ' '))$("----".PadRight($longestDeviceNameLength + $spaceSize, ' '))$("---------".PadRight($longestDeviceNameLength + 0, ' '))-----"
+    $header = "$("Serial Number".PadRight($longestIdLength + $spaceSize, ' '))$("Name".PadRight($longestDeviceNameLength + $spaceSize, ' '))$("API Level".PadRight(10 + $spaceSize, ' '))State"
+    $header += "`n$("-------------".PadRight($longestIdLength + $spaceSize, ' '))$("----".PadRight($longestDeviceNameLength + $spaceSize, ' '))$("---------".PadRight(10 + $spaceSize, ' '))-----"
 
     Write-Host $header -ForegroundColor Green
 
@@ -42,13 +42,13 @@ function Show-AdbDevice {
         if ($device.State -ne 'offline') {
             $apiLevel = Get-AdbApiLevel -SerialNumber $device.SerialNumber -Verbose:$false -ErrorAction Ignore
         }
-        if (-not $apiLevel) {
+        if ([string]::IsNullOrWhiteSpace($apiLevel)) {
             $apiLevel = '-'
         }
 
         Write-Host $device.SerialNumber.PadRight($longestIdLength + $spaceSize, ' ') -NoNewline -ForegroundColor Cyan
         Write-Host $deviceName.PadRight($longestDeviceNameLength + $spaceSize, ' ') -NoNewline -ForegroundColor DarkCyan
-        Write-Host $apiLevel.ToString().PadRight($longestDeviceNameLength + 0, ' ') -NoNewline -ForegroundColor White
+        Write-Host $apiLevel.ToString().PadRight(10 + $spaceSize, ' ') -NoNewline -ForegroundColor White
         Write-Host $device.State -ForegroundColor White
     }
 
