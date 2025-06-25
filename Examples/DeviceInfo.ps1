@@ -17,6 +17,11 @@ $properties = @(
     'ro.product.system.manufacturer'
     'ro.product.system.model'
     'ro.product.system.name'
+
+    'ro.oplus.display.screen.heteromorphism'
+    'ro.oplus.display.screenhole.positon'
+    'ro.oppo.screen.heteromorphism'
+    'ro.oppo.screenhole.positon' # (e.g. '62,30:140,108')
 )
 
 
