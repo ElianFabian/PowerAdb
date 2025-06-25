@@ -12,6 +12,7 @@ function Invoke-AdbScreenShot {
 
     Assert-AdbExecution -SerialNumber $SerialNumber
     Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 20
+    Assert-ValidAdbStringArgument $Destination -ArgumentName 'Destination'
 
     # This might seem weird, but at least on emulators 'screencap' is not available for API level 25.
     Assert-ApiLevel -SerialNumber $SerialNumber -NotEqualTo 25
@@ -29,14 +30,14 @@ function Invoke-AdbScreenShot {
         $serialNumberArg = " -s '$SerialNumber'"
     }
 
-    $adbCommand = "adb$serialNumberArg exec-out screencap -p > ""$actualDestination"""
+    $adbCommand = "adb$serialNumberArg exec-out screencap -p > ""$($actualDestination.Replace("'", "''"))"""
 
     # https://stackoverflow.com/a/59118502/18418162
     if ($IsWindows -or -not $IsCoreCLR) {
         $actualCommand = "cmd /c $adbCommand"
     }
     elseif ($IsMacOS -or $IsLinux) {
-        $actualCommand = "sh -c $adbCommand"
+        $actualCommand = "sh -c '$adbCommand'"
     }
     else {
         Write-Error "Unsupported platform. This script only works on Windows, MacOS, and Linux." -ErrorAction Stop
