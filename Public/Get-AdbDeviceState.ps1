@@ -2,16 +2,21 @@ function Get-AdbDeviceState {
 
     [CmdletBinding()]
     [OutputType([string])]
-    param(
+    param (
         [string] $SerialNumber
     )
 
     try {
-        return Invoke-AdbExpression -SerialNumber $SerialNumber -Command "get-state" -IgnoreExecutionCheck -Verbose:$VerbosePreference
+        return Invoke-AdbExpression -SerialNumber $SerialNumber -Command 'get-state' -IgnoreExecutionCheck -Verbose:$VerbosePreference
     }
     catch [AdbCommandException] {
         if ($_.Exception.Message -eq 'error: device offline') {
+            Write-Verbose $_
             return 'offline'
+        }
+        if ($_.Exception.Message.StartsWith('error: device unauthorized')) {
+            Write-Verbose $_
+            return 'unauthorized'
         }
         throw $_
     }

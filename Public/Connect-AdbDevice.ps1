@@ -1,5 +1,6 @@
 function Connect-AdbDevice {
 
+    [OutputType([bool])]
     [CmdletBinding(SupportsShouldProcess)]
     param (
         [Parameter(Mandatory)]
@@ -14,7 +15,14 @@ function Connect-AdbDevice {
         if ($result.StartsWith('cannot resolve host') -or $result.StartsWith('cannot connect to')) {
             Write-Error $result -ErrorAction Stop
         }
+        if ($result.StartsWith('failed to authenticate to')) {
+            Write-Host $result -ForegroundColor Green
+            return $false
+        }
+
         Write-Verbose $result
+
+        return $true
     }
     catch [AdbCommandException] {
         if ($_.Exception.Message.Contains('cannot connect to')) {

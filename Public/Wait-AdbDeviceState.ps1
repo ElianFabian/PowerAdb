@@ -12,15 +12,20 @@ function Wait-AdbDeviceState {
         [string] $Transport = "any"
     )
 
-    if ($SerialNumber) {
-        $currentState = Get-AdbDeviceState -SerialNumber $SerialNumber -Verbose:$false # -PreventLock
-        if ($currentState -eq 'offline') {
-            return 'offline'
-        }
-
-        Invoke-AdbExpression -SerialNumber $SerialNumber -Command "wait-for-$Transport-$State" -IgnoreExecutionCheck -Verbose:$VerbosePreference
+    $currentState = Get-AdbDeviceState -SerialNumber $SerialNumber -Verbose:$false # -PreventLock
+    if ($currentState -eq 'offline' -and $State -eq 'disconnect') {
         return
     }
 
-    Invoke-AdbExpression -Command "wait-for-$Transport-$State" -IgnoreExecutionCheck -Verbose:$VerbosePreference
+    # When the state is 'unauthorized' wait-for-*-disconnect immediately returns, so we manually wait for disconnection.
+    if ($currentState -eq 'unauthorized' -and $State -eq 'disconnect') {
+        do {
+            Start-Sleep -Milliseconds 100
+            $currentState = Get-AdbDeviceState -SerialNumber $SerialNumber -Verbose:$false -ErrorAction Ignore
+        }
+        while ($null -ne $currentState -and $currentState -ne 'offline')
+        return
+    }
+
+    Invoke-AdbExpression -SerialNumber $SerialNumber -Command "wait-for-$Transport-$State" -IgnoreExecutionCheck -Verbose:$VerbosePreference
 }

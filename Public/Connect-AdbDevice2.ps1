@@ -14,7 +14,7 @@ function Connect-AdbDevice2 {
     # The adb_wifi_enabled has the following values:
     # 0 - Wireless debugging is disabled
     # 1 - Wireless debugging is enabled
-    # 'null' - Wireless debugging is enabled (at least)
+    # 'null' - Wireless debugging is enabled (at least on the tests made)
     $isWirelessDebuggingEnabled = Get-AdbSetting -SerialNumber $SerialNumber -Namespace global -Name 'adb_wifi_enabled' -Verbose:$false
     if ($isWirelessDebuggingEnabled -eq 0 -and -not $Force) {
         Write-Error "Wireless debugging is not enabled on device $SerialNumber. Use -Force to enable it."
@@ -45,6 +45,39 @@ function Connect-AdbDevice2 {
     $ipAdress = Get-AdbLocalNetworkIp -SerialNumber $SerialNumber -Wait -Verbose:$false
     Start-AdbTcpIp -SerialNumber $SerialNumber -Port 5555 -Verbose:$VerbosePreference
     Connect-AdbDevice -IpAddress $ipAdress -Port 5555 -Verbose:$VerbosePreference
-
-    # We could return true or false to indicate success or failure
 }
+
+# TODO: we could try to use this to check if the device and the computer are on the same network
+
+# Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.InterfaceAlias -eq 'Wi-Fi' } | ForEach-Object { "$($_.IPAddress)-$($_.PrefixLength)" }
+
+# adb shell ip route
+# 192.168.1.0/24 dev wlan0 proto kernel scope link src 192.168.1.102
+
+
+# function Get-NetworkAddress {
+#     param(
+#         [string]$ip,
+#         [int]$prefixLength
+#     )
+
+#     $ipAddr = [System.Net.IPAddress]::Parse($ip)
+#     $ipBytes = $ipAddr.GetAddressBytes()
+
+#     # Crear la máscara
+#     $maskBits = [Convert]::ToString(([math]::Pow(2, 32) - 1) - ([math]::Pow(2, 32 - $prefixLength) - 1), 2).PadLeft(32, '0')
+#     $maskBytes = @()
+#     for ($i = 0; $i -lt 4; $i++) {
+#         $maskBytes += [Convert]::ToInt32($maskBits.Substring($i * 8, 8), 2)
+#     }
+
+#     # AND entre IP y máscara
+#     $networkBytes = for ($i = 0; $i -lt 4; $i++) {
+#         $ipBytes[$i] -band $maskBytes[$i]
+#     }
+
+#     return ($networkBytes -join ".") + "/$prefixLength"
+# }
+
+# # Ejemplo de uso
+# Get-NetworkAddress -ip "192.168.1.130" -prefixLength 25  # Resultado: 192.168.1.128/25
