@@ -17,7 +17,8 @@ function Send-AdbText {
         Write-Error "'$($MyInvocation.MyCommand)' only accepts ASCII characters. Use the '-Force' switch to override this restriction." -ErrorAction Stop
     }
 
-    $sanitizedText = ConvertTo-ValidAdbStringArgument $Text
+    # 'adb shell input text' throws an error when we pass the `r character.
+    $sanitizedText = ((ConvertTo-ValidAdbStringArgument $Text).GetEnumerator() | Where-Object { $_ -ne "`r" }) -join ''
 
     Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell input text $sanitizedText" -Verbose:$VerbosePreference
 }
