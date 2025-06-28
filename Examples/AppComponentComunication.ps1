@@ -1,3 +1,96 @@
+function Invoke-NewAndroidContact {
+
+    param (
+        [Parameter(Mandatory)]
+        [string] $SerialNumber,
+
+        [string] $Name,
+
+        [string] $Phone,
+
+        [string] $Email,
+
+        [string] $Company,
+
+        [string] $JobTitle,
+
+        [string] $Notes
+    )
+
+    $intent = New-AdbIntent `
+        -Action 'android.intent.action.INSERT' `
+        -Type 'vnd.android.cursor.dir/contact' `
+        -Extras {
+        New-AdbBundlePair -Key 'name' -String $Name
+        New-AdbBundlePair -Key 'phone' -String $Phone
+        New-AdbBundlePair -Key 'email' -String $Email
+        New-AdbBundlePair -Key 'company' -String $Company
+        New-AdbBundlePair -Key 'job_title' -String $JobTitle
+        New-AdbBundlePair -Key 'notes' -String $Notes
+    }
+
+    Start-AdbActivity -SerialNumber $SerialNumber -Intent $intent
+}
+
+function New-AndroidAlarm {
+
+    param (
+        [Parameter(Mandatory)]
+        [string] $SerialNumber,
+
+        [Parameter(Mandatory)]
+        [uint32] $Hour,
+
+        [Parameter(Mandatory)]
+        [uint32] $Minute,
+
+        [Parameter(Mandatory)]
+        [string] $Message,
+
+        [switch] $SkipUi
+    )
+
+    $intent = New-AdbIntent `
+        -Action 'android.intent.action.SET_ALARM' `
+        -Extras {
+        New-AdbBundlePair -Key 'android.intent.extra.alarm.HOUR' -Int $Hour
+        New-AdbBundlePair -Key 'android.intent.extra.alarm.MINUTES' -Int $Minute
+        New-AdbBundlePair -Key 'android.intent.extra.alarm.MESSAGE' -String $Message
+        New-AdbBundlePair -Key 'android.intent.extra.alarm.SKIP_UI' -Boolean $SkipUi
+    }
+
+    Start-AdbActivity -SerialNumber $SerialNumber -Intent $intent
+}
+
+function New-AndroidTimer {
+
+    param (
+        [Parameter(Mandatory)]
+        [string] $SerialNumber,
+
+        [Parameter(Mandatory)]
+        [uint32] $Seconds,
+
+        [string] $Message,
+
+        [switch] $SkipUi
+    )
+
+    $intent = New-AdbIntent `
+        -Action 'android.intent.action.SET_TIMER' `
+        -Extras {
+        New-AdbBundlePair -Key 'android.intent.extra.alarm.LENGTH' -Int $Seconds
+        if ($Message) {
+            New-AdbBundlePair -Key 'android.intent.extra.alarm.MESSAGE' -String $Message
+        }
+        New-AdbBundlePair -Key 'android.intent.extra.alarm.SKIP_UI' -Boolean $SkipUi
+    }
+
+    Start-AdbActivity -SerialNumber $SerialNumber -Intent $intent
+}
+
+
+
 function Send-AndroidFcmNotification {
 
     param (
