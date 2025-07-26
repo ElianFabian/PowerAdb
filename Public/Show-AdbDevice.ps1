@@ -1,5 +1,7 @@
 function Show-AdbDevice {
 
+    # FIXME: Avoid this function blocks the terminal input when the device is unauthorized (this probably also applies to other commands).
+
     $devices = Get-AdbDeviceDetail -Verbose:$false
 
     Write-Host
