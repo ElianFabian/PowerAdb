@@ -6,5 +6,12 @@ function Get-AdbBluetoothAddress {
         [string] $SerialNumber
     )
 
-    Get-AdbSetting -SerialNumber $SerialNumber -Namespace secure -Name 'bluetooth_address' -Verbose:$VerbosePreference
+    $value = Get-AdbSetting -SerialNumber $SerialNumber -Namespace secure -Name 'bluetooth_address' -Verbose:$VerbosePreference
+    if ($value -ne 'null' -and -not $value) {
+        return $value
+    }
+
+    return Get-AdbServiceDump -SerialNumber ZLCQGUPF7TDENZGM -Name bluetooth_manager | Select-Object -Skip 3 -First 1 | ForEach-Object {
+        $_.Trim().Replace('address: ', '')
+    }
 }
