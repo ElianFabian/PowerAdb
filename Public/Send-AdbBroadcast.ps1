@@ -35,8 +35,8 @@ function Send-AdbBroadcast {
     $actualHexFlags = $broadcastingIntentLine | Select-String -Pattern "Broadcasting: Intent \{ act=.* flg=(0x.+) cmp=.* \}" -AllMatches `
     | Select-Object -ExpandProperty Matches -First 1 `
     | ForEach-Object { $_.Groups[1].Value }
-    $broacastCompletedMatch = $rawResult `
-    | Select-String -Pattern "Broadcast completed: result=(?<result>\d+)(?:, data=""(?<data>[\s\S\n\r.]*?)"")?" -AllMatches `
+    $broacastCompletedMatch = $rawResult `  
+    | Select-String -Pattern "Broadcast completed: result=(?<result>-?\d+)(?:, data=""(?<data>[\s\S\n\r.]*?)"")?" -AllMatches `
     | Select-Object -ExpandProperty Matches -First 1
 
     $groups = $broacastCompletedMatch.Groups
