@@ -35,17 +35,35 @@ function Send-AdbBroadcast {
     $actualHexFlags = $broadcastingIntentLine | Select-String -Pattern "Broadcasting: Intent \{ act=.* flg=(0x.+) cmp=.* \}" -AllMatches `
     | Select-Object -ExpandProperty Matches -First 1 `
     | ForEach-Object { $_.Groups[1].Value }
-    $broacastCompletedMatch = $rawResult `  
-    | Select-String -Pattern "Broadcast completed: result=(?<result>-?\d+)(?:, data=""(?<data>[\s\S\n\r.]*?)"")?" -AllMatches `
-    | Select-Object -ExpandProperty Matches -First 1
 
-    $groups = $broacastCompletedMatch.Groups
-    $broadCastResult = [int] $groups['result'].Value
-    $broadcastData = $groups['data'].Value
+    $resultMatch = [regex]::Match($rawResult, 'result=(-?\d+)')
+    $broadCastResult = if ($resultMatch.Success) { [int]$resultMatch.Groups[1].Value }
+
+    $dataStart = $rawResult.IndexOf('data="')
+    $broadcastData = $null
+    $broadcastExtras = $null
+
+    if ($dataStart -ge 0) {
+        $broadcastData = $rawResult.Substring($dataStart + 'data="'.Length)
+
+        $extrasIndex = $broadcastData.LastIndexOf('", extras:')
+        if ($extrasIndex -ge 0) {
+            $broadcastExtras = $broadcastData.Substring($extrasIndex + '", '.Length).Trim().TrimEnd("`r`n").Substring('extras: '.Length)
+            $broadcastData = $broadcastData.Substring(0, $extrasIndex)
+        }
+        else {
+            if ($broadcastData.EndsWith('"')) {
+                $broadcastData = $broadcastData.Substring(0, $broadcastData.Length - 1)
+            }
+        }
+
+        $broadcastData = $broadcastData -replace '\"', '"'
+    }
 
     $broadcastOuput = [PSCustomObject]@{
         Result = $broadCastResult
         Data   = $broadcastData
+        Extras = $broadcastExtras
     }
 
     if ($actualHexFlags) {
