@@ -7,7 +7,7 @@ function Get-AdbBluetoothAddress {
     )
 
     $value = Get-AdbSetting -SerialNumber $SerialNumber -Namespace secure -Name 'bluetooth_address' -Verbose:$VerbosePreference
-    if ($value -ne 'null' -and -not $value) {
+    if ($value -ne 'null' -and $value) {
         return $value
     }
 
