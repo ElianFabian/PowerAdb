@@ -1,5 +1,7 @@
 function Connect-AdbDevice {
 
+    # NOTES: It seems that connecting a device through a 5G only Wi-Fi doesn't work
+
     [OutputType([bool])]
     [CmdletBinding(SupportsShouldProcess)]
     param (
