@@ -21,11 +21,6 @@ function Connect-AdbDevice2 {
         continue
     }
 
-    if (-not (Test-AdbInternetConnection -SerialNumber $SerialNumber -Verbose:$false)) {
-        Write-Error "Device '$SerialNumber' has no internet connection. Please check your connection."
-        continue
-    }
-
     ### EDIT: Since Get-NetConnectionProfile doesn't return the correct name of the Wi-Fi
     # we decide to omit this check for now.
 
