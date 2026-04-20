@@ -1,0 +1,3 @@
+usage: setprop NAME VALUE
+
+Sets an Android system property.
