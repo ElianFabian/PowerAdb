@@ -3,19 +3,38 @@ function Get-AdbProperty {
     [CmdletBinding(DefaultParameterSetName = "Default")]
     [OutputType([string[]], ParameterSetName = "Default")]
     [OutputType([PSCustomObject[]], ParameterSetName = "List")]
+    [OutputType([string[]], ParameterSetName = "Type")]
+    [OutputType([string[]], ParameterSetName = "Context")]
     param (
         [string] $SerialNumber,
 
+        [Parameter(Mandatory, ParameterSetName = "Type")]
+        [Parameter(Mandatory, ParameterSetName = "Context")]
         [Parameter(Mandatory, ParameterSetName = "Default")]
         [string[]] $Name,
 
         # Fast query of multiple values
+        [Parameter(Mandatory, ParameterSetName = "Type")]
+        [Parameter(Mandatory, ParameterSetName = "Context")]
         [Parameter(ParameterSetName = "Default")]
         [switch] $QueryFromList,
 
         [Parameter(Mandatory, ParameterSetName = "List")]
-        [switch] $List
+        [switch] $List,
+
+        [Parameter(Mandatory, ParameterSetName = "Type")]
+        [switch] $Type,
+
+        [Parameter(Mandatory, ParameterSetName = "Context")]
+        [switch] $Context
     )
+
+    if ($Type) {
+        $typeArg = ' -T'
+    }
+    if ($Context) {
+        $contextArg = ' -Z'
+    }
 
     if ($List) {
         return Invoke-AdbExpression -SerialNumber $SerialNumber -Command 'shell getprop' -Verbose:$VerbosePreference `
@@ -55,14 +74,14 @@ function Get-AdbProperty {
                 }
                 else {
                     $sanitizedPropertyName = ConvertTo-ValidAdbStringArgument $_
-                    $value = Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell getprop $sanitizedPropertyName" -Verbose:$VerbosePreference -ErrorAction Ignore | Out-String -NoNewline
+                    $value = Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell getprop $sanitizedPropertyName$typeArg$contextArg" -Verbose:$VerbosePreference -ErrorAction Ignore | Out-String -NoNewline
                     Set-CacheValue -SerialNumber $SerialNumber -Key $_ -Value $value
                     $value
                 }
             }
             else {
                 $sanitizedPropertyName = ConvertTo-ValidAdbStringArgument $_
-                Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell getprop $sanitizedPropertyName" -Verbose:$VerbosePreference -ErrorAction Ignore | Out-String -NoNewline
+                Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell getprop $sanitizedPropertyName$typeArg$contextArg" -Verbose:$VerbosePreference -ErrorAction Ignore | Out-String -NoNewline
             }
         }
     }
