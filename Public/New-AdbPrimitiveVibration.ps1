@@ -1,7 +1,6 @@
 function New-AdbPrimitiveVibration {
 
     [OutputType([PSCustomObject])]
-    [CmdletBinding()]
     param (
         [ValidateSet(
             'PRIMITIVE_NOOP',
@@ -17,7 +16,7 @@ function New-AdbPrimitiveVibration {
         [Parameter(Mandatory)]
         [string[]] $Type,
 
-        [int] $DelayMilliseconds = 0
+        [uint32] $DelayMilliseconds = 0
     )
 
     $output = [PSCustomObject]@{

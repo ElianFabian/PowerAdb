@@ -1,7 +1,6 @@
 function New-AdbWaveFormVibrationStep {
 
     [OutputType([PSCustomObject])]
-    [CmdletBinding()]
     param (
         [Parameter(Mandatory)]
         [int] $DurationMilliseconds,
@@ -12,8 +11,8 @@ function New-AdbWaveFormVibrationStep {
         [int] $Frequency = 1
     )
 
-    if ($Frequency -lt 1) {
-        Write-Error "Frequency must be greater than or equal to 1, but was $Frequency" -ErrorAction Stop
+    if ($Frequency -le 0) {
+        Write-Error "Frequency must be greater than 01, but was $Frequency" -ErrorAction Stop
     }
 
     $segment = [PSCustomObject]@{

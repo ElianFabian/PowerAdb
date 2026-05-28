@@ -1,7 +1,6 @@
 function New-AdbPrebakedVibration {
 
     [OutputType([PSCustomObject])]
-    [CmdletBinding()]
     param (
         # The ones that at least work on Pixel 8 Pro API 35 are:
         # - 'CLICK', 'DOUBLE_CLICK', 'TICK', 'POP', 'HEAVY_CLICK', 'TEXTURE_TICK'.
@@ -32,11 +31,15 @@ function New-AdbPrebakedVibration {
         [Parameter(Mandatory)]
         [string] $Effect,
 
-        [int] $DelayMilliseconds = 0,
+        [uint32] $DelayMilliseconds = 0,
 
         # I tested it with the ones that don't work on Pixel 8 Pro API 35, but this doesn't seem to do anything.
         [switch] $Fallback
     )
+
+    if ($DelayMilliseconds -gt 0) {
+        Assert-ApiLevel -SerialNumber $SerialNumber -From 31 -To 35 -FeatureName "$($MyInvocation.MyCommand.Name) -DelayMilliseconds"
+    }
 
     $output = [PSCustomObject]@{
         Effect            = $Effect
@@ -77,7 +80,10 @@ function New-AdbPrebakedVibration {
         if ($this.Fallback) {
             $fallbackArg = ' -b'
         }
-        return " prebaked -w $($this.DelayMilliseconds)$fallbackArg $($this.EffectCode)"
+        if ($this.DelayMilliseconds -gt 0) {
+            $delayArg = " -w $($this.DelayMilliseconds)"
+        }
+        return " prebaked$delayArg$fallbackArg $($this.EffectCode)"
     }
 
     return $output

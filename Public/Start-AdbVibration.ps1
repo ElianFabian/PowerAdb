@@ -9,9 +9,10 @@ function Start-AdbVibration {
         [uint32] $OneShotDuration,
 
         [Parameter(Mandatory, ParameterSetName = 'Synced')]
-        [PSCustomObject] $Synced,
+        [scriptblock] $Synced,
 
         # Waveform vibrations with repeating index don't work with combined
+        # It only seems to work with just one effect, the rest are ignored
         [Parameter(Mandatory, ParameterSetName = 'Combined')]
         [scriptblock] $Combined,
 
@@ -34,10 +35,12 @@ function Start-AdbVibration {
         # NOTES: At least on Pixel 8 Pro API 35, when the device is in Do Not Disturb mode, the vibration still works.
         [switch] $Force,
 
-        [string] $Description
-    )
+        [string] $Description,
 
-    # NOTES: In some devices (e.g. Realme 6 API 30, and Xiaomi Mi MIX 2S API 29) the vibrator command does not seem to work
+        [switch] $VendorSession,
+
+        [string] $Usage
+    )
 
     Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 26
 
@@ -45,10 +48,10 @@ function Start-AdbVibration {
         Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 31 -FeatureName "$($MyInvocation.MyCommand.Name) -Combined"
     }
     if ($Synced) {
-        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 31 -FeatureName "$($MyInvocation.MyCommand.Name) -Syn$Synced"
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 31 -FeatureName "$($MyInvocation.MyCommand.Name) -Synced"
     }
     if ($Sequential) {
-        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 31 -FeatureName "$($MyInvocation.MyCommand.Name) -Sequential"
+        Assert-ApiLevel -SerialNumber $SerialNumber -From 31 -To 35 -FeatureName "$($MyInvocation.MyCommand.Name) -Sequential"
     }
     if ($DontWait) {
         Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 33 -FeatureName "$($MyInvocation.MyCommand.Name) -DontWait"
@@ -58,6 +61,12 @@ function Start-AdbVibration {
     }
     if ($Xml) {
         Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 35 -FeatureName "$($MyInvocation.MyCommand.Name) -Xml"
+    }
+    if ($VendorSession) {
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 36 -FeatureName "$($MyInvocation.MyCommand.Name) -VendorSession"
+    }
+    if ($Usage) {
+        Assert-ApiLevel -SerialNumber $SerialNumber -GreaterThanOrEqualTo 36 -FeatureName "$($MyInvocation.MyCommand.Name) -Usage"
     }
 
     $apiLevel = Get-AdbApiLevel -SerialNumber $SerialNumber -Verbose:$false
@@ -72,6 +81,14 @@ function Start-AdbVibration {
         if ($Description) {
             $descriptionArg = " -d $(ConvertTo-ValidAdbStringArgument $Description)"
         }
+
+        if ($VendorSession) {
+            $vendorSessionArg = ' -S'
+            $dontWaitArg = '' # Clean output: OS ignores -B when -S is supplied
+        }
+        if ($Usage) {
+            $usageArg = " -u $(ConvertTo-ValidAdbStringArgument $Usage)"
+        }
     }
     else {
         if ($Description) {
@@ -79,32 +96,40 @@ function Start-AdbVibration {
         }
     }
 
-    switch ($PSCmdlet.ParameterSetName) {
-        'OneShot' {
-            if ($apiLevel -ge 31) {
-                Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell cmd vibrator_manager synced oneshot$forceArg$descriptionAr $OneShotDuration" -Verbose:$VerbosePreference
+    $commonOptions = "$forceArg$descriptionArg$dontWaitArg$vendorSessionArg$usageArg"
+
+    try {
+        switch ($PSCmdlet.ParameterSetName) {
+            'OneShot' {
+                if ($apiLevel -ge 31) {
+                    Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell cmd vibrator_manager synced oneshot$commonOptions $OneShotDuration" -Verbose:$VerbosePreference
+                }
+                else {
+                    Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell cmd vibrator vibrate$forceArg $OneShotDuration$descriptionArg" -Verbose:$VerbosePreference
+                }
             }
-            else {
-                Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell cmd vibrator vibrate$forceArg $OneShotDuration$descriptionArg" -Verbose:$VerbosePreference
+            'Synced' {
+                Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell cmd vibrator_manager synced$commonOptions$($Synced.Invoke().ToAdbArguments())" -Verbose:$VerbosePreference
+            }
+            'Combined' {
+                $combinedStr = ($Combined.Invoke() | ForEach-Object { $_.ToAdbArguments() }) -join ''
+                Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell cmd vibrator_manager combined$commonOptions$combinedStr" -Verbose:$VerbosePreference
+            }
+            'Sequential' {
+                $sequentialStr = ($Sequential.Invoke() | ForEach-Object { $_.ToAdbArguments() }) -join ''
+                Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell cmd vibrator_manager sequential$commonOptions$sequentialStr" -Verbose:$VerbosePreference
+            }
+            'Feedback' {
+                Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell cmd vibrator_manager feedback$commonOptions $Feedback" -Verbose:$VerbosePreference
+            }
+            'Xml' {
+                $sanitizedXml = ConvertTo-ValidAdbStringArgument $Xml
+                Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell cmd vibrator_manager xml$commonOptions $sanitizedXml" -Verbose:$VerbosePreference
             }
         }
-        'Synced' {
-            Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell cmd vibrator_manager synced$forceArg$descriptionArg$dontWaitArg$($Synced.ToAdbArguments())" -Verbose:$VerbosePreference
-        }
-        'Combined' {
-            $combinedStr = ($Combined.Invoke() | ForEach-Object { $_.ToAdbArguments() }) -join ''
-            Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell cmd vibrator_manager combined$forceArg$descriptionArg$dontWaitArg$combinedStr" -Verbose:$VerbosePreference
-        }
-        'Sequential' {
-            $sequentialStr = ($Sequential.Invoke() | ForEach-Object { $_.ToAdbArguments() }) -join ''
-            Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell cmd vibrator_manager sequential$forceArg$descriptionArg$dontWaitArg$sequentialStr" -Verbose:$VerbosePreference
-        }
-        'Feedback' {
-            Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell cmd vibrator_manager feedback$forceArg$descriptionArg$dontWaitArg $Feedback" -Verbose:$VerbosePreference
-        }
-        'Xml' {
-            $sanitizedXml = ConvertTo-ValidAdbStringArgument $Xml
-            Invoke-AdbExpression -SerialNumber $SerialNumber -Command "shell cmd vibrator_manager xml$forceArg$descriptionArg$dontWaitArg $sanitizedXml" -Verbose:$VerbosePreference
-        }
+    }
+    catch {
+        # Force throw exception
+        throw $_
     }
 }

@@ -1,10 +1,11 @@
-Start-AdbVibration -Synced (
-    New-AdbOneShotVibration -DurationMilliseconds 5000 -Amplitude 255 -DelayMilliseconds 0
-)
+Start-AdbVibration -Synced {
+    New-AdbOneShotVibration -DurationMilliseconds 1000 -Amplitude 255
+    New-AdbOneShotVibration -DurationMilliseconds 1000 -Amplitude 50
+} -Verbose
 
-Start-AdbVibration -Synced (
+Start-AdbVibration -Synced {
     New-AdbPrimitiveVibration -Type (1..100 | ForEach-Object { 'PRIMITIVE_CLICK' }) -DelayMilliseconds 0
-) -Verbose
+} -Verbose
 
 Start-AdbVibration -Synced (
     New-AdbWaveFormVibration -Continuous {
