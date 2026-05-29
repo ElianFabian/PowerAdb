@@ -24,6 +24,8 @@ function Get-AdbContentEntry {
         [scriptblock] $SortBy
     )
 
+    Update-TypeData -TypeName 'Adb.ContentRow' -DefaultDisplayPropertySet RowIndex, Properties -ErrorAction SilentlyContinue
+
     $user = Resolve-AdbUser -SerialNumber $SerialNumber -UserId $UserId -CurrentUserAsNull
     if ($null -ne $user) {
         $userArg = " --user $user"
@@ -80,6 +82,7 @@ function Get-AdbContentEntry {
     | Select-Object -SkipLast 1 `
     | ForEach-Object {
         $output = [PSCustomObject] @{
+            PSTypeName = 'Adb.ContentRow'
             RowIndex   = $lastRowIndex - 1
             RawContent = $_
         }
