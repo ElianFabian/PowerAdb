@@ -7,23 +7,23 @@ Start-AdbVibration -Synced {
     New-AdbPrimitiveVibration -Type (1..100 | ForEach-Object { 'PRIMITIVE_CLICK' }) -DelayMilliseconds 0
 } -Verbose
 
-Start-AdbVibration -Synced (
+Start-AdbVibration -Synced {
     New-AdbWaveFormVibration -Continuous {
         New-AdbWaveFormVibrationStep -DurationMilliseconds 1000 -Amplitude 255
         New-AdbWaveFormVibrationStep -DurationMilliseconds 1000 -Amplitude 100
         New-AdbWaveFormVibrationStep -DurationMilliseconds 1000 -Amplitude 200
         New-AdbWaveFormVibrationStep -DurationMilliseconds 1000 -Amplitude 255
     }
-) -Verbose
+} -Verbose
 
-Start-AdbVibration -Synced (
+Start-AdbVibration -Synced {
     New-AdbWaveFormVibration -Continuous -RepeatAtIndex 0 {
         New-AdbWaveFormVibrationStep -DurationMilliseconds 1000 -Amplitude 255
         New-AdbWaveFormVibrationStep -DurationMilliseconds 1000 -Amplitude 100
         New-AdbWaveFormVibrationStep -DurationMilliseconds 1000 -Amplitude 200
         New-AdbWaveFormVibrationStep -DurationMilliseconds 1000 -Amplitude 255
     }
-) -Verbose
+} -Verbose
 
 $xml = @"
 <vibration-effect>
