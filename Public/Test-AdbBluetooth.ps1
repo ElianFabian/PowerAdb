@@ -15,15 +15,15 @@ function Test-AdbBluetooth {
     do {
         # TODO: There is also the state of BLE_TURNING_ON and BLE_TURNING_OFF, so maybe we could create a differente function
         # that returns the code for all the states.
-        $result = Get-AdbServiceDump -SerialNumber $SerialNumber -Name bluetooth_manager | Select-Object -Skip 2 -First 1
+        $result = (Get-AdbServiceDump -SerialNumber $SerialNumber -Name bluetooth_manager | Select-Object -First 10) -join "`n"
     }
     while ($result.Contains('TURNING_OFF') -or $result.Contains('TURNING_ON'))
 
-    switch ($result.Trim()) {
-        'state: ON' { $true }
-        'state: OFF' { $false }
+    switch -regex ($result) {
+        'state\s*:\s*on' { $true }
+        'state\s*:\s*off' { $false }
         default {
-            Write-Error -Message "Unkown state: $_" -ErrorAction Stop
+            Write-Error -Message "Unknown state: $_" -ErrorAction Stop
         }
     }
 }
