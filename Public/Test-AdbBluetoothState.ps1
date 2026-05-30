@@ -1,4 +1,4 @@
-function Test-AdbBluetooth {
+function Test-AdbBluetoothState {
 
     [OutputType([bool])]
     [CmdletBinding(SupportsShouldProcess)]
