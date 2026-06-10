@@ -11,7 +11,7 @@ function Get-AdbBluetoothAddress {
         return $value
     }
 
-    return Get-AdbServiceDump -SerialNumber ZLCQGUPF7TDENZGM -Name bluetooth_manager | Select-Object -Skip 3 -First 1 | ForEach-Object {
+    return Get-AdbServiceDump -SerialNumber $SerialNumber -Name bluetooth_manager | Select-Object -Skip 3 -First 1 | ForEach-Object {
         $_.Trim().Replace('address: ', '')
     }
 }
