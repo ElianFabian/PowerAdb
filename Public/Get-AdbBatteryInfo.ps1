@@ -15,7 +15,12 @@ function Get-AdbBatteryInfo {
         $rawName, $rawValue = $_ -split ':'
 
         $name = ConvertTo-PascalCase $rawName.Trim()
-        $value = if ($rawValue -match '\d+') {
+
+        if ($name.StartsWith('(')) {
+            return
+        }
+
+        $value = if ($rawValue -match '$\d+') {
             [int] $rawValue
         }
         elseif ($rawValue -match '(true|false)') {
