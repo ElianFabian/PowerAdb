@@ -9,7 +9,7 @@ function Test-AdbScreenOn {
     )
 
     Get-AdbServiceDump -SerialNumber $SerialNumber -Name 'input_method' -Verbose:$VerbosePreference `
-    | Out-String | Select-String -Pattern "(mScreenOn|screenOn = |mInteractive=)(true|false)" -AllMatches `
+    | Out-String | Select-String -Pattern "(?:mInteractive|mScreenOn|screenOn)\s*=\s*(?<state>true|false)" -AllMatches `
     | Select-Object -ExpandProperty Matches `
     | Select-Object -ExpandProperty Groups `
     | Select-Object -ExpandProperty Value -Last 1 `
