@@ -7,9 +7,15 @@ function Get-AdbApiLevel {
     )
 
     $result = Get-AdbProperty -SerialNumber $SerialNumber -Name 'ro.build.version.sdk' -Verbose:$VerbosePreference
-    if ([string]::IsNullOrEmpty($result.Trim())) {
+
+    if ([string]::IsNullOrWhiteSpace($result)) {
         return $null
     }
 
-    [int] $result
+    $apiLevel = $result -as [int]
+    if ($null -ne $apiLevel) {
+        return $apiLevel
+    }
+
+    return $null
 }
