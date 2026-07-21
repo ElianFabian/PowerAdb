@@ -42,7 +42,7 @@ function Show-AdbDevice {
         }
 
         if ($device.State -ne 'offline') {
-            $apiLevel = Get-AdbApiLevel -SerialNumber $device.SerialNumber -Verbose:$false -ErrorAction Ignore
+            $apiLevel = Get-AdbApiLevelFull -SerialNumber $device.SerialNumber -Verbose:$false -ErrorAction Ignore
         }
         if ([string]::IsNullOrWhiteSpace($apiLevel)) {
             $apiLevel = '-'
