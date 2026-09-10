@@ -1,0 +1,10 @@
+ContextualSearchService commands:
+  help
+    Prints this help text.
+
+  set temporary-package [PACKAGE_NAME DURATION]
+    Temporarily (for DURATION ms) changes the Contextual Search implementation.
+    To reset, call without any arguments.
+  set token-duration [DURATION]
+    Changes the Contextual Search token duration to DURATION ms.
+    To reset, call without any arguments.

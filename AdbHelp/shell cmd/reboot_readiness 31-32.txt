@@ -1,4 +1,4 @@
-eboot readiness (reboot_readiness) commands:
+Reboot readiness (reboot_readiness) commands:
     help:
         Prints this help text.
     check-interactivity-state:

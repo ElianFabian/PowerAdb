@@ -1,0 +1,99 @@
+Power manager (power) commands:
+  help
+    Print this help text.
+
+  set-adaptive-power-saver-enabled [true|false]
+    enables or disables adaptive power saver.
+  set-mode MODE
+    sets the power mode of the device to MODE.
+    1 turns low power mode on and 0 turns low power mode off.
+  set-fixed-performance-mode-enabled [true|false]
+    enables or disables fixed performance mode
+    note: this will affect system performance and should only be used
+          during development
+  suppress-ambient-display <token> [none|all|dream|aod|true|false]
+    suppresses the current ambient display configuration and disables
+    ambient display
+  list-ambient-display-suppression-tokens
+    prints the tokens used to suppress ambient display
+  set-prox [list|acquire|release] (-d <display_id>)
+    Acquires the proximity sensor wakelock. Wakelock is associated with
+    a specific display if specified. 'list' lists wakelocks previously
+    created by set-prox including their held status.
+  set-wakelock [list|acquire|release] (-d <display_id>) [wakelock type]
+    Acquires the specified wakelock. Wakelock is associated with
+    a specific display if specified. 'list' lists wakelocks previously
+    created by set-wakelock including their held status.
+    Available wakelocks are described in PowerManager.*_WAKE_LOCK.
+  set-face-down-detector [true|false]
+    sets whether we use face down detector timeouts or not
+  sleep (--disable-wakelocks) (--group-id <group ids>) 
+    requests to sleep the device
+      --disable-wakelocks: Force disable wakelocks before going to sleep.
+        It will only act upon the wakelocks associated with the listed power groups or displays.
+      --group-id <group ids>: Only sleep certain power groups, list with spaces.
+      --display-id <display ids>: Only sleep power groups of listed displays, list with spaces.
+      If no group ids nor display ids are specified, then default & adjacent groups will sleep.
+      Usage: adb shell cmd power sleep --group-id 0 1 2 --display-id 3 --disable-wakelocks
+  wakeup (<delay>) (--restore-wakelocks)
+    requests to wake up the device. If a delay of milliseconds is specified,
+    alarm manager will schedule a wake up after the delay.
+      --group-id <group ids>: Only wake certain power groups, list with spaces.
+      --display-id <display ids>: Only wake power groups of listed displays, list with spaces.
+      If no group ids nor display ids are specified, then default & adjacent groups will sleep.
+      --restore-wakelocks: Restore force-disabled wakelocks after wakeup.
+        It will not restore wakelocks that are generically disabled.
+
+<INTENT> specifications include these flags and arguments:
+    [-a <ACTION>] [-d <DATA_URI>] [-t <MIME_TYPE>] [-i <IDENTIFIER>]
+    [-c <CATEGORY> [-c <CATEGORY>] ...]
+    [-n <COMPONENT_NAME>]
+    [-e|--es <EXTRA_KEY> <EXTRA_STRING_VALUE> ...]
+    [--esn <EXTRA_KEY> ...]
+    [--ez <EXTRA_KEY> <EXTRA_BOOLEAN_VALUE> ...]
+    [--ei <EXTRA_KEY> <EXTRA_INT_VALUE> ...]
+    [--el <EXTRA_KEY> <EXTRA_LONG_VALUE> ...]
+    [--ef <EXTRA_KEY> <EXTRA_FLOAT_VALUE> ...]
+    [--ed <EXTRA_KEY> <EXTRA_DOUBLE_VALUE> ...]
+    [--eu <EXTRA_KEY> <EXTRA_URI_VALUE> ...]
+    [--ecn <EXTRA_KEY> <EXTRA_COMPONENT_NAME_VALUE>]
+    [--eia <EXTRA_KEY> <EXTRA_INT_VALUE>[,<EXTRA_INT_VALUE...]]
+        (multiple extras passed as Integer[])
+    [--eial <EXTRA_KEY> <EXTRA_INT_VALUE>[,<EXTRA_INT_VALUE...]]
+        (multiple extras passed as List<Integer>)
+    [--ela <EXTRA_KEY> <EXTRA_LONG_VALUE>[,<EXTRA_LONG_VALUE...]]
+        (multiple extras passed as Long[])
+    [--elal <EXTRA_KEY> <EXTRA_LONG_VALUE>[,<EXTRA_LONG_VALUE...]]
+        (multiple extras passed as List<Long>)
+    [--efa <EXTRA_KEY> <EXTRA_FLOAT_VALUE>[,<EXTRA_FLOAT_VALUE...]]
+        (multiple extras passed as Float[])
+    [--efal <EXTRA_KEY> <EXTRA_FLOAT_VALUE>[,<EXTRA_FLOAT_VALUE...]]
+        (multiple extras passed as List<Float>)
+    [--eda <EXTRA_KEY> <EXTRA_DOUBLE_VALUE>[,<EXTRA_DOUBLE_VALUE...]]
+        (multiple extras passed as Double[])
+    [--edal <EXTRA_KEY> <EXTRA_DOUBLE_VALUE>[,<EXTRA_DOUBLE_VALUE...]]
+        (multiple extras passed as List<Double>)
+    [--esa <EXTRA_KEY> <EXTRA_STRING_VALUE>[,<EXTRA_STRING_VALUE...]]
+        (multiple extras passed as String[]; to embed a comma into a string,
+         escape it using "\,")
+    [--esal <EXTRA_KEY> <EXTRA_STRING_VALUE>[,<EXTRA_STRING_VALUE...]]
+        (multiple extras passed as List<String>; to embed a comma into a string,
+         escape it using "\,")
+    [-f <FLAG>]
+    [--grant-read-uri-permission] [--grant-write-uri-permission]
+    [--grant-persistable-uri-permission] [--grant-prefix-uri-permission]
+    [--debug-log-resolution] [--exclude-stopped-packages]
+    [--include-stopped-packages]
+    [--activity-brought-to-front] [--activity-clear-top]
+    [--activity-clear-when-task-reset] [--activity-exclude-from-recents]
+    [--activity-launched-from-history] [--activity-multiple-task]
+    [--activity-no-animation] [--activity-no-history]
+    [--activity-no-user-action] [--activity-previous-is-top]
+    [--activity-reorder-to-front] [--activity-reset-task-if-needed]
+    [--activity-single-top] [--activity-clear-task]
+    [--activity-task-on-home] [--activity-match-external]
+    [--receiver-registered-only] [--receiver-replace-pending]
+    [--receiver-foreground] [--receiver-no-abort]
+    [--receiver-include-background]
+    [--selector]
+    [<URI> | <PACKAGE> | <COMPONENT>]

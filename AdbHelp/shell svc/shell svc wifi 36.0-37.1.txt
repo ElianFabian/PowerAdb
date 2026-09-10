@@ -1,0 +1,4 @@
+Control the Wi-Fi manager
+
+usage: svc wifi [enable|disable]
+         Turn Wi-Fi on or off.

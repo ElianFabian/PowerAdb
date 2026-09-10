@@ -1,0 +1,18 @@
+Settings provider (settings) commands:
+  help
+      Print this help text.
+  get [--user <USER_ID> | current] [--deviceId <DEVICE_ID> | 0] NAMESPACE KEY
+      Retrieve the current value of KEY.
+  put [--user <USER_ID> | current] [--deviceId <DEVICE_ID> | 0] NAMESPACE KEY VALUE [TAG] [default] [overrideableByRestore]
+      Change the contents of KEY to VALUE.
+      TAG to associate with the setting (cannot be default or overrideableByRestore).
+      {default} to set as the default, case-insensitive only for global/secure namespace
+      {overrideableByRestore} to let the value be overridden by BackupManager on restore operations
+  delete [--user <USER_ID> | current] [--deviceId <DEVICE_ID> | 0] NAMESPACE KEY
+      Delete the entry for KEY.
+  reset [--user <USER_ID> | current] [--deviceId <DEVICE_ID> | 0] NAMESPACE {PACKAGE_NAME | RESET_MODE}
+      Reset the global/secure table for a package with mode.
+      RESET_MODE is one of {untrusted_defaults, untrusted_clear, trusted_defaults}, case-insensitive
+  list [--user <USER_ID> | current] NAMESPACE
+      Print all defined keys.
+      NAMESPACE is one of {system, secure, global}, case-insensitive

@@ -1,0 +1,1 @@
+Got a null NfcAdapter, is the system running?

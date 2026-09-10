@@ -23,3 +23,5 @@ adb help output is not always consistent across versions. Some changes are cosme
 - This is not intended to be a complete reference for every adb release.
 - The focus is on significant changes that matter for PowerAdb development.
 - If you add new help files, try to preserve the existing naming and grouping conventions so the folder remains easy to navigate.
+- The symbol '$' means that a command is not supported on newer versions (an flag flag to avoid thinking there are missing docs).
+- The symbol '~' is to indicate that the command exists but it throws an error or the implementation is missing.

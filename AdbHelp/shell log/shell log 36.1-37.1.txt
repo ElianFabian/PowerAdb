@@ -1,0 +1,11 @@
+Toybox 0.8.13-android multicall binary (see toybox --help)
+
+usage: log [-b BUFFER] [-p PRI] [-t TAG] [MESSAGE...]
+
+Logs message (or stdin) to logcat.
+
+-b      Use the given log buffer instead of "main":
+        "radio", "events", "system", "crash", "stats", "security", "kernel"
+-p      Use the given priority instead of INFO:
+        d: DEBUG  e: ERROR  f: FATAL  i: INFO  v: VERBOSE  w: WARN  s: SILENT
+-t      Use the given tag instead of "log"

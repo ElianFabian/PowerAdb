@@ -1,0 +1,16 @@
+Bluetooth Manager Commands:
+  help or -h
+    Print this help text.
+  enable
+    Enable Bluetooth on this device.
+  disable
+    Disable Bluetooth on this device.
+  enableBle
+    Call enableBle to activate ble only mode on this device.
+  disableBle
+    undo the call to enableBle.
+  factoryReset
+    Perform a factory reset of Bluetooth settings.
+  wait-for-state:<STATE>
+    Wait until the adapter state is one of [STATE_OFF|STATE_ON]
+    Note: This command can timeout and failed

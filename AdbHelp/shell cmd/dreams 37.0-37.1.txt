@@ -1,0 +1,13 @@
+Dream manager (dreams) commands:
+  help
+      Print this help text.
+  start-dreaming
+      Start the currently configured dream.
+  stop-dreaming
+      Stops any active dream
+  playlist
+      Prints the current dream playlist
+  next-dream
+      Activates the next dream in the playlist
+  previous-dream
+      Activates the previous dream in the playlist

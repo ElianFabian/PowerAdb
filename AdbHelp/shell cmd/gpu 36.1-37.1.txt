@@ -1,0 +1,4 @@
+GPU Service commands:
+  vkjson      dump Vulkan properties as JSON
+  vkprofiles  print support for select Vulkan profiles
+  featureOverrides  update and output gpuservice's feature overrides

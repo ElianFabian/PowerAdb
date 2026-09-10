@@ -1,0 +1,10 @@
+ProtoLog commands:
+  help
+    Print this help text.
+
+  groups (list | status)
+    list - Lists all ProtoLog groups registered with ProtoLog service
+    status <group>? - Print the status of a ProtoLog group. If no group is passed then it prints the status of all groups.
+
+  logcat (enable | disable) <group>?
+    Enable or disable ProtoLog to logcat. Passing no groups to the command will enable/disable all groups. Passing a group or space separated list of groups to the command will enable/disable those groups only.

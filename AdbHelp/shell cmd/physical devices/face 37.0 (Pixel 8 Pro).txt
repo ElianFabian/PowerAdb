@@ -1,0 +1,7 @@
+Face Service commands:
+  help
+      Print this help text.
+  sync
+      Sync enrollments now (virtualized sensors only).
+  notification
+     Sends a Face re-enrollment notification

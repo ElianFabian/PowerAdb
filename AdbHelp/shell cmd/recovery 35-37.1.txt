@@ -1,0 +1,10 @@
+Recovery system commands:
+  request-lskf <package_name>
+  clear-lskf <package_name>
+  is-lskf-captured <package_name>
+  reboot-and-apply <package_name> <reason>
+  wipe <new filesystem type ext4/f2fs>
+
+
+
+NOTE: doc for "clear-lskf" was fixed in API 37.1, in older versions it lacked the <package_name> argument
