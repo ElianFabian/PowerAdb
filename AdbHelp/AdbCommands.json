@@ -1,0 +1,25 @@
+{
+  "commands": [
+    { "type": "exec-out", "name": "screenrecord", "helpArg": "--help" },
+    { "type": "exec-out", "name": "screencap", "helpArg": "-h" },
+    { "type": "exec-out", "name": "uiautomator", "helpArg": "help" },
+    { "type": "shell", "name": "am", "helpArg": "" },
+    { "type": "shell", "name": "content", "helpArg": "" },
+    { "type": "shell", "name": "dpm", "helpArg": "" },
+    { "type": "shell", "name": "dumpsys", "helpArg": "--help" },
+    { "type": "shell", "name": "getprop", "helpArg": "--help" },
+    { "type": "shell", "name": "input", "helpArg": "" },
+    { "type": "shell", "name": "ip", "helpArg": "" },
+    { "type": "shell", "name": "log", "helpArg": "--help" },
+    { "type": "shell", "name": "logcat", "helpArg": "--help" },
+    { "type": "shell", "name": "pidof", "helpArg": "--help" },
+    { "type": "shell", "name": "pm", "helpArg": "" },
+    { "type": "shell", "name": "screencap", "helpArg": "-h" },
+    { "type": "shell", "name": "screenrecord", "helpArg": "--help" },
+    { "type": "shell", "name": "setprop", "helpArg": "--help" },
+    { "type": "shell", "name": "settings", "helpArg": "" },
+    { "type": "shell", "name": "sleep", "helpArg": "--help" },
+    { "type": "shell", "name": "svc", "helpArg": "" },
+    { "type": "shell", "name": "wm", "helpArg": "" }
+  ]
+}
