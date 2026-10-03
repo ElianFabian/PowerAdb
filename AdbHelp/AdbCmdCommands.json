@@ -1,0 +1,29 @@
+{
+  "commands": [
+    {
+      "type": "cmd",
+      "name": "binder_calls_stats",
+      "helpArg": "help"
+    },
+    {
+      "type": "cmd",
+      "name": "gpu",
+      "helpArg": "help"
+    },
+    {
+      "type": "cmd",
+      "name": "media.codec",
+      "helpArg": "help"
+    },
+    {
+      "type": "cmd",
+      "name": "sensorservice",
+      "helpArg": "help"
+    },
+    {
+      "type": "cmd",
+      "name": "wallpaper",
+      "helpArg": "help"
+    }
+  ]
+}
